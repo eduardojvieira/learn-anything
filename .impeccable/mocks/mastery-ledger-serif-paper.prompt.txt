@@ -1,0 +1,25 @@
+Use case: style-transfer
+Asset type: revised high-fidelity desktop web application comp, 1600x1000 landscape
+Primary request: Revise the attached Learn Anything "Mastery Ledger" UI comp with exactly two related art-direction changes requested by the user: use a strong editorial serif type system and make the material feel more convincingly like real paper.
+
+Edit target and invariants:
+- The attached image is the edit target.
+- Preserve its complete Mastery Ledger topology, proportions, information hierarchy, exact Learn Anything data, square ruled panels, three topic rows, mastery ledger, and Suggested Review column.
+- Preserve the Kanagawa Lotus functional palette: deep blue ink, coral signals, garden green progress, warm cream ground.
+- Keep all current functionality legible and production-realistic.
+- Remove the stray navigation numerals "1 2 3 4 5" from the top strip; they leaked from the visual reference and are not Learn Anything functionality. Keep only the outlined LA mark at left and language/theme controls at right.
+
+Typography change:
+- Replace the monospaced voice with an elegant, highly readable old-style serif resembling Noto Serif / Noto Serif CJK SC, including Chinese glyph support.
+- Use the serif consistently for title, navigation, labels, topic names, review rows, and metrics.
+- Headings should feel like a scholarly ledger or annotated academic folio: confident, moderately high contrast, never fashion-editorial or ornate.
+- Use small caps or restrained letterspacing only for structural section labels. Keep numerals tabular and readable.
+
+Paper-material change:
+- Make the page feel like a carefully printed study ledger on tactile Japanese archival paper: visible but very subtle natural fiber/pulp grain, slight tonal variation between sheet and panels, precise ink rules, and a gentle printed-ink character.
+- Texture must stay behind content and preserve WCAG-like contrast. It should be apparent at full resolution but never dirty, stained, distressed, vignetted, or skeuomorphic.
+- Flat structural depth only: paper tone plus 1px rules. No shadows.
+
+Text that must remain clear and exact where shown: "Learn Anything", "Learning Dashboard", "3 topics", "Mastery Overview", "Topic Directory", "Suggested Review", "JavaScript", "Python", "React", "5 / 41 Concepts", "12%", "5 Mastered", "7 In Progress", "4 Needs Practice", "25 Unexplored", "25 practices", "22 explains", "11 Notes", "22 Exercises", "11 Domains", "52d ago".
+
+Avoid: monospace primary typography, sans-serif primary typography, rounded cards, shadows, gradients, glass, glow, ripped/deckled edges, coffee stains, handwritten fonts, generic book-cover styling, serif italics as decoration, ornate borders, invented metrics, illustrations, wave artwork, garbled headings, layout recomposition.

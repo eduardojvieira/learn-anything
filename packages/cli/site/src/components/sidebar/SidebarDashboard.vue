@@ -20,7 +20,7 @@ const topics = computed(() => {
       v-if="topics.length > 0"
       class="text-xs font-semibold text-text-2 uppercase tracking-wide mb-2"
     >
-      Topics
+      {{ t('sidebar.topics') }}
     </p>
 
     <div class="space-y-0.5">
@@ -32,7 +32,7 @@ const topics = computed(() => {
       >
         <span class="block">{{ topic.name }}</span>
         <span class="block text-xs mt-0.5 font-normal text-text-3">
-          {{ topic.masteredCount }}/{{ topic.totalConcepts }} mastered
+          {{ topic.masteredCount }}/{{ topic.totalConcepts }} {{ t('sidebar.mastered') }}
         </span>
       </button>
     </div>

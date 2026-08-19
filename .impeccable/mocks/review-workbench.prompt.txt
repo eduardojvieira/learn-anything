@@ -1,0 +1,25 @@
+Use case: ui-mockup
+Asset type: high-fidelity desktop web application composition, 1600x1000 landscape
+Primary request: Create composition option C for the existing Learn Anything dashboard. Carry over the exact visual grammar of Homelab Mission Control (reference 1) while using only the real Learn Anything controls and data (reference 2). It must read as an operational learning dashboard, not a poster.
+
+Reference roles:
+- Image 1 contributes its Shoji Operations Desk language: Kanagawa Lotus paper/ink palette, monospaced UI voice, flat square ruled regions, fine dividers, sparse functional blue/coral/green accents, compact density.
+- Image 2 contributes the real Learn Anything topic, mastery, activity, and review content. Do not add capabilities.
+
+Composition C — "Review Workbench":
+- A 36px utility strip across the top with coral outlined "LA" wordmark at left and language/theme at right.
+- Below, a 235px full-height navigation rail plus one wide workspace panel. No third global column.
+- Rail contains "LEARN ANYTHING", a square structured search row "Search notes..." with Ctrl K, and JavaScript 5/24 mastered, Python 0/10, React 0/7 as full-width ruled navigation rows; selected JavaScript uses only a light coral tint.
+- Workspace heading "Learning Dashboard", "3 topics".
+- Inside the workspace, use a 58/42 split that makes the next useful work most visible:
+  - Left dominant region: "Suggested Review" with count 8 and eight compact table-like ruled rows. Show real Chinese concept-name snippets and the real English reasons "Studied, not practiced", "Needs reinforcement", "Low confidence", plus 52d–66d metadata and JavaScript. Status is an 8px functional dot, not a thick edge.
+  - Right upper region: "Topic Directory" with three compact stacked rows. JavaScript 6 Domains, 24 Concepts, 5/24 Mastered, 21%; Python 3 Domains, 10 Concepts, 0/10, 0%; React 2 Domains, 7 Concepts, 0/7, 0%. Thin progress line.
+  - Right lower region: "Mastery Overview" structured ledger with 5 / 41 Concepts, 12%; segmented rule for 5 Mastered, 7 In Progress, 4 Needs Practice, 25 Unexplored; then compact real activity rows: 25 practices, 22 explains, 11 Notes, 22 Exercises, 11 Domains, Recent 52d ago.
+- The first viewport should make it obvious that the user can open one pending review or choose a topic, while retaining a calm personal study-desk feeling.
+
+Style/medium: production-grade desktop web UI screenshot, crisp semantic interface, no device/browser frame
+Color palette: #f1e9d2 paper, #545464 ink, #43436c deep ink, #4d699b utility blue, #c84053 coral, #6f894e green, hairline mixed-ink rules
+Typography: compact JetBrainsMono-like monospaced UI; no serif
+Materials: flat paper field and slight tonal paper panels
+Constraints: exact product name and exact values above; all progress/state real; square/near-square surfaces; 1px dividers; accessible contrast; restrained controls
+Avoid: rounded cards, shadows, gradients, glass, glow, illustrations, wave image, fake AI assistant, streaks, calendar heatmaps, giant percentage hero, marketing hero, circular progress, thick colored side borders, garbled key headings, excessive empty space

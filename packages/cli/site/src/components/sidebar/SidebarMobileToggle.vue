@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from '@/composables/useI18n';
 defineProps<{
   mobileOpen: boolean;
 }>();
@@ -7,14 +8,15 @@ defineEmits<{
   toggle: [];
   close: [];
 }>();
+const { t } = useI18n();
 </script>
 
 <template>
   <button
-    class="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-(--color-bg) border border-(--color-divider) text-text-2"
+    class="ledger-menu grid lg:hidden fixed z-50"
     @click="$emit('toggle')"
   >
-    <span class="sr-only">Menu</span>
+    <span class="sr-only">{{ t('ui.menu') }}</span>
     <svg v-if="!mobileOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         stroke-linecap="round"

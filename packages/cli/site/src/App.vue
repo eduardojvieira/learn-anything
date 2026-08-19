@@ -77,7 +77,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-(--color-page) text-(--color-ink)">
+  <div class="mastery-shell">
+    <header class="utility-strip">
+      <span class="utility-mark">LA</span>
+      <span class="utility-spacer" />
+      <span class="utility-label">Learn Anything</span>
+    </header>
     <AppSidebar
       :context="sidebarContext"
       :topic-slug="currentTopicSlug"
@@ -91,8 +96,8 @@ onUnmounted(() => {
       @quiz-batch-selected="onQuizBatchSelected"
     />
 
-    <main class="flex-1 min-w-0 lg:pl-68">
-      <div class="px-6 py-10 lg:px-10">
+    <main class="mastery-canvas">
+      <div class="canvas-inner">
         <router-view />
       </div>
     </main>

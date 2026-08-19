@@ -111,14 +111,14 @@ function select(entry: SearchEntry) {
       @mousedown.self="close"
     >
       <!-- Backdrop -->
-      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="close" />
+      <div class="absolute inset-0 bg-black/50" @click="close" />
 
       <!-- Dialog -->
       <div
         role="dialog"
         aria-modal="true"
         :aria-label="t('search.open')"
-        class="relative w-full max-w-xl overflow-hidden rounded-xl border border-(--color-divider) bg-(--color-bg-elv) shadow-2xl"
+        class="relative w-full max-w-xl overflow-hidden border border-(--color-divider) bg-(--color-bg-elv)"
         @keydown="onKeydown"
       >
         <!-- Input -->
@@ -182,7 +182,7 @@ function select(entry: SearchEntry) {
                 v-for="(entry, i) in group.entries"
                 :key="`${group.key}-${entry.title}-${entry.level}`"
                 :data-idx="group.startIndex + i"
-                class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors"
+                class="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors"
                 :class="
                   activeIndex === group.startIndex + i
                     ? 'bg-brand-soft text-text-1'
@@ -193,7 +193,7 @@ function select(entry: SearchEntry) {
               >
                 <!-- Active accent bar -->
                 <span
-                  class="-ml-3 w-0.5 self-stretch rounded-full transition-colors"
+                  class="-ml-3 w-px self-stretch transition-colors"
                   :class="activeIndex === group.startIndex + i ? 'bg-brand-2' : 'bg-transparent'"
                 />
                 <span
@@ -214,9 +214,9 @@ function select(entry: SearchEntry) {
         <div
           class="flex items-center gap-4 border-t border-(--color-divider) px-4 py-2 text-xs text-text-3"
         >
-          <span><kbd class="font-mono">↑↓</kbd> navigate</span>
-          <span><kbd class="font-mono">↵</kbd> open</span>
-          <span><kbd class="font-mono">esc</kbd> close</span>
+          <span><kbd class="font-mono">↑↓</kbd> {{ t('ui.navigate') }}</span>
+          <span><kbd class="font-mono">↵</kbd> {{ t('ui.open') }}</span>
+          <span><kbd class="font-mono">esc</kbd> {{ t('ui.closeVerb') }}</span>
         </div>
       </div>
     </div>

@@ -1,0 +1,6 @@
+{
+  "approved": false,
+  "promptEmbedded": true,
+  "promptFile": "study-desk.prompt.txt",
+  "references": ["homelab-dashboard/.impeccable/review/desktop.png", "learn-dashboard-before.png"]
+}

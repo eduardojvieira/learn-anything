@@ -2,11 +2,13 @@ import { computed } from 'vue';
 import {
   listAllTopics,
   loadTopic,
+  loadTopicV2,
   getDataVersion,
   type Concept,
   type ConceptStatus,
   type TopicSummary,
 } from '@/composables/useTopicData';
+import type { ConceptV2, MasteryV2 } from '@/composables/topicDataTypes';
 
 export type ReviewReason = 'never_practiced' | 'needs_practice' | 'low_confidence' | 'stale';
 
@@ -95,6 +97,40 @@ export function computeReviewPriority(
   };
 }
 
+export function computeV2ReviewPriority(
+  concept: ConceptV2,
+  mastery: MasteryV2 | undefined,
+  topic: TopicSummary,
+  domainName: string,
+  now: number = Date.now(),
+): ReviewItem | null {
+  if (!mastery) return null;
+  const due = concept.review.due_at ? Date.parse(concept.review.due_at) : NaN;
+  if (!Number.isFinite(due) || due > now) return null;
+  const reason: ReviewReason =
+    concept.review.lapses > 0 || mastery.status === 'needs_practice'
+      ? 'needs_practice'
+      : concept.review.reps === 0
+        ? 'never_practiced'
+        : mastery.score < 0.5
+          ? 'low_confidence'
+          : 'stale';
+  const days = Math.max(0, Math.floor((now - due) / ONE_DAY_MS));
+  return {
+    topicSlug: topic.slug,
+    topicName: topic.name,
+    domainName,
+    conceptName: concept.name,
+    conceptSlug: concept.slug,
+    reason,
+    confidence: mastery.score,
+    practiceCount: concept.review.reps,
+    explainCount: 0,
+    daysSinceActivity: days,
+    priority: days + concept.review.lapses * 10 + (1 - mastery.score),
+  };
+}
+
 export function useReviewItems(topN: number = 8) {
   return computed<ReviewItem[]>(() => {
     void getDataVersion();
@@ -103,6 +139,22 @@ export function useReviewItems(topN: number = 8) {
     const now = Date.now();
 
     for (const topic of topics) {
+      const v2 = loadTopicV2(topic.slug);
+      if (v2) {
+        for (const domain of v2.state.domains) {
+          for (const concept of domain.concepts) {
+            const item = computeV2ReviewPriority(
+              concept,
+              v2.mastery[concept.id],
+              topic,
+              domain.name,
+              now,
+            );
+            if (item) items.push(item);
+          }
+        }
+        continue;
+      }
       const state = loadTopic(topic.slug);
       if (!state) continue;
       for (const domain of state.domains) {

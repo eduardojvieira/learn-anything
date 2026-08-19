@@ -10,7 +10,14 @@
 /* ================================================================== */
 
 import { ref } from 'vue';
-import type { StateV1, TopicSummary, TopicFiles } from './topicDataTypes';
+import type {
+  StateV1,
+  StateV2,
+  TopicSummary,
+  TopicFiles,
+  TopicV2Snapshot,
+  MasteryV2,
+} from './topicDataTypes';
 import { createSSEListener } from './useSSE';
 import { clearFileContentCache, setFileContent } from './fileContentCache';
 
@@ -23,6 +30,11 @@ export type {
   Concept,
   Domain,
   StateV1,
+  StateV2,
+  ConceptV2,
+  EvidenceV2,
+  MasteryV2,
+  TopicV2Snapshot,
   TopicSummary,
   TopicFiles,
   SelectedFilePayload,
@@ -39,6 +51,7 @@ let initPromise: Promise<void> | null = null;
 let initVersion = 0;
 
 const stateBySlug = new Map<string, StateV1>();
+const v2BySlug = new Map<string, TopicV2Snapshot>();
 const knowledgeMapBySlug = new Map<string, string>();
 const filesBySlug = new Map<string, TopicFiles>();
 
@@ -59,6 +72,7 @@ function clearIndexes() {
   ready = false;
   initVersion++;
   stateBySlug.clear();
+  v2BySlug.clear();
   knowledgeMapBySlug.clear();
   filesBySlug.clear();
   clearFileContentCache();
@@ -79,9 +93,14 @@ export function __injectTestData(data: {
   knowledgeMaps: Record<string, string>;
   fileContents: Record<string, string>;
   files?: Record<string, TopicFiles>;
+  v2Snapshots?: Record<string, TopicV2Snapshot>;
 }): void {
   topicSummaryCache = data.summaries;
   for (const [slug, state] of Object.entries(data.states)) stateBySlug.set(slug, state);
+  for (const [slug, snapshot] of Object.entries(data.v2Snapshots ?? {})) {
+    v2BySlug.set(slug, snapshot);
+    stateBySlug.set(slug, adaptV2State(snapshot.state, snapshot.mastery));
+  }
   for (const [slug, md] of Object.entries(data.knowledgeMaps)) knowledgeMapBySlug.set(slug, md);
   for (const [slug, files] of Object.entries(data.files ?? {})) filesBySlug.set(slug, files);
   for (const [path, content] of Object.entries(data.fileContents)) setFileContent(path, content);
@@ -97,16 +116,30 @@ function buildIndexes(
   topicDataMap: Map<
     string,
     {
-      state: StateV1;
+      state: StateV1 | StateV2;
       knowledgeMap: string;
       files?: TopicFiles;
+      revision?: string;
+      numbering?: Record<string, string>;
+      mastery?: Record<string, MasteryV2>;
     }
   >,
 ) {
   topicSummaryCache = summaries;
 
   for (const [slug, data] of topicDataMap) {
-    stateBySlug.set(slug, data.state);
+    if (data.state.version === 2 && data.revision && data.numbering && data.mastery) {
+      const snapshot: TopicV2Snapshot = {
+        state: data.state,
+        revision: data.revision,
+        numbering: data.numbering,
+        mastery: data.mastery,
+      };
+      v2BySlug.set(slug, snapshot);
+      stateBySlug.set(slug, adaptV2State(data.state, data.mastery));
+    } else if (data.state.version === 1) {
+      stateBySlug.set(slug, data.state);
+    }
     knowledgeMapBySlug.set(slug, data.knowledgeMap || '');
     if (data.files) filesBySlug.set(slug, data.files);
   }
@@ -175,6 +208,46 @@ export function listAllTopics(): TopicSummary[] {
 
 export function loadTopic(slug: string): StateV1 | null {
   return stateBySlug.get(slug) ?? null;
+}
+
+export function loadTopicV2(slug: string): TopicV2Snapshot | null {
+  return v2BySlug.get(slug) ?? null;
+}
+
+export function adaptV2State(state: StateV2, mastery: Record<string, MasteryV2>): StateV1 {
+  return {
+    version: 1,
+    topic: state.topic,
+    slug: state.slug,
+    created: state.created_at,
+    domains: state.domains.map((domain) => ({
+      name: domain.name,
+      slug: domain.slug,
+      concepts: domain.concepts.map((concept) => {
+        const practice = concept.evidence.filter((entry) => entry.kind === 'practice');
+        const explanation = concept.evidence.filter((entry) => entry.kind === 'self_explanation');
+        return {
+          name: concept.name,
+          slug: concept.slug,
+          status: mastery[concept.id]?.status ?? 'unexplored',
+          confidence: mastery[concept.id]?.score ?? 0,
+          practice_count: practice.length,
+          explain_count: explanation.length,
+          last_practiced: latestEvidenceAt(practice),
+          last_explained: latestEvidenceAt(explanation),
+          details: concept.details.map((detail) => detail.name),
+        };
+      }),
+    })),
+  };
+}
+
+function latestEvidenceAt(evidence: { observed_at: string }[]): string | null {
+  return evidence.reduce<string | null>(
+    (latest, entry) =>
+      !latest || Date.parse(entry.observed_at) > Date.parse(latest) ? entry.observed_at : latest,
+    null,
+  );
 }
 
 export function loadKnowledgeMap(slug: string): string | null {

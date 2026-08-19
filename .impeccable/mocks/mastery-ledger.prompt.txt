@@ -1,0 +1,23 @@
+Use case: ui-mockup
+Asset type: high-fidelity desktop web application composition, 1600x1000 landscape
+Primary request: Create composition option B for the existing Learn Anything learning dashboard. Use the exact Shoji Operations Desk visual language from reference image 1 and only the real learning content/functionality from reference image 2. This is a production operating UI comp, not a poster.
+
+Reference roles:
+- Image 1 contributes chrome, Kanagawa Lotus palette, monospaced type character, 1px ruled panels, compact square controls, flat tonal-paper surfaces, and disciplined density. Do not copy service/port content or the wave image.
+- Image 2 contributes all Learn Anything functionality and real dashboard data. Replace its generic rounded cards and shadows.
+
+Composition B — "Mastery Ledger":
+- Thin 36px full-width top utility strip, compact coral outlined "LA" wordmark, language and theme at right.
+- Below: a 230px ruled navigation rail and a fluid two-column workspace. The central canvas is wider; a 330px context column sits on the right.
+- Rail contains "LEARN ANYTHING", square Search notes control with Ctrl K, and ruled topic navigation rows for JavaScript 5/24, Python 0/10, React 0/7.
+- Central canvas begins with "Learning Dashboard" and "3 topics", then makes the real mastery overview the dominant structural ledger, not a giant metric hero: 5 / 41 Concepts, 12%; segmented linear rule with 5 Mastered, 7 In Progress, 4 Needs Practice, 25 Unexplored. Directly under it, compact columns for Activity 25 practices / 22 explains, Content 11 Notes / 22 Exercises / 11 Domains, Recent 52d ago.
+- Below, a one-column "Topic directory" of three dense, full-width ruled rows. JavaScript: 6 Domains, 24 Concepts, 5/24 Mastered, 21%; Python: 3 Domains, 10 Concepts, 0/10, 0%; React: 2 Domains, 7 Concepts, 0/7, 0%. Each row places name and counts left, percentage and thin real progress right.
+- Right context column is "Suggested Review", 8 compact ruled rows using the actual Chinese concept-name snippets, English reasons "Studied, not practiced", "Needs reinforcement", "Low confidence", JavaScript, and 52d–66d day metadata. Use an 8px coral/amber status dot, never a thick colored border.
+- The page should feel like a personal learning ledger: scan mastery, choose a topic, or open a review item.
+
+Style/medium: crisp high-fidelity web app screenshot, no browser or device frame
+Color palette: paper #f1e9d2; ink #545464; deep ink #43436c; utility blue #4d699b; coral #c84053; garden green #6f894e; hairline ink rules
+Typography: compact JetBrainsMono-like monospaced interface; strong but restrained title
+Materials: flat warm paper and lightly lifted paper panels; no texture illustration
+Constraints: exact name "Learn Anything"; exact values listed; all indicators real; square or near-square panels and controls; clear focus/keyboard affordance
+Avoid: rounded cards, shadows, gradients, glass, blur, neon, wave artwork, illustrations, circular progress, huge hero number, marketing layout, fabricated streaks/telemetry/AI capabilities, lorem ipsum, garbled key headings

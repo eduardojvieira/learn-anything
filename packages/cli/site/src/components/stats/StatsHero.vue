@@ -27,7 +27,7 @@ const { t } = useI18n();
     </p>
 
     <!-- Segmented ledger rule: proportional by concept status -->
-    <div class="flex h-2.5 w-full rounded-full overflow-hidden bg-(--color-divider)">
+    <div class="flex h-2.5 w-full overflow-hidden bg-(--color-divider)">
       <div
         class="h-full bg-mastered transition-all duration-500"
         :style="{ flexGrow: stats.mastered, flexBasis: 0 }"

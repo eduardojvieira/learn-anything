@@ -12,12 +12,16 @@ export default defineConfig(() => {
   const topicsDir = process.env.TOPICS_DIR || resolve(__dirname, '../test/fixtures/topics');
 
   let apiProcess: ChildProcess | null = null;
+  const intentionalStops = new WeakSet<ChildProcess>();
 
   function cleanup() {
-    if (apiProcess && apiProcess.exitCode === null) {
-      apiProcess.kill('SIGTERM');
-      apiProcess = null;
-    }
+    if (apiProcess) stopApiProcess(apiProcess);
+  }
+
+  function stopApiProcess(child: ChildProcess) {
+    intentionalStops.add(child);
+    if (apiProcess === child) apiProcess = null;
+    if (child.exitCode === null) child.kill('SIGTERM');
   }
 
   function removeProcessListeners(fn: () => void) {
@@ -36,11 +40,8 @@ export default defineConfig(() => {
         apply: 'serve',
         configureServer(server) {
           function startApiProcess() {
-            if (apiProcess && apiProcess.exitCode === null) {
-              apiProcess.kill('SIGTERM');
-              apiProcess = null;
-            }
-            apiProcess = spawn('node', ['serve.mjs'], {
+            if (apiProcess) stopApiProcess(apiProcess);
+            const child = spawn('node', ['serve.mjs'], {
               cwd: __dirname,
               stdio: 'inherit',
               env: {
@@ -49,16 +50,24 @@ export default defineConfig(() => {
                 TOPICS_DIR: topicsDir,
               },
             });
+            apiProcess = child;
 
-            apiProcess.on('error', (err) => {
+            const failClosed = (reason: string) => {
+              if (intentionalStops.has(child)) return;
+              console.error(`[serve-api] API server stopped unexpectedly: ${reason}`);
+              if (apiProcess === child) apiProcess = null;
+              server.httpServer?.close();
+            };
+
+            child.on('error', (err) => {
               console.error(`[serve-api] Failed to start API server: ${err.message}`);
+              failClosed('spawn error');
             });
 
-            apiProcess.on('exit', (code) => {
-              if (code !== 0 && code !== null) {
-                console.error(`[serve-api] API server exited with code ${code}`);
-              }
-              apiProcess = null;
+            child.on('exit', (code, signal) => {
+              if (apiProcess === child) apiProcess = null;
+              if (!intentionalStops.has(child))
+                failClosed(signal ? `signal ${signal}` : `code ${code}`);
             });
           }
 
@@ -90,7 +99,7 @@ export default defineConfig(() => {
       proxy: {
         '/api': {
           target: 'http://localhost:24277',
-          changeOrigin: true,
+          changeOrigin: false,
         },
       },
     },

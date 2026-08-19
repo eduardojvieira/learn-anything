@@ -10,12 +10,11 @@ defineProps<{
 const emit = defineEmits<{
   navigate: [id: string];
 }>();
-
 const { t } = useI18n();
 </script>
 
 <template>
-  <nav v-if="headings.length" class="toc-nav" aria-label="Table of contents">
+  <nav v-if="headings.length" class="toc-nav" :aria-label="t('toc.title')">
     <p class="mb-3 text-sm font-semibold text-text-1">{{ t('toc.title') }}</p>
     <ul class="border-l border-divider">
       <li v-for="h in headings" :key="h.id">

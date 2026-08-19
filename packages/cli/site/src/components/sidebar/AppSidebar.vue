@@ -67,23 +67,23 @@ function onQuizBatchSelected(batch: {
   />
 
   <aside
-    class="fixed top-0 left-0 bottom-0 z-40 w-68 bg-(--color-bg-alt) flex flex-col transition-transform duration-200 lg:translate-x-0"
+    class="ledger-rail fixed left-0 bottom-0 z-40 flex flex-col transition-transform duration-200 lg:translate-x-0"
     :class="mobileOpen ? 'translate-x-0' : '-translate-x-full'"
   >
-    <div class="px-6 pt-6 pb-4">
+    <div class="rail-heading">
       <button
-        class="text-base font-semibold text-text-1 hover:text-brand-2 transition-colors cursor-pointer"
+        class="rail-title"
         @click="emit('back-to-dashboard')"
       >
         Learn Anything
       </button>
     </div>
 
-    <div class="px-6 pb-3">
+    <div class="rail-search">
       <SearchTrigger @open="emit('search-open')" />
     </div>
 
-    <div class="mx-6 border-t border-(--color-divider)" />
+    <div class="rail-rule" />
 
     <!-- Dashboard: topic list -->
     <SidebarDashboard v-if="context === 'dashboard'" @topic-selected="onTopicSelected" />

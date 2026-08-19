@@ -13,6 +13,13 @@ import {
 } from 'node:fs';
 import { join, extname, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  assertCanonicalTopic,
+  handleDashboardApi,
+  resolveTopicDir,
+  respondDashboardError,
+  v2TopicSnapshot,
+} from '../dist/dashboard-api.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const STATIC_DIR = __dirname;
@@ -213,15 +220,31 @@ function startWatcher() {
 /*  API: topic summaries                                               */
 /* ------------------------------------------------------------------ */
 
-function buildTopicSummaries() {
+async function buildTopicSummaries() {
   const summaries = [];
   if (!existsSync(TOPICS_DIR)) return summaries;
   const entries = readdirSync(TOPICS_DIR, { withFileTypes: true });
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     const slug = entry.name;
+    assertCanonicalTopic(join(TOPICS_DIR, slug), TOPICS_DIR);
     const state = safeReadJson(join(TOPICS_DIR, slug, 'state.json'));
-    if (!state) continue;
+    if (state?.version !== 1) {
+      const current = await v2TopicSnapshot(join(TOPICS_DIR, slug));
+      const concepts = current.state.domains.flatMap((domain) => domain.concepts);
+      const mastered = concepts.filter(
+        (concept) => current.mastery[concept.id].status === 'mastered',
+      ).length;
+      summaries.push({
+        slug,
+        name: current.state.topic || slug,
+        domainCount: current.state.domains.length,
+        totalConcepts: concepts.length,
+        masteredCount: mastered,
+        percentage: concepts.length > 0 ? Math.round((mastered / concepts.length) * 100) : 0,
+      });
+      continue;
+    }
     const allConcepts = (state.domains || []).flatMap((d) => d.concepts || []);
     const total = allConcepts.length;
     const mastered = allConcepts.filter((c) => c.status === 'mastered').length;
@@ -242,21 +265,30 @@ function buildTopicSummaries() {
 /*  API: topic data (state, knowledge-map, file tree)                  */
 /* ------------------------------------------------------------------ */
 
-function buildTopicData(slug) {
-  const topicDir = join(TOPICS_DIR, slug);
-  if (!existsSync(topicDir)) return null;
+async function buildTopicData(slug) {
+  const topicDir = resolveTopicDir(TOPICS_DIR, slug);
+  if (!topicDir || !existsSync(topicDir)) return null;
+  assertCanonicalTopic(topicDir, TOPICS_DIR);
 
-  const state = safeReadJson(join(topicDir, 'state.json'));
+  const legacyState = safeReadJson(join(topicDir, 'state.json'));
   const knowledgeMap = safeReadText(join(topicDir, 'knowledge-map.md')) || '';
   const files = scanTopicFiles(topicDir);
-
-  return { state, knowledgeMap, files };
+  if (legacyState?.version === 1) return { state: legacyState, knowledgeMap, files };
+  const current = await v2TopicSnapshot(topicDir);
+  return {
+    state: current.state,
+    knowledgeMap,
+    files,
+    revision: current.revision,
+    numbering: current.numbering,
+    mastery: current.mastery,
+  };
 }
 
 /** Read and return a single quiz deck JSON file with path traversal protection. */
 function serveQuizDeck(res, topic, restPath) {
-  const topicDir = join(TOPICS_DIR, topic);
-  if (!existsSync(topicDir)) {
+  const topicDir = resolveTopicDir(TOPICS_DIR, topic);
+  if (!topicDir || !existsSync(topicDir)) {
     return json(res, { error: 'Topic not found' }, 404);
   }
   if (restPath.includes('..')) {
@@ -472,20 +504,30 @@ function serveFileContent(res, url) {
 /*  HTTP Server                                                        */
 /* ------------------------------------------------------------------ */
 
-function handler(req, res) {
+async function handler(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const pathname = url.pathname;
 
   // API routes
   if (pathname === '/api/topics') {
-    return json(res, buildTopicSummaries());
+    return json(res, await buildTopicSummaries());
   }
+
+  if (await handleDashboardApi(req, res, TOPICS_DIR, pathname)) return;
 
   const topicMatch = pathname.match(/^\/api\/topics\/([^/]+)$/);
   if (topicMatch) {
-    const data = buildTopicData(decodeURIComponent(topicMatch[1]));
+    const data = await buildTopicData(topicMatch[1]);
     if (!data) {
       return json(res, { error: 'Topic not found' }, 404);
+    }
+    const headers = data.revision
+      ? { ETag: `"${data.revision}"`, 'Cache-Control': 'no-store' }
+      : undefined;
+    if (headers) {
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', ...headers });
+      res.end(JSON.stringify(data));
+      return;
     }
     return json(res, data);
   }
@@ -514,7 +556,6 @@ function handler(req, res) {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
     });
     res.write('data: connected\n\n');
     sseClients.add(res);
@@ -541,7 +582,11 @@ function handler(req, res) {
   serveStatic(res, cleanPath);
 }
 
-const server = createServer(handler);
+const server = createServer((req, res) => {
+  void handler(req, res).catch((error) => respondDashboardError(res, error));
+});
+server.requestTimeout = 30_000;
+server.headersTimeout = 15_000;
 server.listen(PORT, () => {
   process.stdout.write(`SITE_READY|http://localhost:${PORT}\n`);
   startWatcher();

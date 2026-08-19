@@ -21,17 +21,18 @@ function goToTopic(slug: string) {
 </script>
 
 <template>
-  <div class="w-full pr-0 lg:pr-8 xl:pr-12 2xl:pr-16">
-    <!-- Header — VitePress-style page heading with brand accent -->
-    <div class="flex items-center gap-3 mb-4">
-      <span class="w-1 h-6 rounded-full bg-brand-2 shrink-0" />
+  <div class="ledger-dashboard">
+    <header class="ledger-heading">
       <h1>
         {{ t('dashboard.title') }}
       </h1>
-    </div>
-    <p v-if="topics.length > 0" class="text-sm text-text-3 mb-10">
+      <p v-if="topics.length > 0">
       {{ topics.length }} {{ topics.length === 1 ? 'topic' : 'topics' }}
     </p>
+      <a v-if="reviewItems.length > 0" class="ledger-review-jump" href="#review-ledger">
+        {{ t('review.title') }} {{ reviewItems.length }}
+      </a>
+    </header>
 
     <!-- Empty state -->
     <div
@@ -49,58 +50,47 @@ function goToTopic(slug: string) {
     <!-- Content (only when topics exist) -->
     <template v-else>
       <!-- Topics band (top, full width) -->
-      <section class="mb-8">
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
+      <div class="ledger-desk">
+        <section class="ledger-main">
+          <div class="mastery-ledger">
+            <StatsHero :stats="stats" />
+            <StatsSummary :stats="stats" />
+          </div>
+          <section class="topic-directory">
+            <h2>{{ t('dashboard.topicDirectory') }}</h2>
           <button
             v-for="topic in topics"
             :key="topic.slug"
-            class="text-left bg-(--color-bg-soft) rounded-xl border border-(--color-divider) p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-brand-2 transition-all duration-200 cursor-pointer"
+            class="topic-ledger-row"
             @click="goToTopic(topic.slug)"
           >
-            <!-- Title -->
-            <h3 class="text-base font-semibold text-text-1 leading-snug mb-3">
-              {{ topic.name }}
-            </h3>
-
-            <!-- Stats -->
-            <p class="text-[13px] text-text-2 leading-relaxed">
-              {{ topic.domainCount }} {{ t('topic.domains') }} · {{ topic.totalConcepts }}
-              {{ t('topic.concepts') }} · {{ topic.masteredCount }}/{{ topic.totalConcepts }}
-              {{ t('topic.mastered') }}
-            </p>
+            <div>
+              <h3>
+                {{ topic.name }}
+              </h3>
+              <p>
+                {{ topic.domainCount }} {{ t('topic.domains') }} · {{ topic.totalConcepts }}
+                {{ t('topic.concepts') }} · {{ topic.masteredCount }}/{{ topic.totalConcepts }}
+                {{ t('topic.mastered') }}
+              </p>
+            </div>
 
             <!-- Progress bar — mastered-green, slightly thicker -->
-            <div class="mt-4 flex items-center gap-3">
-              <div class="flex-1 h-1.5 bg-(--color-divider) rounded-full overflow-hidden">
+            <div class="topic-ledger-progress">
+              <div class="topic-ledger-track">
                 <div
-                  class="h-full rounded-full bg-mastered transition-all duration-500"
+                  class="topic-ledger-fill"
                   :style="{ width: `${topic.percentage}%` }"
                 />
               </div>
-              <span class="text-xs font-semibold tabular-nums text-mastered">
+              <span>
                 {{ topic.percentage }}%
               </span>
             </div>
           </button>
-        </div>
-      </section>
-
-      <!-- Bottom: stats (left, grows) + review (right, fixed width) -->
-      <div class="flex flex-col lg:flex-row gap-8 lg:gap-10">
-        <!-- Left: merged stats card -->
-        <div class="flex-1 min-w-0">
-          <div
-            class="bg-(--color-bg-soft) rounded-xl border border-(--color-divider) shadow-sm overflow-hidden"
-          >
-            <StatsHero :stats="stats" />
-            <div class="border-t border-(--color-divider)">
-              <StatsSummary :stats="stats" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Review panel (no longer sticky) -->
-        <aside v-if="reviewItems.length > 0" class="w-full lg:w-72 xl:w-96 2xl:w-xl shrink-0">
+          </section>
+        </section>
+        <aside id="review-ledger" v-if="reviewItems.length > 0" class="ledger-review">
           <ReviewPanel />
         </aside>
       </div>

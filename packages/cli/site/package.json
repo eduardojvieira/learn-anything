@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:test": "vite --mode test",
+    "dev": "pnpm --dir .. build && vite",
+    "dev:test": "pnpm --dir .. build && vite --mode test",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

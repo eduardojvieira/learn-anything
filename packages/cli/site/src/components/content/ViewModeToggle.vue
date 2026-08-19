@@ -7,8 +7,9 @@ const { t } = useI18n();
 
 const viewMode = inject<Ref<ViewMode>>('viewMode', ref<ViewMode>('map'));
 const setViewMode = inject<(m: ViewMode) => void>('setViewMode', () => {});
+defineProps<{ v2?: boolean }>();
 
-const options: { value: ViewMode; label: 'topic.view.map' | 'topic.view.progress'; d: string }[] = [
+const options: { value: ViewMode; label: 'topic.view.map' | 'topic.view.progress' | 'topic.view.sessions'; d: string }[] = [
   {
     value: 'map',
     label: 'topic.view.map',
@@ -19,6 +20,11 @@ const options: { value: ViewMode; label: 'topic.view.map' | 'topic.view.progress
     label: 'topic.view.progress',
     d: 'M4 4v16h16 M9 16v-4 M13 16V8 M17 16v-6',
   },
+  {
+    value: 'sessions',
+    label: 'topic.view.sessions',
+    d: 'M5 4h14v16H5z M8 8h8 M8 12h8 M8 16h5',
+  },
 ];
 </script>
 
@@ -28,13 +34,13 @@ const options: { value: ViewMode; label: 'topic.view.map' | 'topic.view.progress
     role="group"
   >
     <button
-      v-for="opt in options"
+      v-for="opt in options.filter((opt) => opt.value !== 'sessions' || v2)"
       :key="opt.value"
       type="button"
-      class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer"
+      class="inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer"
       :class="
         viewMode === opt.value
-          ? 'bg-(--color-bg) text-brand-2 shadow-sm'
+          ? 'bg-(--color-bg) text-brand-2'
           : 'text-text-3 hover:text-text-1'
       "
       :aria-pressed="viewMode === opt.value"

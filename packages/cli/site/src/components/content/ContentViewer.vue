@@ -4,6 +4,7 @@ import { renderMarkdown, getFileExtension } from '@/utils/markdown';
 import { highlightCode } from '@/utils/highlight';
 import type { SelectedFilePayload } from '@/composables/useTopicData';
 import TocLayout from './TocLayout.vue';
+import { useI18n } from '@/composables/useI18n';
 
 const props = defineProps<{
   file: SelectedFilePayload | null;
@@ -25,12 +26,13 @@ const renderedHtml = computed(() => {
 });
 
 const isMd = computed(() => props.file?.type === 'markdown');
+const { t } = useI18n();
 </script>
 
 <template>
   <div class="h-full">
     <div v-if="!file" class="flex items-center justify-center h-full min-h-75 text-sm text-text-3">
-      Select a file from the sidebar to view its content
+      {{ t('domain.selectFile') }}
     </div>
 
     <!-- Loading placeholder — normally covered by the overlay -->

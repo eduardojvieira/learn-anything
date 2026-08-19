@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-19T15:46:46Z",
+  "title": "Design System: Learn Anything",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Kanagawa Lotus Paper",
+        "canonical": "#f1e9d2",
+        "tonalRamp": [
+          "oklch(15% 0.02 85)",
+          "oklch(25% 0.02 85)",
+          "oklch(35% 0.02 85)",
+          "oklch(45% 0.02 85)",
+          "oklch(55% 0.02 85)",
+          "oklch(65% 0.02 85)",
+          "oklch(75% 0.02 85)",
+          "oklch(95% 0.02 85)"
+        ]
+      },
+      "paper-alt": {
+        "role": "neutral",
+        "displayName": "Ledger Paper Shadow",
+        "canonical": "#ebe2cb",
+        "tonalRamp": [
+          "oklch(15% 0.02 85)",
+          "oklch(25% 0.02 85)",
+          "oklch(35% 0.02 85)",
+          "oklch(45% 0.02 85)",
+          "oklch(55% 0.02 85)",
+          "oklch(65% 0.02 85)",
+          "oklch(75% 0.02 85)",
+          "oklch(95% 0.02 85)"
+        ]
+      },
+      "paper-surface": {
+        "role": "neutral",
+        "displayName": "Folio Surface",
+        "canonical": "#f7f1df",
+        "tonalRamp": [
+          "oklch(15% 0.02 85)",
+          "oklch(25% 0.02 85)",
+          "oklch(35% 0.02 85)",
+          "oklch(45% 0.02 85)",
+          "oklch(55% 0.02 85)",
+          "oklch(65% 0.02 85)",
+          "oklch(75% 0.02 85)",
+          "oklch(95% 0.02 85)"
+        ]
+      },
+      "ledger-ink": {
+        "role": "neutral",
+        "displayName": "Deep Ledger Ink",
+        "canonical": "#3e435d",
+        "tonalRamp": [
+          "oklch(15% 0.04 270)",
+          "oklch(25% 0.04 270)",
+          "oklch(35% 0.04 270)",
+          "oklch(45% 0.04 270)",
+          "oklch(55% 0.04 270)",
+          "oklch(65% 0.04 270)",
+          "oklch(75% 0.04 270)",
+          "oklch(95% 0.04 270)"
+        ]
+      },
+      "utility-indigo": {
+        "role": "primary",
+        "displayName": "Utility Indigo",
+        "canonical": "#4d699b",
+        "tonalRamp": [
+          "oklch(15% 0.08 265)",
+          "oklch(25% 0.08 265)",
+          "oklch(35% 0.08 265)",
+          "oklch(45% 0.08 265)",
+          "oklch(55% 0.08 265)",
+          "oklch(65% 0.08 265)",
+          "oklch(75% 0.08 265)",
+          "oklch(95% 0.08 265)"
+        ]
+      },
+      "red-pencil": {
+        "role": "secondary",
+        "displayName": "Red-Pencil Coral",
+        "canonical": "#c84053",
+        "tonalRamp": [
+          "oklch(15% 0.14 15)",
+          "oklch(25% 0.14 15)",
+          "oklch(35% 0.14 15)",
+          "oklch(45% 0.14 15)",
+          "oklch(55% 0.14 15)",
+          "oklch(65% 0.14 15)",
+          "oklch(75% 0.14 15)",
+          "oklch(95% 0.14 15)"
+        ]
+      },
+      "mastery-moss": {
+        "role": "tertiary",
+        "displayName": "Mastery Moss",
+        "canonical": "#526c3a",
+        "tonalRamp": [
+          "oklch(15% 0.06 130)",
+          "oklch(25% 0.06 130)",
+          "oklch(35% 0.06 130)",
+          "oklch(45% 0.06 130)",
+          "oklch(55% 0.06 130)",
+          "oklch(65% 0.06 130)",
+          "oklch(75% 0.06 130)",
+          "oklch(95% 0.06 130)"
+        ]
+      },
+      "practice-ochre": {
+        "role": "tertiary",
+        "displayName": "Practice Ochre",
+        "canonical": "#945b22",
+        "tonalRamp": [
+          "oklch(15% 0.08 60)",
+          "oklch(25% 0.08 60)",
+          "oklch(35% 0.08 60)",
+          "oklch(45% 0.08 60)",
+          "oklch(55% 0.08 60)",
+          "oklch(65% 0.08 60)",
+          "oklch(75% 0.08 60)",
+          "oklch(95% 0.08 60)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Ledger Display", "purpose": "Page-level ledger headings." },
+      "body": { "displayName": "Folio Body", "purpose": "Interface copy and instructional prose." },
+      "label": { "displayName": "Ledger Label", "purpose": "Compact headings and metadata." },
+      "mono": { "displayName": "Utility Mono", "purpose": "Code and keyboard hints only." }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "progress",
+        "value": "500ms",
+        "purpose": "Existing mastery and quiz progress changes."
+      },
+      {
+        "name": "state",
+        "value": "200ms",
+        "purpose": "Existing rail and control state transitions."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" },
+      { "name": "rail", "value": "1023px" },
+      { "name": "dashboard-stack", "value": "1100px" },
+      { "name": "dashboard-narrow", "value": "1199px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary quiz and confirmation action.",
+      "html": "<button class=\"ds-button-primary\">Continue</button>",
+      "css": ".ds-button-primary { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-brand-2); border-radius: 0; background: var(--color-brand-2); color: #fff; padding: 8px 24px; font: 500 14px var(--font-sans); cursor: pointer; transition: background-color 200ms; } .ds-button-primary:hover { background: var(--color-brand-1); } .ds-button-primary:focus-visible { outline: 2px solid var(--color-brand-3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Search Trigger",
+      "kind": "input",
+      "refersTo": "search-trigger",
+      "description": "Square rail control that opens keyboard-first search.",
+      "html": "<button class=\"ds-search-trigger\"><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"6\"></circle><path d=\"m16 16 4 4\"></path></svg><span>Search notes</span><kbd>Ctrl K</kbd></button>",
+      "css": ".ds-search-trigger { display: flex; width: 100%; align-items: center; gap: 8px; border: 1px solid var(--color-divider); border-radius: 0; background: var(--color-bg-soft); color: var(--color-text-3); padding: 6px 12px; font: 14px var(--font-sans); text-align: left; cursor: pointer; transition: border-color 200ms, color 200ms; } .ds-search-trigger svg { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; } .ds-search-trigger span { flex: 1; } .ds-search-trigger:hover { border-color: var(--color-border); color: var(--color-text-2); } .ds-search-trigger:focus-visible { outline: 2px solid var(--color-brand-3); outline-offset: 3px; } .ds-search-trigger kbd { border: 1px solid var(--color-divider); padding: 2px 6px; font: 12px var(--font-mono); }"
+    },
+    {
+      "name": "Topic Ledger Row",
+      "kind": "nav",
+      "refersTo": "ledger-row",
+      "description": "Full-width topic record with evidence at the right edge.",
+      "html": "<button class=\"ds-topic-row\"><span><strong>TypeScript</strong><small>4 domains · 18 concepts · 9 mastered</small></span><span class=\"ds-topic-progress\"><i><b></b></i><em>50%</em></span></button>",
+      "css": ".ds-topic-row { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) 190px; gap: 16px; align-items: center; border: 0; border-bottom: 1px solid var(--color-divider); border-radius: 0; background: var(--color-bg-soft); color: var(--color-text-1); padding: 17px 20px; font-family: var(--font-sans); text-align: left; cursor: pointer; } .ds-topic-row:hover { background: color-mix(in srgb, var(--color-brand-2) 7%, transparent); } .ds-topic-row:focus-visible { outline: 2px solid var(--color-brand-3); outline-offset: -3px; } .ds-topic-row strong { display: block; font-size: 22px; font-weight: 500; } .ds-topic-row small { display: block; margin-top: 4px; color: var(--color-text-2); font-size: 14px; } .ds-topic-progress { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; color: var(--color-mastered); font-variant-numeric: tabular-nums; } .ds-topic-progress i { height: 6px; overflow: hidden; background: var(--color-divider); } .ds-topic-progress b { display: block; width: 50%; height: 100%; background: var(--color-mastered); } .ds-topic-progress em { font-style: normal; }"
+    },
+    {
+      "name": "Review Ledger Item",
+      "kind": "nav",
+      "description": "Compact review queue record with a reason dot.",
+      "html": "<button class=\"ds-review-item\"><i></i><strong>Retrieval practice</strong><small>Needs practice · 3d ago</small></button>",
+      "css": ".ds-review-item { display: flex; width: 100%; min-height: 68px; align-items: center; gap: 10px; border: 0; border-bottom: 1px solid var(--color-divider); border-radius: 0; background: var(--color-bg-soft); color: var(--color-text-1); padding: 11px 14px; font-family: var(--font-sans); text-align: left; cursor: pointer; } .ds-review-item:hover { background: color-mix(in srgb, var(--color-brand-2) 7%, transparent); } .ds-review-item:focus-visible { outline: 2px solid var(--color-brand-3); outline-offset: -3px; } .ds-review-item i { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--color-brand-3); } .ds-review-item strong { flex: 1; font-size: 14px; font-weight: 500; } .ds-review-item small { color: var(--color-text-3); font-size: 12px; }"
+    },
+    {
+      "name": "Mastery Progress Rule",
+      "kind": "custom",
+      "description": "Segmented evidence rule for existing learning states.",
+      "html": "<div class=\"ds-mastery\"><p>Mastered <strong>9</strong> / 18 concepts · <b>50%</b></p><div><i></i><i></i><i></i><i></i></div></div>",
+      "css": ".ds-mastery { background: var(--color-bg-soft); color: var(--color-text-2); padding: 24px; font: 14px var(--font-sans); } .ds-mastery p { margin: 0 0 16px; } .ds-mastery strong { color: var(--color-text-1); font-size: 24px; } .ds-mastery p > b { color: var(--color-mastered); font-size: 24px; } .ds-mastery div { display: flex; height: 10px; overflow: hidden; background: var(--color-divider); } .ds-mastery i { height: 100%; } .ds-mastery i:nth-child(1) { width: 50%; background: var(--color-mastered); } .ds-mastery i:nth-child(2) { width: 17%; background: var(--color-progress); } .ds-mastery i:nth-child(3) { width: 17%; background: var(--color-brand-2); } .ds-mastery i:nth-child(4) { width: 16%; background: color-mix(in srgb, var(--color-text-3) 25%, transparent); }"
+    },
+    {
+      "name": "Ruled Dialog",
+      "kind": "card",
+      "refersTo": "dialog",
+      "description": "Flat modal shell for search and quiz work.",
+      "html": "<section class=\"ds-dialog\" role=\"dialog\" aria-label=\"Search\"><header><strong>Search notes</strong><button aria-label=\"Close\"><svg aria-hidden=\"true\" viewBox=\"0 0 24 24\"><path d=\"m6 6 12 12M18 6 6 18\"></path></svg></button></header><input placeholder=\"Find a concept\"><footer><kbd>Up/Down</kbd> navigate <kbd>Enter</kbd> open</footer></section>",
+      "css": ".ds-dialog { overflow: hidden; border: 1px solid var(--color-divider); border-radius: 0; background: var(--color-bg-elv); color: var(--color-text-1); font: 14px var(--font-sans); } .ds-dialog header, .ds-dialog footer { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--color-divider); } .ds-dialog header button { display: grid; width: 24px; height: 24px; margin-left: auto; place-items: center; border: 0; border-radius: 0; background: transparent; color: var(--color-text-3); cursor: pointer; } .ds-dialog header button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; } .ds-dialog header button:hover { color: var(--color-text-1); } .ds-dialog header button:focus-visible, .ds-dialog input:focus-visible { outline: 2px solid var(--color-brand-3); outline-offset: 3px; } .ds-dialog input { display: block; box-sizing: border-box; width: 100%; border: 0; border-bottom: 1px solid var(--color-divider); border-radius: 0; background: transparent; color: var(--color-text-1); padding: 16px; font: 16px var(--font-sans); caret-color: var(--color-brand-3); } .ds-dialog footer { border-bottom: 0; color: var(--color-text-3); font-size: 12px; } .ds-dialog kbd { font-family: var(--font-mono); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Mastery Ledger",
+    "overview": "Learn Anything is an operational academic folio: a calm, dense study workspace built from archival paper, deep ink, and visible ledger rules. It supports local, evidence-led learning with editorial restraint rather than SaaS ceremony.\n\nThe paper texture is CSS-native and deliberately low contrast. Functional color marks real study state while the interface stays primarily paper and ink. Keyboard operation remains explicit through square controls, semantic labels, and a visible focus outline.",
+    "keyCharacteristics": [
+      "Archival paper surfaces and low-contrast fiber marks.",
+      "Serif-first reading and tabular numeric evidence.",
+      "Flat, ruled structure instead of card-wall elevation.",
+      "Functional indigo, coral, moss, and ochre accents."
+    ],
+    "rules": [
+      {
+        "name": "The Functional Accent Rule",
+        "body": "Reserve colored marks for a state, action, or evidence category; paper, ink, and rules do the structural work.",
+        "section": "colors"
+      },
+      {
+        "name": "The Reading Measure Rule",
+        "body": "Keep pedagogical prose at the established `72ch` measure; use the wider canvas for navigation and evidence, not longer lines of study text.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Ledger Rule",
+        "body": "Convey hierarchy with borders, typography, and tonal paper surfaces; do not introduce drop shadows or backdrop blur.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Ruled Edge Rule",
+        "body": "Use square boundaries and 1px rules for workspace structure; reserve rounding for small local affordances where the implementation already uses it.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do use paper tone, ink hierarchy, and 1px rules before adding decoration.",
+      "Do reserve serif for interface and learning prose, and mono for code and keyboard hints.",
+      "Do keep interaction states keyboard-visible with the established red-pencil focus outline.",
+      "Do use the CSS-native paper texture as an optional tonal layer only."
+    ],
+    "donts": [
+      "Don't use shadows, blur, or floating card-wall compositions for the core workspace.",
+      "Don't use colored accents as decoration; attach them to navigation, action, or evidence.",
+      "Don't let long-form instructional prose exceed the established reading measure.",
+      "Don't make the texture necessary for legibility or contrast."
+    ]
+  }
+}

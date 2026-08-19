@@ -8,14 +8,14 @@ const { t } = useI18n();
 const items = useReviewItems(8);
 
 const REASON_BORDER: Record<ReviewReason, string> = {
-  never_practiced: 'var(--color-brand-2)',
+  never_practiced: 'var(--color-brand-3)',
   needs_practice: 'var(--color-brand-3)',
   low_confidence: 'var(--color-progress)',
   stale: 'var(--color-text-3)',
 };
 
 const REASON_TEXT: Record<ReviewReason, string> = {
-  never_practiced: 'var(--color-brand-2)',
+  never_practiced: 'var(--color-brand-3)',
   needs_practice: 'var(--color-brand-3)',
   low_confidence: 'var(--color-progress)',
   stale: 'var(--color-text-2)',
@@ -43,23 +43,23 @@ function goToTopic(slug: string): void {
 <template>
   <div
     v-if="items.length > 0"
-    class="bg-(--color-bg-soft) rounded-xl border border-(--color-divider) shadow-sm overflow-hidden lg:h-[400px] lg:flex lg:flex-col"
+    class="review-ledger"
   >
     <!-- Header -->
-    <div class="flex items-baseline justify-between px-5 py-3 shrink-0">
+    <div class="review-ledger-head">
       <h3 class="text-sm font-semibold text-text-1">{{ t('review.title') }}</h3>
       <span class="text-xs text-text-3 tabular-nums">{{ items.length }}</span>
     </div>
 
     <!-- Items -->
-    <div class="divide-y divide-(--color-divider) border-t border-(--color-divider) lg:flex-1 lg:overflow-y-auto">
+    <div class="review-ledger-list">
       <button
         v-for="item in items"
         :key="item.topicSlug + '-' + item.conceptSlug"
-        class="w-full flex items-center gap-3 pl-4 pr-5 py-2.5 text-left border-l-[3px] border-solid hover:bg-(--color-brand-soft) transition-all duration-150 cursor-pointer"
-        :style="{ borderLeftColor: REASON_BORDER[item.reason] }"
+        class="review-ledger-item"
         @click="goToTopic(item.topicSlug)"
       >
+        <span class="review-reason-dot" :style="{ backgroundColor: REASON_BORDER[item.reason] }" />
         <span class="flex-1 min-w-0 truncate text-sm font-medium text-text-1">
           {{ item.conceptName }}
         </span>

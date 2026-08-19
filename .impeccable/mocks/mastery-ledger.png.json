@@ -1,0 +1,6 @@
+{
+  "approved": false,
+  "promptEmbedded": true,
+  "promptFile": "mastery-ledger.prompt.txt",
+  "references": ["homelab-dashboard/.impeccable/review/desktop.png", "learn-dashboard-before.png"]
+}

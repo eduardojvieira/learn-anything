@@ -1,7 +1,7 @@
 import { provide, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-export type ViewMode = 'map' | 'progress';
+export type ViewMode = 'map' | 'progress' | 'sessions';
 
 export function useViewMode() {
   const route = useRoute();
@@ -15,7 +15,7 @@ export function useViewMode() {
     viewMode.value = mode;
     if (!syncUrl) return;
     const query = { ...route.query };
-    if (mode === 'progress') query.view = 'progress';
+    if (mode === 'progress' || mode === 'sessions') query.view = mode;
     else delete query.view;
     router.replace({ query });
   }
@@ -23,7 +23,8 @@ export function useViewMode() {
   provide('setViewMode', setMode);
 
   function restoreFromRoute(): void {
-    viewMode.value = route.query.view === 'progress' ? 'progress' : 'map';
+    viewMode.value =
+      route.query.view === 'progress' || route.query.view === 'sessions' ? route.query.view : 'map';
   }
 
   watch(

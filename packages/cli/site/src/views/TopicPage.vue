@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, inject, type Ref } from 'vue';
+import { computed, ref, inject, watch, type Ref } from 'vue';
 import { useI18n } from '@/composables/useI18n';
-import { loadTopic, loadKnowledgeMap, getDataVersion } from '@/composables/useTopicData';
+import { loadTopic, loadTopicV2, loadKnowledgeMap, getDataVersion } from '@/composables/useTopicData';
 import ContentViewer from '@/components/content/ContentViewer.vue';
 import TocLayout from '@/components/content/TocLayout.vue';
 import ViewModeToggle from '@/components/content/ViewModeToggle.vue';
 import TopicProgressView from '@/components/stats/TopicProgressView.vue';
+import SessionLedger from '@/components/sessions/SessionLedger.vue';
 import type { SelectedFilePayload } from '@/composables/useTopicData';
 import type { ViewMode } from '@/composables/useViewMode';
 import { renderMarkdown } from '@/utils/markdown';
@@ -22,6 +23,10 @@ const knowledgeMapRaw = computed(() => {
   void getDataVersion();
   return loadKnowledgeMap(props.slug);
 });
+const v2 = computed(() => {
+  void getDataVersion();
+  return loadTopicV2(props.slug);
+});
 
 const knowledgeMapHtml = computed(() => {
   const raw = knowledgeMapRaw.value;
@@ -34,6 +39,11 @@ const selectedFile = inject<Ref<SelectedFilePayload | null>>('topicSelectedFile'
 
 /* --- View-mode toggle (Map / Progress) shared via provide/inject --- */
 const viewMode = inject<Ref<ViewMode>>('viewMode', ref<ViewMode>('map'));
+const setViewMode = inject<(mode: ViewMode) => void>('setViewMode', () => {});
+
+watch(v2, (snapshot) => {
+  if (!snapshot && viewMode.value === 'sessions') setViewMode('map');
+}, { immediate: true });
 
 const showKnowledgeMap = computed(() => !selectedFile.value);
 </script>
@@ -46,16 +56,17 @@ const showKnowledgeMap = computed(() => !selectedFile.value);
   </div>
 
   <!-- Topic content -->
-  <div v-else>
+  <div v-else class="topic-sheet">
     <!-- Topic overview: toggle between Knowledge Map (markdown) and Progress (data).
          The Progress view is width-constrained to the prose reading measure. -->
     <template v-if="showKnowledgeMap">
       <div :class="viewMode === 'progress' ? 'max-w-4xl mx-auto' : ''">
         <div class="flex justify-end mb-6">
-          <ViewModeToggle />
+          <ViewModeToggle :v2="Boolean(v2)" />
         </div>
         <TocLayout v-if="viewMode === 'map'" :html="knowledgeMapHtml" />
-        <TopicProgressView v-else :state="state" />
+        <TopicProgressView v-else-if="viewMode === 'progress'" :state="state" />
+        <SessionLedger v-else-if="v2" :key="slug" :slug="slug" />
       </div>
     </template>
 

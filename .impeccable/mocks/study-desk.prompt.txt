@@ -1,0 +1,23 @@
+Use case: ui-mockup
+Asset type: high-fidelity desktop web application composition, 1600x1000 landscape
+Primary request: Create composition option A for the existing Learn Anything learning dashboard, adapting the exact visual language of the referenced Homelab Mission Control screenshot to the real Learn Anything dashboard shown in the second reference. This is a production UI comp, not a poster.
+
+Reference roles:
+- Image 1 is the binding visual-language reference: Kanagawa Lotus warm paper, deep ink-blue hierarchy, coral and green functional accents, JetBrainsMono-like UI voice, square ruled panels, thin shoji dividers, flat surfaces, compact density.
+- Image 2 is the current Learn Anything information and functionality reference. Preserve its real content and tasks, but replace its generic gray rounded-card appearance.
+
+Composition A — "Study Desk":
+- A thin 36px utility strip across the top with a compact coral outlined "LA" wordmark at left and restrained language/theme controls at right.
+- Below, a three-region operating desk: 250px topic rail, fluid central topic directory, 310px suggested-review ledger, separated by 16px gaps on the warm paper field.
+- Topic rail: "LEARN ANYTHING", search control with "Search notes..." and "Ctrl K", then JavaScript, Python, React as full-width ruled rows; language/theme controls stay usable.
+- Central region: heading "Learning Dashboard", quiet subline "3 topics"; a directory label and two-column compact topic rows for JavaScript, Python, React. Each row shows only the real counts and a restrained linear progress indicator: JavaScript 6 Domains, 24 Concepts, 5/24 Mastered, 21%; Python 3 Domains, 10 Concepts, 0/10, 0%; React 2 Domains, 7 Concepts, 0/7, 0%.
+- Beneath topic rows, one structural mastery ledger using real data: 5 / 41 Concepts, 12%; 5 Mastered, 7 In Progress, 4 Needs Practice, 25 Unexplored; Activity 25 practices and 22 explains; Content 11 Notes, 22 Exercises, 11 Domains; Recent 52d ago.
+- Right ledger: heading "Suggested Review", count 8, compact ruled rows with the real Chinese concept names visible where possible and English reasons such as "Studied, not practiced", "Needs reinforcement", "Low confidence", plus JavaScript and day counts.
+- The first useful action is choosing a topic or review item. No marketing hero.
+
+Style/medium: crisp high-fidelity web UI screenshot, precise semantic interface, no device frame
+Color palette: paper #f1e9d2, ink #545464, deep ink #43436c, utility blue #4d699b, coral #c84053, green #6f894e, thin mixed-ink rules
+Typography: compact monospaced UI similar to JetBrainsMono Nerd Font; clear hierarchy, no serif
+Materials: flat warm paper and tonal paper panels only
+Constraints: exact product name "Learn Anything"; exact visible data above; preserve dashboard functionality; square or near-square controls; 1px rules; visible keyboard affordance; real progress only
+Avoid: rounded card wall, shadows, gradients, glass, blur, neon, giant metric hero, illustrations, wave artwork, fake charts, invented streaks or AI claims, remote service semantics, lorem ipsum, garbled headings, excessive empty space
