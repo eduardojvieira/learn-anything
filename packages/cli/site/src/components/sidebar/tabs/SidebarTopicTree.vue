@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, inject, watch } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useAutoExpand } from './useAutoExpand';
-import { loadTopic, loadTopicFiles, getDataVersion } from '@/composables/useTopicData';
-import { buildFileTree, ancestorDirPaths, type FileLeaf } from '@/components/sidebar/tabs/buildFileTree';
+import { loadTopic, loadTopicFiles, loadTopicV2, getDataVersion } from '@/composables/useTopicData';
+import {
+  buildFileTree,
+  ancestorDirPaths,
+  type FileLeaf,
+} from '@/components/sidebar/tabs/buildFileTree';
 import FileTreeBranch from '@/components/sidebar/tabs/FileTreeBranch.vue';
 
 const props = defineProps<{
@@ -17,6 +21,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const setViewMode = inject<(mode: 'sessions') => void>('setViewMode', () => {});
 
 const currentState = computed(() => {
   void getDataVersion();
@@ -26,6 +31,11 @@ const currentState = computed(() => {
 const nodes = computed(() => {
   void getDataVersion();
   return buildFileTree(loadTopicFiles(props.topicSlug)?.sessions ?? []);
+});
+
+const isV2 = computed(() => {
+  void getDataVersion();
+  return Boolean(loadTopicV2(props.topicSlug));
 });
 
 const firstDirPath = computed(() => {
@@ -72,6 +82,11 @@ function onFileSelected(file: FileLeaf) {
     type: 'markdown',
   });
 }
+
+function onOpenSessionLedger() {
+  emit('knowledge-map');
+  setViewMode('sessions');
+}
 </script>
 
 <template>
@@ -90,6 +105,17 @@ function onFileSelected(file: FileLeaf) {
       @toggle="onToggle"
       @file-selected="onFileSelected"
     />
-    <div v-else class="py-2 text-xs text-text-3">{{ t('sidebar.noNotes') }}</div>
+    <div v-else class="py-2 text-xs text-text-3">
+      <p>{{ t('sidebar.noNotes') }}</p>
+      <button
+        v-if="isV2"
+        type="button"
+        data-testid="open-session-ledger"
+        class="mt-2 text-left font-medium text-brand-2 hover:text-brand-1 transition-colors cursor-pointer"
+        @click="onOpenSessionLedger"
+      >
+        {{ t('sidebar.openSessions') }}
+      </button>
+    </div>
   </nav>
 </template>

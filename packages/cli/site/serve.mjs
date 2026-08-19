@@ -327,21 +327,10 @@ function buildSlugNameMap(state) {
   return map;
 }
 
-/** Collect `.md` files at root or exactly one subdirectory deep — matching the
-    sidebar's two-level navigation tree (deeper nesting is not displayed, so not indexed). */
+/** Collect Markdown files recursively, preserving the safe walker used by the sidebar. */
 function collectMarkdownFiles(dir) {
   const out = [];
-  if (!existsSync(dir)) return out;
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.isDirectory()) {
-      const subDir = join(dir, entry.name);
-      for (const f of readdirSync(subDir, { withFileTypes: true })) {
-        if (f.isFile() && f.name.endsWith('.md')) out.push(`${entry.name}/${f.name}`);
-      }
-    } else if (entry.isFile() && entry.name.endsWith('.md')) {
-      out.push(entry.name);
-    }
-  }
+  walkDir(dir, '', false, (name) => name.toLowerCase().endsWith('.md'), out);
   return out;
 }
 
@@ -396,7 +385,11 @@ function buildSearchIndex() {
     const sessionsDir = join(topicDir, 'sessions');
     for (const rel of collectMarkdownFiles(sessionsDir)) {
       const dirName = rel.includes('/') ? rel.slice(0, rel.indexOf('/')) : '';
-      const section = dirName ? slugName.get(dirName) || dirName : topicName;
+      const section = /^[0-9a-f-]{36}\/views\//i.test(rel)
+        ? topicName
+        : dirName
+          ? slugName.get(dirName) || dirName
+          : topicName;
       index.push(
         ...buildFileEntries({
           filePath: join(sessionsDir, rel),

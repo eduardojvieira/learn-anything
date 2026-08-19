@@ -74,6 +74,7 @@ const zhCN: Record<I18nKey, string> = {
   'sidebar.exercises': '练习',
   'sidebar.quizzes': '测验',
   'sidebar.noNotes': '暂无会话笔记',
+  'sidebar.openSessions': '打开会话记录',
   'sidebar.noExercises': '没有练习',
   'quiz.empty': '暂无测验',
   'quiz.start': '开始测验',

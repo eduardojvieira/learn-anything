@@ -73,6 +73,7 @@ const en = {
   'sidebar.exercises': 'Exercises',
   'sidebar.quizzes': 'Quizzes',
   'sidebar.noNotes': 'No session notes',
+  'sidebar.openSessions': 'Open Session Ledger',
   'sidebar.noExercises': 'No exercises',
   'quiz.empty': 'No quizzes yet',
   'quiz.start': 'Start quiz',

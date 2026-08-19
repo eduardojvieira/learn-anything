@@ -75,6 +75,7 @@ const es: Record<I18nKey, string> = {
   'sidebar.exercises': 'Ejercicios',
   'sidebar.quizzes': 'Cuestionarios',
   'sidebar.noNotes': 'Sin notas de sesión',
+  'sidebar.openSessions': 'Abrir registro de sesiones',
   'sidebar.noExercises': 'Sin ejercicios',
   'quiz.empty': 'Todavía no hay cuestionarios',
   'quiz.start': 'Empezar cuestionario',
