@@ -164,7 +164,7 @@ describe('StateStore', () => {
       }),
     );
 
-    const store = new StateStore<{ count: number }>(topicDir, { lockTimeoutMs: 100 });
+    const store = new StateStore<{ count: number }>(topicDir);
     await expect(store.read()).resolves.toEqual({ state: from, revision: revision(from) });
     await expect(fs.access(lock)).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(fs.access(path.join(topicDir, '.state.json.journal'))).rejects.toMatchObject({
@@ -187,9 +187,9 @@ describe('StateStore', () => {
           instance: '00000000-0000-4000-8000-000000000000:0',
         }),
       );
-      await expect(
-        new StateStore<{ count: number }>(topicDir, { lockTimeoutMs: 100 }).read(),
-      ).resolves.toMatchObject({ state: { count: 1 } });
+      await expect(new StateStore<{ count: number }>(topicDir).read()).resolves.toMatchObject({
+        state: { count: 1 },
+      });
       await expect(fs.access(lock)).rejects.toMatchObject({ code: 'ENOENT' });
     },
   );
