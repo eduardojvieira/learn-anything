@@ -51,7 +51,7 @@ export { parseKnowledgeMap } from './parser.js';
 
 export { isV0State, migrateV0ToV1, migrateAll } from './migrate.js';
 export type { MigrationResult, MigrationReport } from './migrate.js';
-export { migrateV1ToV2, V1BackupMismatchError } from './migrate-v2.js';
-export type { V2MigrationResult } from './migrate-v2.js';
+export { migrateV1ToV2, migrateAllV1ToV2, V1BackupMismatchError } from './migrate-v2.js';
+export type { V2MigrationResult, V2MigrationReport } from './migrate-v2.js';
 export { learningSessionV1Schema, renderSessionMarkdown } from './session.js';
 export type { LearningSessionV1, SessionLocale } from './session.js';

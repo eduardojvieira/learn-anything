@@ -392,4 +392,41 @@ describe('StateStore', () => {
     await fs.writeFile(path.join(topicDir, 'state.json'), '{broken');
     await expect(new StateStore(topicDir).read()).rejects.toBeInstanceOf(StateCorruptionError);
   });
+
+  it('rejects a symlinked recovery temp without replacing local state', async () => {
+    const from = { count: 1 };
+    const to = { count: 2 };
+    await writeState(from);
+    const outside = path.join(topicDir, 'outside.json');
+    await fs.writeFile(outside, `${JSON.stringify(to, null, 2)}\n`);
+    await fs.symlink(outside, path.join(topicDir, '.state.json.tmp'));
+    await fs.writeFile(
+      path.join(topicDir, '.state.json.journal'),
+      JSON.stringify({
+        version: 1,
+        fromRevision: revision(from),
+        toRevision: revision(to),
+        tempFile: '.state.json.tmp',
+      }),
+    );
+    await expect(new StateStore<{ count: number }>(topicDir).read()).rejects.toBeInstanceOf(
+      StateRecoveryError,
+    );
+    expect(await fs.readFile(path.join(topicDir, 'state.json'), 'utf8')).toBe(
+      `${JSON.stringify(from, null, 2)}\n`,
+    );
+    expect(JSON.parse(await fs.readFile(outside, 'utf8'))).toEqual(to);
+  });
+
+  it('fails closed on a symlinked lock without touching its external owner', async () => {
+    await writeState({ count: 1 });
+    const outside = path.join(topicDir, 'outside-lock');
+    await fs.mkdir(outside);
+    await fs.writeFile(path.join(outside, 'owner.json'), 'sentinel');
+    await fs.symlink(outside, path.join(topicDir, '.state.json.lock'));
+    await expect(
+      new StateStore<{ count: number }>(topicDir, { lockTimeoutMs: 10 }).read(),
+    ).rejects.toBeInstanceOf(StateRecoveryError);
+    expect(await fs.readFile(path.join(outside, 'owner.json'), 'utf8')).toBe('sentinel');
+  });
 });

@@ -25,16 +25,16 @@ describe('CLI Integration — init', () => {
     expect(fs.existsSync(sd)).toBe(false);
   });
 
-  it('should not affect existing .learn/ data after init', async () => {
+  it('should not affect non-canonical files under .learn after init', async () => {
     const topicsDir = path.join(tmpDir, LEARN_DIR, 'topics', 'python');
     fs.mkdirSync(topicsDir, { recursive: true });
-    const statePath = path.join(topicsDir, 'state.json');
-    fs.writeFileSync(statePath, '{"slug":"python"}', 'utf-8');
+    const notePath = path.join(topicsDir, 'notes.txt');
+    fs.writeFileSync(notePath, 'keep this note', 'utf-8');
 
     const cmd = new InitCommand({ tools: 'none' });
     await cmd.execute(tmpDir);
 
-    expect(fs.existsSync(statePath)).toBe(true);
+    expect(fs.readFileSync(notePath, 'utf8')).toBe('keep this note');
     const sd = path.join(tmpDir, LEARN_DIR, 'site');
     expect(fs.existsSync(sd)).toBe(false);
   });
@@ -200,6 +200,123 @@ describe('CLI Integration — init', () => {
     await expect(
       new InitCommand({ tools: 'claude', context7: false, force: true }).execute(tmpDir),
     ).rejects.toThrow(/no se puede reemplazar con --force/i);
+  });
+
+  it('upgrades V1 topics to V2 with a stable backup and is idempotent', async () => {
+    const topicDir = path.join(tmpDir, LEARN_DIR, 'topics', 'python');
+    const v1 = {
+      version: 1,
+      topic: 'Python',
+      slug: 'python',
+      created: '2026-01-01',
+      domains: [],
+    };
+    fs.mkdirSync(topicDir, { recursive: true });
+    fs.writeFileSync(path.join(topicDir, 'state.json'), `${JSON.stringify(v1, null, 2)}\n`);
+
+    await new InitCommand({ tools: 'none' }).execute(tmpDir);
+    expect(JSON.parse(fs.readFileSync(path.join(topicDir, 'state.json'), 'utf8')).version).toBe(2);
+    expect(JSON.parse(fs.readFileSync(path.join(topicDir, 'state.v1.json.bak'), 'utf8'))).toEqual(
+      v1,
+    );
+    const stateBytes = fs.readFileSync(path.join(topicDir, 'state.json'));
+    const backupBytes = fs.readFileSync(path.join(topicDir, 'state.v1.json.bak'));
+
+    await new InitCommand({ tools: 'none' }).execute(tmpDir);
+    expect(fs.readFileSync(path.join(topicDir, 'state.json'))).toEqual(stateBytes);
+    expect(fs.readFileSync(path.join(topicDir, 'state.v1.json.bak'))).toEqual(backupBytes);
+  });
+
+  it('chains V0 through V2 before generating integrations', async () => {
+    const topicDir = path.join(tmpDir, LEARN_DIR, 'topics', 'go');
+    fs.mkdirSync(topicDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(topicDir, 'state.yaml'),
+      "topic: Go\ncreated: '2026-01-01'\nconcepts:\n  - path: Basics/Variables\n    status: unexplored\n    last_practiced: null\n    practice_count: 0\n    confidence: 0\n",
+    );
+    fs.writeFileSync(path.join(topicDir, 'knowledge-map.md'), '# Go\n\n## Basics\n- Variables\n');
+
+    await new InitCommand({ tools: 'none' }).execute(tmpDir);
+    expect(JSON.parse(fs.readFileSync(path.join(topicDir, 'state.json'), 'utf8')).version).toBe(2);
+    expect(fs.existsSync(path.join(topicDir, 'state.yaml.v0.bak'))).toBe(true);
+    expect(fs.existsSync(path.join(topicDir, 'state.v1.json.bak'))).toBe(true);
+  });
+
+  it('aborts before generating integrations when a topic state is corrupt', async () => {
+    const topicDir = path.join(tmpDir, LEARN_DIR, 'topics', 'broken');
+    fs.mkdirSync(topicDir, { recursive: true });
+    fs.writeFileSync(path.join(topicDir, 'state.json'), '{broken');
+
+    await expect(
+      new InitCommand({ tools: 'claude', context7: false }).execute(tmpDir),
+    ).rejects.toThrow();
+    expect(fs.existsSync(path.join(tmpDir, '.claude', 'skills'))).toBe(false);
+  });
+
+  it('aborts failed V0 migration, then recovers after legacy files are fixed', async () => {
+    const topicDir = path.join(tmpDir, LEARN_DIR, 'topics', 'legacy');
+    fs.mkdirSync(topicDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(topicDir, 'state.yaml'),
+      'topic: Legacy\ncreated: 2026-01-01\nconcepts: []\n',
+    );
+    await expect(
+      new InitCommand({ tools: 'claude', context7: false }).execute(tmpDir),
+    ).rejects.toThrow(/Migration failed/i);
+    expect(fs.existsSync(path.join(tmpDir, '.claude', 'skills'))).toBe(false);
+    fs.writeFileSync(path.join(topicDir, 'knowledge-map.md'), '# Legacy\n');
+    await new InitCommand({ tools: 'claude', context7: false }).execute(tmpDir);
+    expect(JSON.parse(fs.readFileSync(path.join(topicDir, 'state.json'), 'utf8')).version).toBe(2);
+    expect(fs.existsSync(path.join(tmpDir, '.claude', 'skills'))).toBe(true);
+  });
+
+  it('does not migrate symlinked topics outside the project', async () => {
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'learn-external-topic-'));
+    const v0Outside = path.join(outside, 'v0');
+    const v1Outside = path.join(outside, 'v1');
+    fs.mkdirSync(v0Outside);
+    fs.mkdirSync(v1Outside);
+    fs.writeFileSync(
+      v0Outside + '/state.yaml',
+      'topic: Outside\ncreated: 2026-01-01\nconcepts: []\n',
+    );
+    fs.writeFileSync(v0Outside + '/knowledge-map.md', '# Outside\n');
+    fs.writeFileSync(
+      v1Outside + '/state.json',
+      '{"version":1,"topic":"Outside","slug":"outside","created":"2026-01-01","domains":[]}\n',
+    );
+    const topicsDir = path.join(tmpDir, LEARN_DIR, 'topics');
+    fs.mkdirSync(topicsDir, { recursive: true });
+    fs.symlinkSync(v0Outside, path.join(topicsDir, 'v0-link'));
+    fs.symlinkSync(v1Outside, path.join(topicsDir, 'v1-link'));
+    try {
+      await new InitCommand({ tools: 'none' }).execute(tmpDir);
+      expect(fs.existsSync(v0Outside + '/state.json')).toBe(false);
+      expect(JSON.parse(fs.readFileSync(v1Outside + '/state.json', 'utf8')).version).toBe(1);
+    } finally {
+      fs.rmSync(outside, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects symlinked .learn/topics before migration or skill generation', async () => {
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'learn-external-root-'));
+    const externalTopic = path.join(outside, 'v1');
+    fs.mkdirSync(externalTopic);
+    const state =
+      '{"version":1,"topic":"Outside","slug":"outside","created":"2026-01-01","domains":[]}\n';
+    fs.writeFileSync(path.join(externalTopic, 'state.json'), state);
+    fs.mkdirSync(path.join(tmpDir, LEARN_DIR), { recursive: true });
+    fs.symlinkSync(outside, path.join(tmpDir, LEARN_DIR, 'topics'));
+    try {
+      await expect(
+        new InitCommand({ tools: 'claude', context7: false }).execute(tmpDir),
+      ).rejects.toThrow();
+      expect(fs.readFileSync(path.join(externalTopic, 'state.json'), 'utf8')).toBe(state);
+      expect(fs.existsSync(path.join(externalTopic, 'state.v1.json.bak'))).toBe(false);
+      expect(fs.existsSync(path.join(tmpDir, '.claude', 'skills'))).toBe(false);
+    } finally {
+      fs.rmSync(outside, { recursive: true, force: true });
+    }
   });
 
   it('injects Context7 before the workflow execution contract only when enabled', async () => {

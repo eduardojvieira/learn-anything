@@ -16,9 +16,31 @@ export class GeneratedFileConflictError extends Error {
   }
 }
 
+export class UnsafePathError extends Error {
+  constructor(public readonly path: string) {
+    super(`Unsafe path: "${path}" must be a real directory`);
+    this.name = 'UnsafePathError';
+  }
+}
+
 export class FileSystemUtils {
   static async ensureDir(dirPath: string): Promise<void> {
     await fs.mkdir(dirPath, { recursive: true });
+  }
+
+  static async ensureSafeDirectories(root: string, ...segments: string[]): Promise<string> {
+    let current = root;
+    for (const segment of segments) {
+      current = path.join(current, segment);
+      try {
+        const stat = await fs.lstat(current);
+        if (stat.isSymbolicLink() || !stat.isDirectory()) throw new UnsafePathError(current);
+      } catch (error: any) {
+        if (error?.code !== 'ENOENT') throw error;
+        await fs.mkdir(current);
+      }
+    }
+    return current;
   }
 
   static async writeFile(filePath: string, content: string): Promise<void> {

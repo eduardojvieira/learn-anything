@@ -40,6 +40,10 @@ export const en: LocaleMessages = {
       'Select AI tools to generate skills for (space to select, enter to confirm):',
     migrationComplete: (count: number) =>
       `Migrated ${count} topic(s) from v0 to v1 format (backups created).`,
+    migrationV2Complete: (count: number) =>
+      `Migrated ${count} topic(s) from V1 to V2 format (backups created).`,
+    migrationFailed: (topic) =>
+      `Migration failed for topic "${topic}". Fix its legacy files and rerun.`,
     context7Prompt:
       'Enable Context7 for documentation verification? (Provides on-demand access to official library docs)',
     context7Enabled: '  📚 Context7 guidance enabled.',

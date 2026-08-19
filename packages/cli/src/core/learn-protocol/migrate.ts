@@ -250,25 +250,21 @@ export async function migrateV0ToV1(topicDir: string): Promise<MigrationResult> 
 export async function migrateAll(baseDir: string): Promise<MigrationReport> {
   const results: MigrationResult[] = [];
 
-  let entryNames: string[];
+  let entries: import('node:fs').Dirent[];
   try {
-    entryNames = await fs.readdir(baseDir);
-  } catch {
+    const root = await fs.lstat(baseDir);
+    if (root.isSymbolicLink() || !root.isDirectory())
+      throw new Error(`Unsafe topics directory: ${baseDir}`);
+    entries = await fs.readdir(baseDir, { withFileTypes: true });
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
     // Directory doesn't exist — nothing to migrate
     return { migratedCount: 0, skippedCount: 0, results: [] };
   }
 
-  // Check each entry to see if it's a directory
-  const topicDirs: string[] = [];
-  for (const name of entryNames) {
-    const fullPath = path.join(baseDir, name);
-    try {
-      const stat = await fs.stat(fullPath);
-      if (stat.isDirectory()) topicDirs.push(fullPath);
-    } catch {
-      // Skip entries we can't stat
-    }
-  }
+  const topicDirs = entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(baseDir, entry.name));
 
   for (const dir of topicDirs) {
     const result = await migrateV0ToV1(dir);

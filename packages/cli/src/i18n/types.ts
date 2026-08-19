@@ -44,6 +44,8 @@ export interface InitMessages {
   cmdLine: (cmd: string, desc: string) => string;
   interactiveSelectPrompt: string;
   migrationComplete: (count: number) => string;
+  migrationV2Complete: (count: number) => string;
+  migrationFailed: (topic: string) => string;
   context7Prompt: string;
   context7Enabled: string;
   context7SetupHint: string;

@@ -24,6 +24,49 @@ export interface V2MigrationResult {
   reason?: 'already_v2';
 }
 
+export interface V2MigrationReport {
+  migratedCount: number;
+  skippedCount: number;
+  results: V2MigrationResult[];
+}
+
+export async function migrateAllV1ToV2(topicsDir: string): Promise<V2MigrationReport> {
+  let entries: import('node:fs').Dirent[];
+  try {
+    const root = await fs.lstat(topicsDir);
+    if (root.isSymbolicLink() || !root.isDirectory())
+      throw new Error(`Unsafe topics directory: ${topicsDir}`);
+    entries = await fs.readdir(topicsDir, { withFileTypes: true });
+  } catch (error) {
+    if (isNotFound(error)) return { migratedCount: 0, skippedCount: 0, results: [] };
+    throw error;
+  }
+
+  const results: V2MigrationResult[] = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    const topicDir = path.join(topicsDir, entry.name);
+    const statePath = path.join(topicDir, 'state.json');
+    let stateStat;
+    try {
+      stateStat = await fs.lstat(statePath);
+    } catch (error) {
+      if (isNotFound(error)) continue;
+      throw error;
+    }
+    if (!stateStat.isFile()) {
+      throw new Error(`state.json in "${topicDir}" must be a regular file`);
+    }
+    results.push(await migrateV1ToV2(topicDir));
+  }
+
+  return {
+    migratedCount: results.filter((result) => result.migrated).length,
+    skippedCount: results.filter((result) => !result.migrated).length,
+    results,
+  };
+}
+
 export async function migrateV1ToV2(topicDir: string): Promise<V2MigrationResult> {
   const store = new StateStore<StateV1 | StateV2>(topicDir, { validate: validateKnownState });
   const current = await store.read();
@@ -167,32 +210,37 @@ function maxTimestamp(...timestamps: string[]): string {
 async function ensureV1Backup(topicDir: string, state: StateV1): Promise<void> {
   const backupPath = path.join(topicDir, BACKUP_FILE);
   const tempPath = path.join(topicDir, BACKUP_TEMP_FILE);
-  if (await exists(backupPath)) {
+  const backupExists = await requireRegularOrMissing(backupPath);
+  await requireRegularOrMissing(tempPath);
+  if (backupExists) {
     await verifyMatchingBackup(backupPath, state);
-    await fs.rm(tempPath, { force: true });
+    await removeRegularIfExists(tempPath);
     await syncDirectory(topicDir);
     return;
   }
+  await removeRegularIfExists(tempPath);
   await durableWrite(tempPath, canonicalBytes(state));
   try {
     await fs.link(tempPath, backupPath);
   } catch (error) {
     if (!isAlreadyExists(error)) throw error;
+    await requireRegularOrMissing(backupPath);
     await verifyMatchingBackup(backupPath, state);
   }
   await syncDirectory(topicDir);
-  await fs.rm(tempPath, { force: true });
+  await removeRegularIfExists(tempPath);
   await syncDirectory(topicDir);
 }
 
 async function verifyMatchingBackup(backupPath: string, state: StateV1): Promise<void> {
+  await requireRegularOrMissing(backupPath);
   const backup = validateV1(JSON.parse(await fs.readFile(backupPath, 'utf8')) as StateV1);
   if (!isDeepStrictEqual(backup, state)) throw new V1BackupMismatchError();
 }
 
 async function cleanBackupTempIfLinked(topicDir: string): Promise<void> {
   const backupPath = path.join(topicDir, BACKUP_FILE);
-  if (!(await exists(backupPath))) return;
+  if (!(await requireRegularOrMissing(backupPath))) return;
   const text = await fs.readFile(backupPath, 'utf8');
   let backup: StateV1;
   try {
@@ -205,18 +253,33 @@ async function cleanBackupTempIfLinked(topicDir: string): Promise<void> {
   } catch {
     return;
   }
-  await fs.rm(path.join(topicDir, BACKUP_TEMP_FILE), { force: true });
+  await removeRegularIfExists(path.join(topicDir, BACKUP_TEMP_FILE));
   await syncDirectory(topicDir);
 }
 
 async function durableWrite(temp: string, bytes: Buffer): Promise<void> {
-  const handle = await fs.open(temp, 'w', 0o600);
+  const handle = await fs.open(temp, 'wx', 0o600);
   try {
     await handle.writeFile(bytes);
     await handle.sync();
   } finally {
     await handle.close();
   }
+}
+
+async function requireRegularOrMissing(filePath: string): Promise<boolean> {
+  try {
+    const stat = await fs.lstat(filePath);
+    if (!stat.isFile()) throw new Error(`Migration artifact "${filePath}" must be a regular file`);
+    return true;
+  } catch (error) {
+    if (isNotFound(error)) return false;
+    throw error;
+  }
+}
+
+async function removeRegularIfExists(filePath: string): Promise<void> {
+  if (await requireRegularOrMissing(filePath)) await fs.rm(filePath);
 }
 
 async function syncDirectory(directoryPath: string): Promise<void> {
@@ -238,16 +301,6 @@ async function syncDirectory(directoryPath: string): Promise<void> {
 
 function canonicalBytes(value: unknown): Buffer {
   return Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
-}
-
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch (error) {
-    if (isNotFound(error)) return false;
-    throw error;
-  }
 }
 
 function isAlreadyExists(error: unknown): error is NodeJS.ErrnoException {

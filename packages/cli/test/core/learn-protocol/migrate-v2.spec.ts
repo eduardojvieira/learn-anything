@@ -5,6 +5,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   deriveNumbering,
+  migrateAllV1ToV2,
   migrateV1ToV2,
   stateV2Schema,
   V1BackupMismatchError,
@@ -199,6 +200,22 @@ describe('migrateV1ToV2', () => {
     expect(await fs.readFile(path.join(topicDir, 'state.json')).then(String)).toBe(String(before));
   });
 
+  it.each(['.state.v1.json.bak.tmp', 'state.v1.json.bak'])(
+    'rejects symlinked V1 artifact %s without touching its referent',
+    async (artifact) => {
+      const source = v1();
+      await writeState(source);
+      const sentinel = path.join(topicDir, 'sentinel.json');
+      await fs.writeFile(sentinel, 'sentinel');
+      await fs.symlink(sentinel, path.join(topicDir, artifact));
+      await expect(migrateV1ToV2(topicDir)).rejects.toThrow();
+      expect(await fs.readFile(sentinel, 'utf8')).toBe('sentinel');
+      expect(JSON.parse(await fs.readFile(path.join(topicDir, 'state.json'), 'utf8'))).toEqual(
+        source,
+      );
+    },
+  );
+
   it('recovers a pending StateStore journal before deciding what to migrate', async () => {
     const original = v1();
     const recovered = { ...v1(), topic: 'Recovered', slug: 'recovered' };
@@ -217,5 +234,59 @@ describe('migrateV1ToV2', () => {
     expect(
       JSON.parse(await fs.readFile(path.join(topicDir, 'state.v1.json.bak'), 'utf8')).topic,
     ).toBe('Recovered');
+  });
+});
+
+describe('migrateAllV1ToV2', () => {
+  it('migrates direct V1 topic directories, skips V2, and never follows topic symlinks', async () => {
+    const topicsDir = path.join(topicDir, 'topics');
+    const v1Dir = path.join(topicsDir, 'v1');
+    const v2Dir = path.join(topicsDir, 'v2');
+    const outsideDir = path.join(topicDir, 'outside');
+    await fs.mkdir(v1Dir, { recursive: true });
+    await fs.mkdir(v2Dir);
+    await fs.mkdir(outsideDir);
+    await fs.writeFile(path.join(v1Dir, 'state.json'), `${JSON.stringify(v1(), null, 2)}\n`);
+    await fs.writeFile(path.join(v2Dir, 'state.json'), `${JSON.stringify(v1(), null, 2)}\n`);
+    await migrateV1ToV2(v2Dir);
+    const v2Before = await fs.readFile(path.join(v2Dir, 'state.json'));
+    await fs.writeFile(path.join(outsideDir, 'state.json'), `${JSON.stringify(v1(), null, 2)}\n`);
+    await fs.symlink(outsideDir, path.join(topicsDir, 'outside-link'));
+    await fs.writeFile(path.join(topicsDir, 'not-a-topic.txt'), 'ignore');
+    await fs.mkdir(path.join(topicsDir, 'empty'));
+
+    const report = await migrateAllV1ToV2(topicsDir);
+
+    expect(report.migratedCount).toBe(1);
+    expect(report.skippedCount).toBe(1);
+    expect(JSON.parse(await fs.readFile(path.join(v1Dir, 'state.json'), 'utf8')).version).toBe(2);
+    expect(await fs.readFile(path.join(v2Dir, 'state.json'))).toEqual(v2Before);
+    expect(JSON.parse(await fs.readFile(path.join(outsideDir, 'state.json'), 'utf8')).version).toBe(
+      1,
+    );
+  });
+
+  it('rejects symlinked or non-regular state.json targets', async () => {
+    const topicsDir = path.join(topicDir, 'topics');
+    const linked = path.join(topicsDir, 'linked');
+    await fs.mkdir(linked, { recursive: true });
+    const outside = path.join(topicDir, 'outside.json');
+    await fs.writeFile(outside, `${JSON.stringify(v1(), null, 2)}\n`);
+    await fs.symlink(outside, path.join(linked, 'state.json'));
+    await expect(migrateAllV1ToV2(topicsDir)).rejects.toThrow();
+    expect(JSON.parse(await fs.readFile(outside, 'utf8')).version).toBe(1);
+  });
+
+  it('rejects a symlinked bulk root without touching external V1 state', async () => {
+    const outside = path.join(topicDir, 'outside-root');
+    await fs.mkdir(outside);
+    const bytes = Buffer.from(`${JSON.stringify(v1(), null, 2)}\n`);
+    await fs.writeFile(path.join(outside, 'state.json'), bytes);
+    const link = path.join(topicDir, 'topics-link');
+    await fs.symlink(outside, link);
+
+    await expect(migrateAllV1ToV2(link)).rejects.toThrow();
+    expect(await fs.readFile(path.join(outside, 'state.json'))).toEqual(bytes);
+    await expect(fs.access(path.join(outside, 'state.v1.json.bak'))).rejects.toThrow();
   });
 });

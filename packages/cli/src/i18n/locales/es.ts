@@ -33,6 +33,9 @@ export const es: LocaleMessages = {
     cmdLine: (c, d) => `  ${c}${d}`,
     interactiveSelectPrompt: 'Seleccioná las herramientas de IA:',
     migrationComplete: (n) => `Se migraron ${n} tema(s) de v0 a v1.`,
+    migrationV2Complete: (n) => `Se migraron ${n} tema(s) de V1 a V2 (con respaldo).`,
+    migrationFailed: (topic) =>
+      `Falló la migración del tema "${topic}". Corregí sus archivos heredados y volvé a ejecutar.`,
     context7Prompt: '¿Habilitar Context7 para verificar documentación?',
     context7Enabled: '  📚 Context7 habilitado.',
     context7SetupHint: '  💡 Para configurar Context7 MCP, ejecutá `npx ctx7 setup`.',

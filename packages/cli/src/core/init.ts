@@ -54,18 +54,25 @@ export class InitCommand {
     const canonicalProjectRoot = await fs.promises.realpath(resolvedPath);
 
     // Create .learn/ directory in the target project
-    const learnDir = path.join(resolvedPath, LEARN_DIR);
-    const topicsDir = path.join(learnDir, 'topics');
-    await FileSystemUtils.ensureDir(topicsDir);
+    const learnDir = await FileSystemUtils.ensureSafeDirectories(canonicalProjectRoot, LEARN_DIR);
+    const topicsDir = await FileSystemUtils.ensureSafeDirectories(learnDir, 'topics');
     const config = await initializeLearnConfig(learnDir, this.configLocale);
     this.locale = config.state.locale;
     const m = getMessages(this.locale);
 
     // Run v0→v1 migration for any existing learning data
-    const { migrateAll } = await import('./learn-protocol/index.js');
-    const report = await migrateAll(topicsDir);
-    if (report.migratedCount > 0) {
-      console.log(chalk.green(m.init.migrationComplete(report.migratedCount)));
+    const { migrateAll, migrateAllV1ToV2 } = await import('./learn-protocol/index.js');
+    const v0Report = await migrateAll(topicsDir);
+    const v0Failure = v0Report.results.find(
+      (result) => result.reason === 'error' || result.reason === 'not_v0',
+    );
+    if (v0Failure) throw new Error(m.init.migrationFailed(v0Failure.topic));
+    if (v0Report.migratedCount > 0) {
+      console.log(chalk.green(m.init.migrationComplete(v0Report.migratedCount)));
+    }
+    const v2Report = await migrateAllV1ToV2(topicsDir);
+    if (v2Report.migratedCount > 0) {
+      console.log(chalk.green(m.init.migrationV2Complete(v2Report.migratedCount)));
     }
 
     console.log(chalk.bold(m.init.header));

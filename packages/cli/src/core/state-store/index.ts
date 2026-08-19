@@ -116,10 +116,11 @@ export class StateStore<T> {
         await this.recover();
       }
       if (await exists(this.statePath)) {
-        await fs.rm(this.tempPath, { force: true });
+        await this.requireRegularArtifact(this.statePath);
+        await this.removeRegularArtifact(this.tempPath);
         throw new StateAlreadyExistsError(this.statePath);
       }
-      await fs.rm(this.tempPath, { force: true });
+      await this.removeRegularArtifact(this.tempPath);
       this.validate(initial);
       const bytes = canonicalBytes(initial);
       try {
@@ -131,7 +132,7 @@ export class StateStore<T> {
       try {
         await fs.link(this.tempPath, this.statePath);
       } catch (error) {
-        await fs.rm(this.tempPath, { force: true });
+        await this.removeRegularArtifact(this.tempPath);
         if (isAlreadyExists(error)) throw new StateAlreadyExistsError(this.statePath);
         throw error;
       }
@@ -175,9 +176,10 @@ export class StateStore<T> {
         await this.clearRecoveryArtifacts();
         throw error;
       }
+      await this.requireRegularArtifact(this.tempPath);
       await fs.rename(this.tempPath, this.statePath);
       await this.syncDirectory();
-      await fs.rm(this.journalPath, { force: true });
+      await this.removeRegularArtifact(this.journalPath);
       await this.syncDirectory();
       return { state: next, revision: nextRevision };
     });
@@ -192,8 +194,8 @@ export class StateStore<T> {
   private async recover(): Promise<void> {
     if (!(await exists(this.journalPath))) {
       await Promise.all([
-        fs.rm(this.tempPath, { force: true }),
-        fs.rm(this.journalTempPath, { force: true }),
+        this.removeRegularArtifact(this.tempPath),
+        this.removeRegularArtifact(this.journalTempPath),
       ]);
       return;
     }
@@ -211,7 +213,7 @@ export class StateStore<T> {
       throw new StateRecoveryError('State differs from both journal revisions; recovery refused');
     }
     if (!(await exists(this.tempPath))) {
-      await fs.rm(this.journalPath, { force: true });
+      await this.removeRegularArtifact(this.journalPath);
       await this.syncDirectory();
       return;
     }
@@ -226,6 +228,7 @@ export class StateStore<T> {
       await this.clearRecoveryArtifacts();
       return;
     }
+    await this.requireRegularArtifact(this.tempPath);
     await fs.rename(this.tempPath, this.statePath);
     await this.syncDirectory();
     await this.clearRecoveryArtifacts();
@@ -233,9 +236,9 @@ export class StateStore<T> {
 
   private async clearRecoveryArtifacts(): Promise<void> {
     await Promise.all([
-      fs.rm(this.tempPath, { force: true }),
-      fs.rm(this.journalPath, { force: true }),
-      fs.rm(this.journalTempPath, { force: true }),
+      this.removeRegularArtifact(this.tempPath),
+      this.removeRegularArtifact(this.journalPath),
+      this.removeRegularArtifact(this.journalTempPath),
     ]);
     await this.syncDirectory();
   }
@@ -327,6 +330,10 @@ export class StateStore<T> {
   private async reclaimDeadLock(): Promise<void> {
     let owner: { version: number; pid: number; token: string; instance?: string };
     try {
+      const lock = await fs.lstat(this.lockPath);
+      if (lock.isSymbolicLink() || !lock.isDirectory()) {
+        throw new StateRecoveryError(`Unsafe state lock ${this.lockPath}`);
+      }
       const entries = await fs.readdir(this.lockPath);
       const ownerPath = path.join(this.lockPath, 'owner.json');
       if (!entries.includes('owner.json')) {
@@ -380,14 +387,16 @@ export class StateStore<T> {
 
   private async readStateBytes(filePath: string): Promise<Buffer> {
     try {
+      await this.requireRegularArtifact(filePath);
       return await fs.readFile(filePath);
     } catch (error) {
+      if (error instanceof StateRecoveryError) throw error;
       throw new StateCorruptionError(`Unable to read ${filePath}`, error);
     }
   }
 
   private async durableWrite(filePath: string, bytes: Buffer): Promise<void> {
-    const handle = await fs.open(filePath, 'w', 0o600);
+    const handle = await fs.open(filePath, 'wx', 0o600);
     try {
       await handle.writeFile(bytes);
       await handle.sync();
@@ -397,7 +406,9 @@ export class StateStore<T> {
   }
 
   private async atomicDurableWrite(target: string, temp: string, bytes: Buffer): Promise<void> {
+    await this.removeRegularArtifact(temp);
     await this.durableWrite(temp, bytes);
+    await this.requireRegularArtifact(temp);
     await fs.rename(temp, target);
     await this.syncDirectory();
   }
@@ -412,6 +423,27 @@ export class StateStore<T> {
       }
     } catch (error) {
       if (!isUnsupportedDirectorySync(error)) throw error;
+    }
+  }
+
+  private async requireRegularArtifact(filePath: string): Promise<void> {
+    try {
+      const stat = await fs.lstat(filePath);
+      if (!stat.isFile()) throw new StateRecoveryError(`Unsafe state artifact ${filePath}`);
+    } catch (error) {
+      if (isNotFound(error)) throw error;
+      if (error instanceof StateRecoveryError) throw error;
+      throw new StateCorruptionError(`Unable to inspect ${filePath}`, error);
+    }
+  }
+
+  private async removeRegularArtifact(filePath: string): Promise<void> {
+    try {
+      await this.requireRegularArtifact(filePath);
+      await fs.rm(filePath);
+    } catch (error) {
+      if (isNotFound(error)) return;
+      throw error;
     }
   }
 }
@@ -495,7 +527,7 @@ function revisionOf(bytes: Buffer): string {
 
 async function exists(filePath: string): Promise<boolean> {
   try {
-    await fs.access(filePath);
+    await fs.lstat(filePath);
     return true;
   } catch (error) {
     if (isNotFound(error)) return false;
