@@ -14,7 +14,7 @@ export const en: LocaleMessages = {
     cannotAccess: (path: string, msg: string) => `Cannot access path "${path}": ${msg}`,
     errorPrefix: (msg: string) => `Error: ${msg}`,
     updateComplete: 'Learn Anything skill files have been updated.',
-    forceOption: 'Skip confirmation prompt',
+    forceOption: 'Overwrite existing generated files',
     langOption: 'Display language: en, es, or zh-CN (default: system locale)',
     portOption: 'Port for the dev server (default: 24278)',
     strictPortOption: 'Use the exact port from --port; do not auto-pick a free one when busy',
@@ -30,7 +30,7 @@ export const en: LocaleMessages = {
     noToolsSelected:
       'No AI tools selected. Use --tools option to specify, or select in interactive mode.',
     availableTools: (tools: string) => `Available tools: ${tools}`,
-    skillGenerated: (toolName: string) => `  ✓ ${toolName} — 7 skill files generated`,
+    skillGenerated: (toolName: string) => `  ✓ ${toolName} — learning integration ready`,
     initComplete: '🎉 Learn Anything initialization complete!\n',
     globalDataPath: (dir: string) => `  Learning data stored at ${dir}/`,
     startLearning: (example: string) => `  Run ${example} to start your first learning topic\n`,
@@ -45,6 +45,10 @@ export const en: LocaleMessages = {
     context7Enabled: '  📚 Context7 guidance enabled.',
     context7SetupHint:
       '  💡 To set up Context7 MCP, run `npx ctx7 setup` or visit https://context7.com/docs/resources/all-clients',
+    generatedFileConflict: (path, forceAllowed) =>
+      forceAllowed
+        ? `Generated file conflict: "${path}" has local changes. Rerun with --force to overwrite generated files.`
+        : `Generated file conflict: "${path}" is not a safe generated-file target and cannot be replaced with --force.`,
     studyCommandDescription: '      — Follow the deterministic study plan',
     topicCommandDescription: '      — Initialize or load a learning topic',
     explainCommandDescription: '  — Recursively deep-dive into a concept',

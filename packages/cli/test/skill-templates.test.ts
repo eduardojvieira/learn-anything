@@ -122,7 +122,7 @@ describe('V2 workflow templates', () => {
     expect(getLearnQuizSkillTemplate().instructions).toMatch(/\n1\..*\n2\..*\n3\..*\n4\./s);
   });
 
-  it.each(['claude', 'cursor', 'codex', 'gemini'])(
+  it.each(['claude', 'cursor', 'gemini', 'opencode'])(
     'generates all seven commands for %s',
     (toolId) => {
       const adapter = CommandAdapterRegistry.get(toolId)!;
@@ -138,12 +138,18 @@ describe('V2 workflow templates', () => {
         expect(study.path.replace(/\\/g, '/')).toContain(
           '.cursor/commands/learn-anything-study.md',
         );
-      if (toolId === 'codex')
-        expect(study.path.replace(/\\/g, '/')).toContain('.codex/prompts/learn-anything-study.md');
       if (toolId === 'gemini') {
         expect(study.path.replace(/\\/g, '/')).toContain('.gemini/commands/learn/study.toml');
         expect(study.fileContent).toContain('prompt = """');
+      } else if (toolId === 'opencode') {
+        expect(study.path.replace(/\\/g, '/')).toContain('.opencode/commands/learn/study.md');
+        expect(study.fileContent).toContain('description:');
+        expect(study.fileContent).toContain('$ARGUMENTS');
       } else expect(study.fileContent).toContain('---');
     },
   );
+
+  it('uses standard project-local skills for Codex instead of legacy home prompts', () => {
+    expect(CommandAdapterRegistry.has('codex')).toBe(false);
+  });
 });

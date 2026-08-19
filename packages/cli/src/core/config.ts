@@ -46,7 +46,7 @@ export const AI_TOOLS: AIToolOption[] = [
     skillsDir: '.claude',
   },
   { name: 'Cline', value: 'cline', available: true, successLabel: 'Cline', skillsDir: '.cline' },
-  { name: 'Codex', value: 'codex', available: true, successLabel: 'Codex', skillsDir: '.codex' },
+  { name: 'Codex', value: 'codex', available: true, successLabel: 'Codex', skillsDir: '.agents' },
   {
     name: 'ForgeCode',
     value: 'forgecode',
@@ -129,6 +129,13 @@ export const AI_TOOLS: AIToolOption[] = [
     available: true,
     successLabel: 'OpenCode',
     skillsDir: '.opencode',
+  },
+  {
+    name: 'Hermes',
+    value: 'hermes',
+    available: true,
+    successLabel: 'Hermes',
+    skillsDir: '.agents',
   },
   { name: 'Pi', value: 'pi', available: true, successLabel: 'Pi', skillsDir: '.pi' },
   { name: 'Qoder', value: 'qoder', available: true, successLabel: 'Qoder', skillsDir: '.qoder' },

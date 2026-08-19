@@ -91,7 +91,7 @@ program
       const { InitCommand } = await import('../core/init.js');
       const initCommand = new InitCommand({
         update: true,
-        force: options?.force ?? true,
+        force: options?.force,
         locale: cliLocale,
         configLocale: options?.lang ? cliLocale : undefined,
       });

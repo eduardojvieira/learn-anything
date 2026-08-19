@@ -2,7 +2,11 @@ import path from 'path';
 import chalk from 'chalk';
 import * as fs from 'fs';
 import { createRequire } from 'module';
-import { FileSystemUtils } from '../utils/file-system.js';
+import {
+  FileSystemUtils,
+  GeneratedFileConflictError,
+  type GeneratedFile,
+} from '../utils/file-system.js';
 import { AI_TOOLS, AIToolOption, LEARN_DIR } from './config.js';
 import { isInteractive } from '../utils/interactive.js';
 import { generateCommands, CommandAdapterRegistry } from './command-generation/index.js';
@@ -47,6 +51,7 @@ export class InitCommand {
 
     // Ensure target directory exists
     await FileSystemUtils.ensureDir(resolvedPath);
+    const canonicalProjectRoot = await fs.promises.realpath(resolvedPath);
 
     // Create .learn/ directory in the target project
     const learnDir = path.join(resolvedPath, LEARN_DIR);
@@ -107,11 +112,22 @@ export class InitCommand {
 
     console.log('');
 
-    // Generate skill files for each tool
+    const generatedFiles: GeneratedFile[] = [];
     for (const tool of selectedTools) {
-      if (!tool.skillsDir) continue;
-      await this.generateSkillsForTool(resolvedPath, tool);
-      await this.generateCommandsForTool(resolvedPath, tool);
+      generatedFiles.push(...this.generatedFilesForTool(canonicalProjectRoot, tool));
+    }
+    try {
+      await FileSystemUtils.writeGeneratedFiles(generatedFiles, this.force, canonicalProjectRoot);
+    } catch (error) {
+      if (error instanceof GeneratedFileConflictError) {
+        throw new Error(m.init.generatedFileConflict(error.filePath, error.forceAllowed), {
+          cause: error,
+        });
+      }
+      throw error;
+    }
+
+    for (const tool of selectedTools) {
       console.log(chalk.green(m.init.skillGenerated(tool.name)));
     }
 
@@ -204,8 +220,10 @@ export class InitCommand {
     return availableTools.filter((t) => selected.includes(t.value));
   }
 
-  private async generateSkillsForTool(resolvedPath: string, tool: AIToolOption): Promise<void> {
+  private generatedFilesForTool(resolvedPath: string, tool: AIToolOption): GeneratedFile[] {
+    if (!tool.skillsDir) return [];
     const skillTemplates = getSkillTemplates();
+    const files: GeneratedFile[] = [];
 
     for (const entry of skillTemplates) {
       const skillDir = path.join(resolvedPath, tool.skillsDir!, 'skills', entry.dirName);
@@ -217,21 +235,16 @@ export class InitCommand {
           ? injectContext7Guidance
           : undefined,
       );
-      await FileSystemUtils.writeFile(skillFile, content);
+      files.push({ path: skillFile, content });
     }
-  }
 
-  private async generateCommandsForTool(resolvedPath: string, tool: AIToolOption): Promise<void> {
     const adapter = CommandAdapterRegistry.get(tool.value);
-    if (!adapter) return;
-
-    const commandContents = getCommandContents();
-    const generatedCommands = generateCommands(commandContents, adapter);
-
-    for (const cmd of generatedCommands) {
-      const filePath = path.resolve(resolvedPath, cmd.path);
-      await FileSystemUtils.writeFile(filePath, cmd.fileContent);
+    if (adapter) {
+      for (const cmd of generateCommands(getCommandContents(), adapter)) {
+        files.push({ path: path.resolve(resolvedPath, cmd.path), content: cmd.fileContent });
+      }
     }
+    return files;
   }
 }
 

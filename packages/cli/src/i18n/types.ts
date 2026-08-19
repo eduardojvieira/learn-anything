@@ -47,6 +47,7 @@ export interface InitMessages {
   context7Prompt: string;
   context7Enabled: string;
   context7SetupHint: string;
+  generatedFileConflict: (path: string, forceAllowed: boolean) => string;
   studyCommandDescription: string;
   topicCommandDescription: string;
   explainCommandDescription: string;

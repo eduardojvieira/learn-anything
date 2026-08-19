@@ -13,7 +13,7 @@ export const zhCN: LocaleMessages = {
     cannotAccess: (path: string, msg: string) => `无法访问路径 "${path}": ${msg}`,
     errorPrefix: (msg: string) => `错误: ${msg}`,
     updateComplete: 'Learn Anything 技能文件已更新。',
-    forceOption: '跳过确认提示',
+    forceOption: '覆盖已有的生成文件',
     langOption: '界面语言：en、es 或 zh-CN（默认读取系统语言设置）',
     portOption: '开发服务器端口（默认：24278）',
     strictPortOption: '严格使用 --port 指定的端口，被占用时不自动寻找空闲端口',
@@ -28,7 +28,7 @@ export const zhCN: LocaleMessages = {
     header: '\n🧠 Learn Anything — AI 驱动的递归学习系统\n',
     noToolsSelected: '未选择任何 AI 工具。使用 --tools 参数指定，或在交互模式中选择。',
     availableTools: (tools: string) => `可用的工具：${tools}`,
-    skillGenerated: (toolName: string) => `  ✓ ${toolName} — 7 个技能文件已生成`,
+    skillGenerated: (toolName: string) => `  ✓ ${toolName} — 学习集成已就绪`,
     initComplete: '🎉 Learn Anything 初始化完成！\n',
     globalDataPath: (dir: string) => `  学习数据存储在 ${dir}/`,
     startLearning: (example: string) => `  运行 ${example} 开始你的第一个学习主题\n`,
@@ -40,6 +40,10 @@ export const zhCN: LocaleMessages = {
     context7Enabled: '  📚 已启用 Context7 文档验证引导。',
     context7SetupHint:
       '  💡 配置 Context7 MCP：运行 `npx ctx7 setup` 或访问 https://context7.com/docs/resources/all-clients',
+    generatedFileConflict: (path, forceAllowed) =>
+      forceAllowed
+        ? `生成文件冲突：“${path}”含有本地修改。请使用 --force 覆盖生成文件。`
+        : `生成文件冲突：“${path}”不是安全的生成文件目标，不能使用 --force 替换。`,
     studyCommandDescription: '      — 按确定性学习计划学习',
     topicCommandDescription: '      — 初始化或加载学习主题',
     explainCommandDescription: '  — 递归深入讲解概念',

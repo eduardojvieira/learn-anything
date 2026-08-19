@@ -11,7 +11,7 @@ export const es: LocaleMessages = {
     cannotAccess: (p, m) => `No se puede acceder a "${p}": ${m}`,
     errorPrefix: (m) => `Error: ${m}`,
     updateComplete: 'Los archivos de habilidades de Learn Anything se actualizaron.',
-    forceOption: 'Omitir confirmación',
+    forceOption: 'Sobrescribir archivos generados existentes',
     langOption: 'Idioma: en, es o zh-CN (por defecto: idioma del sistema)',
     portOption: 'Puerto del servidor local (por defecto: 24278)',
     strictPortOption: 'Usar exactamente el puerto de --port',
@@ -25,7 +25,7 @@ export const es: LocaleMessages = {
     header: '\n🧠 Learn Anything — sistema de aprendizaje recursivo\n',
     noToolsSelected: 'No se seleccionaron herramientas de IA.',
     availableTools: (v) => `Herramientas disponibles: ${v}`,
-    skillGenerated: (n) => `  ✓ ${n} — se generaron 7 archivos de habilidades`,
+    skillGenerated: (n) => `  ✓ ${n} — integración de aprendizaje lista`,
     initComplete: '🎉 ¡Inicialización de Learn Anything completa!\n',
     globalDataPath: (d) => `  Los datos de aprendizaje se guardan en ${d}/`,
     startLearning: (x) => `  Ejecutá ${x} para iniciar tu primer tema\n`,
@@ -36,6 +36,10 @@ export const es: LocaleMessages = {
     context7Prompt: '¿Habilitar Context7 para verificar documentación?',
     context7Enabled: '  📚 Context7 habilitado.',
     context7SetupHint: '  💡 Para configurar Context7 MCP, ejecutá `npx ctx7 setup`.',
+    generatedFileConflict: (path, forceAllowed) =>
+      forceAllowed
+        ? `Conflicto en archivo generado: "${path}" tiene cambios locales. Volvé a ejecutar con --force para sobrescribir los archivos generados.`
+        : `Conflicto en archivo generado: "${path}" no es un destino seguro para archivos generados y no se puede reemplazar con --force.`,
     studyCommandDescription: '      — Seguir el plan de estudio determinista',
     topicCommandDescription: '      — Inicializar o cargar un tema de aprendizaje',
     explainCommandDescription: '  — Profundizar recursivamente en un concepto',
