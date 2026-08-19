@@ -1,211 +1,90 @@
 <p align="center">
-  <img src="./logo.png" alt="Learn Anything Logo" width="120" />
+  <img src="./logo.png" alt="Learn Anything logo" width="120" />
 </p>
 
-<h1 align="center">Learn Anything</h1>
+# Learn Anything V2
 
-<p align="center">
-  <strong>AI-Powered Recursive Learning System</strong><br />
-  Turn your AI coding assistant into an interactive tutor — Socratic method &amp; TDD-style exercises.<br />
-  <em>Now with a built-in visual learning dashboard.</em>
-</p>
+[English](./README.md) · [Español](./README.es.md) · [中文](./README.zh-CN.md)
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/learn-anything-cli"><img src="https://img.shields.io/npm/v/learn-anything-cli?color=blue&label=npm" alt="npm version" /></a>
-  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-%3E%3D20.0-green" alt="Node.js" /></a>
-  <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-workspace-orange" alt="pnpm workspace" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License MIT" /></a>
-</p>
+An independent V2 fork of [ChenChenyaqi/learn-anything](https://github.com/ChenChenyaqi/learn-anything). It keeps the original MIT license and attribution while making learning data durable, revisioned, and local-first. The CLI package is currently private: install and run it from this repository’s `v2` branch.
 
-<p align="center">
-  <a href="./README.md">English</a> · <a href="./README.zh-CN.md">中文</a>
-</p>
-
----
-
-## What is Learn Anything?
-
-**Learn Anything** generates skill and command files for **30+ AI coding tools** — Claude Code, Cursor, Codex, OpenCode, and more. Once generated, your AI assistant gains six slash commands that guide you through systematically mastering any technical topic:
-
-- 🧭 **Choose your own path** — AI generates a knowledge map; you decide what to learn next
-- 🎓 **Recursive learning method** — Recursive explanations that follow your curiosity as deep as you want
-- 🧪 **TDD-style practice** — Write real code with structured feedback, from beginner to challenge
-- 📝 **Adaptive quizzes** — Quick text Q&A quizzes, graded and saved as reusable question decks
-- 📊 **Spaced repetition** — Smart review that surfaces weak spots when you need them most
-- 🔥 **Knowledge visualization** — Heatmap showing exactly where you stand
-- 🖥️ **Visual Dashboard** — Browse knowledge maps, session notes, and exercises in a rich web interface
-
-## Quick Start
+## Quick path
 
 ```bash
-# Interactive mode — auto-detects your AI tools and prompts you to choose
-npx learn-anything-cli init
+git clone --branch v2 https://github.com/eduardojvieira/learn-anything.git
+cd learn-anything
+pnpm install
+pnpm build
 
-# Target specific tools
-npx learn-anything-cli init --tools claude
-
-# Or install globally
-pnpm add -g learn-anything-cli   # npm install -g learn-anything-cli
-learn-anything init
+# Generate integrations for a learning project, then start the dashboard.
+node packages/cli/bin/learn-anything.js init ../my-project --tools claude --lang en
+node packages/cli/bin/learn-anything.js serve ../my-project --no-open
 ```
 
-### Context7 Integration _(optional)_
+The server prints `http://localhost:24278` (or the next free port). LAN access is intentional: use `http://<your-LAN-IP>:24278` only on a trusted local network. It has no authentication layer.
 
-During `init` or `update`, you'll be prompted to enable **Context7** for documentation verification. When enabled, the AI fetches official docs and cross-references its explanations against authoritative sources — dramatically improving teaching accuracy.
+## Learn with seven workflows
 
-> **Setup:** Run `npx ctx7 setup` or visit the [Context7 docs](https://context7.com/docs/resources/all-clients) for your AI tool.
+`/learn:study` is the primary workflow: it asks the deterministic runtime for the next step. The remaining workflows are focused entry points.
 
-### After Init — Six Learning Commands
+| Workflow                    | Purpose                                               |
+| --------------------------- | ----------------------------------------------------- |
+| `/learn:study [topic]`      | Plan and record the next deterministic learning step. |
+| `/learn:topic <topic>`      | Create or inspect a V2 topic.                         |
+| `/learn:explain <concept>`  | Run a persistent Socratic explanation.                |
+| `/learn:practice <concept>` | Record observed practice and correction.              |
+| `/learn:review [topic]`     | Work through due retrieval review.                    |
+| `/learn:status [topic]`     | Read the derived mastery ledger and next step.        |
+| `/learn:quiz <concept>`     | Run and assess a persistent retrieval quiz.           |
 
-| Command                  | What it does                                                 |
-| :----------------------- | :----------------------------------------------------------- |
-| `/learn:topic <name>`    | Initialize a topic, generate a knowledge map, track progress |
-| `/learn:explain <name>`  | Recursive learning method — go as deep as you want           |
-| `/learn:practice <name>` | TDD-style coding exercises with structured feedback          |
-| `/learn:review [name]`   | Spaced repetition review with personalized next-step plan    |
-| `/learn:status [name]`   | Knowledge map heatmap — mastery, practice counts, confidence |
-| `/learn:quiz <name>`     | Quick text Q&A quiz — graded and saved for re-practice       |
+The slash form is shown consistently, but Codex and Hermes are skills-only integrations: invoke the matching skill or ask in natural language when their host does not expose slash commands.
 
-### Visual Learning Dashboard
+## What V2 guarantees
 
-Start a zero-config web dashboard to browse your learning data:
+`learnctl` is the only canonical writer. Agents and the dashboard read snapshots and send revisioned requests; they never edit canonical learning files directly.
 
-```bash
-# Start the visual dashboard (no npm install needed)
-npx learn-anything-cli serve
+- `StateStore` uses locks, compare-and-swap revisions, atomic writes, a journal, and recovery.
+- Topics have stable IDs. Display numbering (`1`, `1.1`, `1.1.1`) is derived, not stored in names, slugs, or IDs.
+- State records prerequisites, relations, evidence, calibration, and review state. Mastery is derived from evidence; an AI cannot set it arbitrarily.
+- The learning engine covers diagnosis, retrieval, self-explanation, feedback, correction, spacing, interleaving, transfer, and delayed assessment. Its scheduler is behind a replaceable FSRS-compatible interface; V2 does not claim to implement FSRS itself.
 
-# Custom port
-npx learn-anything-cli serve --port 8080
+### Canonical data and derived views
 
-# Disable auto-open browser
-npx learn-anything-cli serve --no-open
+```text
+.learn/
+├── config.json                         # locale, timezone, numbering
+└── topics/<slug>/
+    ├── state.json                       # canonical V2 topic state
+    ├── state.v1.json.bak                # only created by V1 → V2 migration
+    ├── knowledge-map.md                 # derived view
+    └── sessions/<uuid>/
+        ├── session.json                 # canonical session
+        └── views/{en,es,zh-CN}.md       # derived localized views
 ```
 
-> The dashboard is pre-built and shipped with the CLI — no extra dependencies or `npm install` required.
-> If you installed globally, you can use `learn-anything serve` instead.
+Do not treat legacy Markdown, exercises, or quizzes as canonical state.
 
-The dashboard provides:
+## Dashboard and integrations
 
-- **Knowledge Map** — Markdown-rendered overview of your learning topic
-- **Session Notes** — Browse and read all learning session notes organized by domain
-- **Exercise Viewer** — View starter code, solutions, and practice results with syntax highlighting
-- **Dark Mode** — Light/dark theme toggle
-- **i18n** — Full English and Chinese interface
-- **Hot Reload** — Auto-refresh when you add or modify topic files
+`serve` opens the Mastery Ledger: a paper-and-serif view of derived mastery, canonical sessions, and editable Socratic responses. Dashboard writes use revisions (`If-Match`) and idempotency keys, so stale updates become explicit conflicts instead of silent overwrites.
 
-## How It Works
+All generated integrations call `learnctl`. Codex and Hermes install standard skills under `.agents/skills/`; OpenCode receives real commands under `.opencode/commands/`; other supported tools keep their existing skills/adapters. English, Spanish, and Simplified Chinese (`en`, `es`, `zh-CN`) share `.learn/config.json` across the CLI, skills, and dashboard.
 
-```
-Your Project/
-├── .claude/
-│   ├── commands/learn/          # Slash commands for Claude
-│   └── skills/                  # Skill files with full workflow instructions
-├── .cursor/commands/            # Cursor-specific command format
-├── .gemini/commands/learn/      # Gemini TOML-format commands
-├── .codex/prompts/              # Codex prompt files
-│   ...                          # (30+ other tool formats)
-│
-├── .learn/                      # 🧠 Your learning data lives here
-│   └── topics/
-│       └── typescript/
-│           ├── state.json           # Single source of truth
-│           ├── knowledge-map.md     # Auto-rendered from state.json
-│           ├── sessions/            # Session history for spaced repetition
-│           ├── exercises/           # TDD-style coding exercises
-│           └── quizzes/             # Reusable text Q&A question decks
-└── ...
-```
-
-Each AI tool receives **tool-appropriate file formats** via an adapter pattern — YAML frontmatter for Claude, TOML for Gemini, Markdown for Cursor, etc.
-
-## Monorepo Structure
-
-```
-learn-anything/
-├── packages/
-│   ├── cli/                     # learn-anything-cli — published to npm
-│   │   ├── site/                 # Dashboard source (Vue 3 + Vite)
-│   │   ├── scripts/              # Build scripts (bundle-site.mjs)
-│   │   ├── src/
-│   │   │   ├── cli/             # Commander.js CLI entry point
-│   │   │   ├── core/            # init, config, command generation, templates
-│   │   │   ├── i18n/            # en + zh-CN locales
-│   │   │   └── utils/           # Filesystem, interactive helpers
-│   │   ├── bin/                 # learn-anything binary
-│   │   └── package.json
-│   └── gui/                     # learn-anything-gui — coming soon 🚧
-│       └── README.md
-├── pnpm-workspace.yaml          # pnpm workspace config
-├── tsconfig.base.json           # Shared compiler options
-├── package.json                 # Workspace root (private)
-└── pnpm-lock.yaml
-```
-
-| Package                                | npm                                                                                                                    | Description                                              |
-| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
-| [`learn-anything-cli`](./packages/cli) | [![npm](https://img.shields.io/npm/v/learn-anything-cli?color=blue)](https://www.npmjs.com/package/learn-anything-cli) | CLI tool — generate skill/command files for 30+ AI tools |
-| `learn-anything-gui`                   | _private_                                                                                                              | Graphical desktop interface _(in development)_           |
-
-## Supported AI Tools
-
-> Manage, Amazon Q Developer, Antigravity, Auggie, Bob Shell, Claude Code, Cline, Codex, ForgeCode, CodeBuddy Code, Continue, CoStrict, Crush, Cursor, Factory Droid, Gemini CLI, GitHub Copilot, iFlow, Junie, Kilo Code, Kiro, OpenCode, Pi, Qoder, Lingma, Qwen Code, RooCode, Trae, Windsurf, and AGENTS.md-compatible assistants.
-
-```bash
-# Update existing skill files to the latest version (auto-detects installed tools)
-npx learn-anything-cli update
-```
+`init` and `update` chain V0 → V1 → V2 migration before generating integrations. V1 state is backed up, reruns are idempotent, and invalid state or unsafe paths abort generation. `learnctl migrate` remains available for advanced runtime use. `--force` only replaces generated integration files; it never bypasses state validation or symlink/escape protections.
 
 ## Development
 
-### Prerequisites
-
-- **Node.js** ≥ 20
-- **pnpm** ≥ 9
-
-### Setup
-
 ```bash
-git clone https://github.com/ChenChenyaqi/learn-anything.git
-cd learn-anything
-pnpm install
+pnpm lint
+pnpm test
+pnpm build
+cd packages/cli
+npm pack --dry-run
+cd ../..
 ```
 
-### Commands
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the fork workflow and [UPSTREAM.md](./UPSTREAM.md) for extracting focused improvements to the original project.
 
-| Command           | Description                          |
-| :---------------- | :----------------------------------- |
-| `pnpm build`      | Build all packages (`tsc`)           |
-| `pnpm test`       | Run all tests (`vitest run`)         |
-| `pnpm test:watch` | Run tests in watch mode              |
-| `pnpm dev`        | TypeScript watch mode (all packages) |
-| `pnpm lint`       | Lint all packages (`eslint`)         |
-| `pnpm format`     | Format code (`prettier`)             |
-| `pnpm dev:site`   | Dev server for the visual dashboard  |
+## License and attribution
 
-### Per-Package Commands
-
-```bash
-pnpm -F learn-anything-cli build      # Build only CLI
-pnpm -F learn-anything-cli test       # Test only CLI
-pnpm -F learn-anything-cli dev:cli    # Build and run CLI locally
-```
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=ChenChenyaqi%2Flearn-anything&type=date&legend=top-left">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=ChenChenyaqi/learn-anything&type=date&theme=dark&legend=top-left" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=ChenChenyaqi/learn-anything&type=date&legend=top-left" />
-    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ChenChenyaqi/learn-anything&type=date&legend=top-left" />
-  </picture>
-</a>
-
-## License
-
-[MIT](./LICENSE) © [yaqi chen](https://github.com/ChenChenyaqi)
-
----
-
-<p align="center">
-  <sub>Built with ❤️ for curious minds · <a href="https://github.com/ChenChenyaqi/learn-anything">GitHub</a> · <a href="./CONTRIBUTING.md">Contributing</a> · <a href="./CHANGELOG.md">Changelog</a></sub>
-</p>
+[MIT](./LICENSE) © [yaqi chen](https://github.com/ChenChenyaqi). V2 is maintained as the [eduardojvieira/learn-anything](https://github.com/eduardojvieira/learn-anything) fork; the original project remains [ChenChenyaqi/learn-anything](https://github.com/ChenChenyaqi/learn-anything).

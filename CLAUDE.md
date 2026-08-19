@@ -1,72 +1,42 @@
-# CLAUDE.md
+# Learn Anything V2 contributor map
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+V2 is an independent fork of Learn Anything. It preserves the original license and attribution, but its learning data is V2 state managed only through `learnctl`.
 
-## Project Overview
-
-Learn Anything is a CLI tool (`learn-anything`) that generates skill and command files for AI coding assistants, turning them into interactive learning tutors. It supports 30+ AI tools (Claude Code, Cursor, Gemini CLI, Codex, Copilot, Windsurf, etc.) and outputs localized files in `en` and `zh-CN`.
-
-The generated skills implement 6 learning workflows: topic (initialize a subject), explain (recursive Socratic deep-dive), practice (TDD-style exercises), review (spaced repetition), status (knowledge map visualization), and quiz (two-stage generation and grading).
-
-## Commands
+## Fast verification
 
 ```bash
-pnpm build          # Compile TypeScript via tsc (runs node build.js in each package)
-pnpm dev            # tsc --watch (all packages)
-pnpm test           # Run all tests once (vitest run) across all packages
-pnpm test:watch     # Run tests in watch mode (vitest) across all packages
-pnpm lint           # ESLint on packages/
-# Per-package commands:
-pnpm -F learn-anything-cli build     # Build only the CLI package
-pnpm -F learn-anything-cli test      # Test only the CLI package
+pnpm lint
+pnpm test
+pnpm build # TypeScript build and typecheck
+cd packages/cli
+npm pack --dry-run
+cd ../..
 ```
 
-## Architecture (monorepo)
+Use `node packages/cli/bin/learn-anything.js init <project>` to generate integrations and `node packages/cli/bin/learn-anything.js serve <project>` to run the dashboard locally.
 
-```
-packages/
-  cli/                  # Published as `learn-anything-cli`
-    src/
-      cli/index.ts          # Commander.js CLI: `learn-anything init [path]` and `learn-anything update [path]`
-      core/
-        init.ts             # InitCommand — orchestrates tool detection, interactive selection,
-                            #   skill generation, and command generation
-        config.ts           # AI_TOOLS array (30+ tools with skillsDir mappings), LEARN_DIR
-        command-generation/ # Adapter pattern: each tool has an adapter that knows its file format
-                            #   and directory conventions (Claude → .claude/commands/, YAML frontmatter;
-                            #   Gemini → .gemini/commands/, TOML; Codex → ~/.codex/prompts/)
-          types.ts          # CommandContent, ToolCommandAdapter, GeneratedCommand interfaces
-          registry.ts       # CommandAdapterRegistry — maps tool IDs → adapters
-          generator.ts      # generateCommand / generateCommands — applies adapter to content
-          adapters/         # claude.ts, cursor.ts, codex.ts, gemini.ts
-        templates/
-          types.ts          # SkillTemplate, CommandTemplate interfaces
-          skill-templates.ts # Re-exports all 6 workflow template getters
-          workflows/        # learn-topic.ts, learn-explain.ts, learn-practice.ts,
-                            #   learn-review.ts, learn-status.ts, learn-quiz.ts
-                            #   Each exports getXxxSkillTemplate(locale) and getXxxCommandTemplate(locale)
-        shared/
-          skill-generation.ts  # Aggregates templates; generateSkillContent() writes YAML frontmatter
-      i18n/
-        index.ts            # getMessages(locale), detectSystemLocale(), resolveLocale()
-        types.ts            # LocaleMessages, SkillsMessages, CLIMessages, InitMessages types
-        locales/
-          en.ts, zh-CN.ts   # Top-level locale messages (CLI strings, init messages)
-          skills/{en,zh-CN}/ # Per-workflow skill/command content (topic.ts, explain.ts, etc.)
-      utils/
-        file-system.ts      # ensureDir, writeFile, fileExists, dirExists, removeDir
-        interactive.ts      # isInteractive() — checks process.stdin/stdout.isTTY
-  gui/                  # Placeholder for future GUI (private, not published)
-```
+## Architecture map
 
-### Key Patterns
+| Area                       | Location                                                                                                                                         | Responsibility                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| CLI and init               | `packages/cli/src/cli/index.ts`, `packages/cli/src/core/init.ts`                                                                                 | Parses commands, loads config, migrates before generation.       |
+| Config and migration       | `packages/cli/src/core/learn-config.ts`, `packages/cli/src/core/learn-protocol/migrate.ts`, `packages/cli/src/core/learn-protocol/migrate-v2.ts` | `.learn/config.json`; V0 → V1 → V2 and V1 backup.                |
+| State and schema           | `packages/cli/src/core/state-store/index.ts`, `packages/cli/src/core/learn-protocol/schema.ts`                                                   | Atomic revisioned state, locks, journal/recovery, V2 validation. |
+| Runtime                    | `packages/cli/src/learnctl/index.ts`, `packages/cli/src/core/learning-engine/index.ts`                                                           | The sole canonical writer and deterministic learning plan.       |
+| Scheduler                  | `packages/cli/src/core/learning-engine/scheduler.ts`                                                                                             | Replaceable FSRS-compatible scheduling boundary.                 |
+| Dashboard API and site     | `packages/cli/src/dashboard-api.ts`, `packages/cli/site/`                                                                                        | Revisioned/idempotent writes and Mastery Ledger UI.              |
+| Templates and integrations | `packages/cli/src/core/templates/`, `packages/cli/src/core/shared/`, `packages/cli/src/core/command-generation/`                                 | Seven workflows and tool-specific generated files.               |
+| Locales                    | `packages/cli/src/i18n/`, `packages/cli/site/src/composables/locales/`                                                                           | `en`, `es`, `zh-CN` for CLI, skills, and dashboard.              |
 
-- **Templates are locale-aware**: every template getter takes `locale: SupportedLocale` and pulls strings from i18n. The same template produces different content for `en` vs `zh-CN`.
-- **Adapter pattern for multi-tool output**: adding support for a new AI tool means creating a new adapter in `command-generation/adapters/` that implements `ToolCommandAdapter` (specifying file path conventions and file format) and registering it.
-- **Shared data in `./.learn/`**: the CLI creates `./.learn/topics/` in the project directory for learning state that stays with the project.
-- **Interactive by default**: when no `--tools` flag is passed and stdin/stdout are TTYs, `learn-anything init` shows an interactive checkbox prompt (via `@inquirer/prompts`) with detected tools pre-selected.
+## Invariants
 
-### Adding a new AI tool
+- Canonical state is `.learn/topics/<slug>/state.json`; sessions are `sessions/<uuid>/session.json`. Maps and localized Markdown views are derived.
+- Only `learnctl` writes canonical learning data. Skills, generated commands, and dashboard requests use its runtime/API boundary.
+- Stable IDs are independent from derived display numbering. Mastery is derived from observed evidence, never declared by an agent.
+- Writes carry an expected revision and idempotency key where the command/API requires them. Surface a conflict; do not overwrite stale state.
+- `init`/`update` migrate V0 → V1 → V2 before integration generation. Invalid data or unsafe paths fail closed. `--force` affects generated integrations only.
+- Codex and Hermes use `.agents/skills/`; OpenCode commands live in `.opencode/commands/`.
 
-1. Add an entry to `AI_TOOLS` in `packages/cli/src/core/config.ts` with the tool's `skillsDir` path.
-2. If the tool has custom command file conventions, create an adapter in `packages/cli/src/core/command-generation/adapters/` and register it in `packages/cli/src/core/command-generation/adapters/index.ts` and `registry.ts`.
+## Change guidance
+
+Start from `v2`. Keep state changes covered by focused CLI tests, then run the verification block above. Do not reintroduce direct state-file editing in templates or the obsolete global Codex prompt location. For an upstreamable change, follow [UPSTREAM.md](./UPSTREAM.md).

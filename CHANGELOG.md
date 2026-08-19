@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- V2’s transactional local learning runtime: `StateStore` locking, compare-and-swap revisions, atomic writes, journal recovery, stable IDs, derived numbering, evidence-backed mastery, canonical sessions, and the seven-workflow `learnctl` learning engine.
+- Mastery Ledger dashboard with editable Socratic responses, revision-aware and idempotent API writes, Spanish, shared configuration, standard Hermes skills, and an OpenCode command adapter.
+
+### Changed
+
+- This repository is now an independent V2 fork. `init` and `update` migrate existing V0 → V1 → V2 data before generation; V1 state receives an idempotent backup.
+- The CLI package is versioned for V2 but private. Installation is currently from this fork’s `v2` branch, not npm.
+
+### Security
+
+- Canonical state and migration paths fail closed for invalid files and unsafe symlink escapes. `--force` only replaces generated integration files.
+
 ## [1.6.3] - 2026-07-21
 
 ### Fixed
@@ -331,7 +347,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Locale support: English (`en`) and Chinese (`zh-CN`).
 - MIT License.
 
-[Unreleased]: https://github.com/ChenChenyaqi/learn-anything/compare/v1.6.3...HEAD
+[Unreleased]: https://github.com/eduardojvieira/learn-anything/compare/v1.6.3...v2
 [1.6.3]: https://github.com/ChenChenyaqi/learn-anything/compare/v1.6.2...v1.6.3
 [1.6.2]: https://github.com/ChenChenyaqi/learn-anything/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/ChenChenyaqi/learn-anything/compare/v1.6.0...v1.6.1

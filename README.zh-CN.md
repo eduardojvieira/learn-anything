@@ -1,211 +1,90 @@
 <p align="center">
-  <img src="./logo.png" alt="Learn Anything Logo" width="120" />
+  <img src="./logo.png" alt="Learn Anything 标志" width="120" />
 </p>
 
-<h1 align="center">Learn Anything</h1>
+# Learn Anything V2
 
-<p align="center">
-  <strong>AI 驱动的递归学习系统</strong><br />
-  将你的 AI 编程助手变成交互式导师 — 苏格拉底式教学法 · TDD 风格练习<br />
-  <em>现已内置可视化学习仪表盘。</em>
-</p>
+[English](./README.md) · [Español](./README.es.md) · [中文](./README.zh-CN.md)
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/learn-anything-cli"><img src="https://img.shields.io/npm/v/learn-anything-cli?color=blue&label=npm" alt="npm 版本" /></a>
-  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/node-%3E%3D20.0-green" alt="Node.js" /></a>
-  <a href="https://pnpm.io/"><img src="https://img.shields.io/badge/pnpm-workspace-orange" alt="pnpm workspace" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="许可证 MIT" /></a>
-</p>
-
-<p align="center">
-  <a href="./README.md">English</a> · <a href="./README.zh-CN.md">中文</a>
-</p>
-
----
-
-## 什么是 Learn Anything？
-
-**Learn Anything** 为 **30+ 种 AI 编程工具**（Claude Code、Cursor、Codex、OpenCode 等）生成 skill 和 command 文件。安装后，你的 AI 助手获得六个斜杠命令，引导你系统性掌握任何技术主题：
-
-- 🧭 **自主选择路径** — AI 生成知识图谱，你来决定学什么
-- 🎓 **递归学习法** — 递归讲解跟随你的好奇心，想挖多深就多深
-- 🧪 **TDD 风格练习** — 写真实代码，获结构化反馈，从入门到挑战
-- 📝 **自适应测验** — 快速文字问答测验，批改后保存为可复用题库
-- 📊 **间隔重复** — 智能复习，在最佳时机帮你巩固薄弱环节
-- 🔥 **知识可视化** — 热力图直观展示你的掌握状态
-- 🖥️ **可视化仪表盘** — 在丰富的 Web 界面中浏览知识图谱、笔记和练习
+这是 [ChenChenyaqi/learn-anything](https://github.com/ChenChenyaqi/learn-anything) 的独立 V2 fork。它保留原始 MIT 许可证和署名，同时让学习数据持久、带修订、以本地优先。CLI 包目前为 private：请从本仓库的 `v2` 分支安装和运行。
 
 ## 快速开始
 
 ```bash
-# 交互模式 — 自动检测你的 AI 工具并提示选择
-npx learn-anything-cli init
+git clone --branch v2 https://github.com/eduardojvieira/learn-anything.git
+cd learn-anything
+pnpm install
+pnpm build
 
-# 指定工具
-npx learn-anything-cli init --tools claude
-
-# 或全局安装
-pnpm add -g learn-anything-cli   # npm install -g learn-anything-cli
-learn-anything init
+# 为学习项目生成集成，然后启动仪表盘。
+node packages/cli/bin/learn-anything.js init ../my-project --tools claude --lang zh-CN
+node packages/cli/bin/learn-anything.js serve ../my-project --no-open
 ```
 
-### Context7 集成 _(可选)_
+服务器会显示 `http://localhost:24278`（或下一个空闲端口）。LAN 访问是有意保留的：仅在可信本地网络中使用 `http://<你的-LAN-IP>:24278`。它没有认证层。
 
-执行 `init` 或 `update` 时会提示是否启用 **Context7** 文档验证。启用后，AI 会获取官方文档并对照权威来源验证其讲解内容——大幅提高教学准确性。
+## 使用七个工作流学习
 
-> **安装：** 运行 `npx ctx7 setup` 或访问 [Context7 文档](https://context7.com/docs/resources/all-clients) 查看你的 AI 工具的配置方式。
+`/learn:study` 是主工作流：它向确定性 runtime 请求下一步。其余工作流是专用入口。
 
-### 安装后 — 六个学习命令
+| 工作流                      | 用途                              |
+| --------------------------- | --------------------------------- |
+| `/learn:study [topic]`      | 计划并记录下一个确定性学习步骤。  |
+| `/learn:topic <topic>`      | 创建或检查 V2 主题。              |
+| `/learn:explain <concept>`  | 运行持久化的苏格拉底式讲解。      |
+| `/learn:practice <concept>` | 记录观察到的练习和纠正。          |
+| `/learn:review [topic]`     | 完成到期的 retrieval 复习。       |
+| `/learn:status [topic]`     | 读取派生掌握账本和下一步。        |
+| `/learn:quiz <concept>`     | 运行并评估持久化 retrieval 测验。 |
 
-| 命令                     | 功能                                      |
-| :----------------------- | :---------------------------------------- |
-| `/learn:topic <名称>`    | 初始化主题，生成知识图谱，跟踪进度        |
-| `/learn:explain <名称>`  | 递归式学习法 — 想挖多深就挖多深           |
-| `/learn:practice <名称>` | TDD 风格编码练习，结构化反馈              |
-| `/learn:review [名称]`   | 间隔重复复习，个性化下一步计划            |
-| `/learn:status [名称]`   | 知识图谱热力图 — 掌握度、练习次数、信心分 |
-| `/learn:quiz <名称>`     | 快速文字问答测验 — 批改并保存，可反复练习 |
+文档统一展示 slash 形式；但 Codex 和 Hermes 是仅 skills 的集成：当宿主不提供 slash command 时，调用相应 skill 或用自然语言提出请求。
 
-### 可视化学习仪表盘
+## V2 保证什么
 
-一键启动零配置的 Web 仪表盘来浏览你的学习数据：
+`learnctl` 是唯一的规范写入者。Agent 和仪表盘读取快照并提交带修订的请求；它们绝不直接编辑规范学习文件。
 
-```bash
-# 启动可视化仪表盘（无需 npm install）
-npx learn-anything-cli serve
+- `StateStore` 使用锁、compare-and-swap 修订、原子写入、journal 和恢复。
+- 主题拥有稳定 ID。显示编号（`1`、`1.1`、`1.1.1`）是派生的，不污染名称、slug 或 ID。
+- 状态记录先修条件、关系、证据、校准和复习状态。掌握度从证据派生；AI 不能任意标记为已掌握。
+- 学习引擎覆盖诊断、retrieval、自我解释、反馈、纠正、间隔、交错、迁移和延迟评估。调度器位于可替换的 FSRS-compatible 接口之后；V2 不声称实现了 FSRS。
 
-# 自定义端口
-npx learn-anything-cli serve --port 8080
+### 规范数据与派生视图
 
-# 禁止自动打开浏览器
-npx learn-anything-cli serve --no-open
+```text
+.learn/
+├── config.json                         # locale、时区、编号
+└── topics/<slug>/
+    ├── state.json                       # 规范 V2 主题状态
+    ├── state.v1.json.bak                # 仅由 V1 → V2 迁移创建
+    ├── knowledge-map.md                 # 派生视图
+    └── sessions/<uuid>/
+        ├── session.json                 # 规范会话
+        └── views/{en,es,zh-CN}.md       # 派生的本地化视图
 ```
 
-> 仪表盘已在 CLI 中预构建并随包发布 — 无需额外依赖或 `npm install`。
-> 如果已全局安装，也可以使用 `learn-anything serve`。
+不要把旧 Markdown、练习或测验当作规范状态。
 
-仪表盘提供：
+## 仪表盘和集成
 
-- **知识图谱** — Markdown 渲染的学习主题总览
-- **学习笔记** — 按知识域分类浏览所有学习会话笔记
-- **练习预览** — 带语法高亮查看起始代码、参考解答和练习记录
-- **暗色模式** — 明/暗主题切换
-- **国际化** — 完整的中英文界面
-- **热更新** — 添加或修改主题文件时自动刷新浏览器
+`serve` 打开 Mastery Ledger：一个 paper/serif 风格的派生掌握度、规范会话和可编辑苏格拉底回答视图。仪表盘写入使用修订（`If-Match`）和 idempotency key；过期更新会成为明确冲突，而不是静默覆盖。
 
-## 工作原理
+所有生成的集成都调用 `learnctl`。Codex 与 Hermes 在 `.agents/skills/` 下安装标准 skills；OpenCode 在 `.opencode/commands/` 下获得真实 commands；其他工具保留原有 skills/adapters。英语、西班牙语和简体中文（`en`、`es`、`zh-CN`）通过 `.learn/config.json` 在 CLI、skills 和仪表盘间共享。
 
-```
-你的项目/
-├── .claude/
-│   ├── commands/learn/          # Claude 专用斜杠命令
-│   └── skills/                  # 包含完整工作流指令的 skill 文件
-├── .cursor/commands/            # Cursor 专用命令格式
-├── .gemini/commands/learn/      # Gemini TOML 格式命令
-├── .codex/prompts/              # Codex prompt 文件
-│   ...                          # （30+ 种工具各有对应格式）
-│
-├── .learn/                      # 🧠 你的学习数据存在这里
-│   └── topics/
-│       └── typescript/
-│           ├── state.json           # 唯一数据源
-│           ├── knowledge-map.md     # 由 state.json 自动渲染
-│           ├── sessions/            # 会话历史，用于间隔重复
-│           ├── exercises/           # TDD 风格编码练习
-│           └── quizzes/             # 可复用的文字问答题库
-└── ...
-```
-
-每个 AI 工具通过**适配器模式**获得对应格式的文件——Claude 用 YAML frontmatter，Gemini 用 TOML，Cursor 用 Markdown 等。
-
-## 仓库结构
-
-```
-learn-anything/
-├── packages/
-│   ├── cli/                     # learn-anything-cli — 发布到 npm
-│   │   ├── site/                 # 仪表盘源码 (Vue 3 + Vite)
-│   │   ├── scripts/              # 构建脚本 (bundle-site.mjs)
-│   │   ├── src/
-│   │   │   ├── cli/             # Commander.js CLI 入口
-│   │   │   ├── core/            # 初始化、配置、命令生成、模板
-│   │   │   ├── i18n/            # en + zh-CN 多语言
-│   │   │   └── utils/           # 文件系统、交互式帮助函数
-│   │   ├── bin/                 # learn-anything 可执行文件
-│   │   └── package.json
-│   └── gui/                     # learn-anything-gui — 开发中 🚧
-│       └── README.md
-├── pnpm-workspace.yaml          # pnpm workspace 配置
-├── tsconfig.base.json           # 共享 TypeScript 编译选项
-├── package.json                 # 工作区根配置（私有）
-└── pnpm-lock.yaml
-```
-
-| 包                                     | npm                                                                                                                    | 说明                                             |
-| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------- |
-| [`learn-anything-cli`](./packages/cli) | [![npm](https://img.shields.io/npm/v/learn-anything-cli?color=blue)](https://www.npmjs.com/package/learn-anything-cli) | CLI 工具 — 为 30+ AI 工具生成 skill/command 文件 |
-| `learn-anything-gui`                   | _私有_                                                                                                                 | 图形化桌面界面 _(开发中)_                        |
-
-## 支持的 AI 工具
-
-> Manage、Amazon Q Developer、Antigravity、Auggie、Bob Shell、Claude Code、Cline、Codex、ForgeCode、CodeBuddy Code、Continue、CoStrict、Crush、Cursor、Factory Droid、Gemini CLI、GitHub Copilot、iFlow、Junie、Kilo Code、Kiro、OpenCode、Pi、Qoder、Lingma、Qwen Code、RooCode、Trae、Windsurf 及兼容 AGENTS.md 的助手。
-
-```bash
-# 更新已有 skill 文件到最新版本（自动检测已安装的工具）
-npx learn-anything-cli update
-```
+`init` 和 `update` 会在生成集成前串联 V0 → V1 → V2 迁移。V1 状态会备份，重跑是幂等的；无效状态或不安全路径会中止生成。`learnctl migrate` 仅保留给高级 runtime 使用。`--force` 只替换生成的集成文件；它不会绕过状态验证或 symlink/escape 保护。
 
 ## 开发
 
-### 前置条件
-
-- **Node.js** ≥ 20
-- **pnpm** ≥ 9
-
-### 环境搭建
-
 ```bash
-git clone https://github.com/ChenChenyaqi/learn-anything.git
-cd learn-anything
-pnpm install
+pnpm lint
+pnpm test
+pnpm build
+cd packages/cli
+npm pack --dry-run
+cd ../..
 ```
 
-### 常用命令
+请参阅 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解 fork 流程，参阅 [UPSTREAM.md](./UPSTREAM.md) 了解如何向原项目提取独立改进。
 
-| 命令              | 说明                          |
-| :---------------- | :---------------------------- |
-| `pnpm build`      | 构建所有包 (`tsc`)            |
-| `pnpm test`       | 运行所有测试 (`vitest run`)   |
-| `pnpm test:watch` | 监听模式运行测试              |
-| `pnpm dev`        | TypeScript 监听模式（所有包） |
-| `pnpm lint`       | 代码检查 (`eslint`)           |
-| `pnpm format`     | 格式化代码 (`prettier`)       |
-| `pnpm dev:site`   | 可视化仪表盘开发服务器        |
+## 许可证与署名
 
-### 单独包命令
-
-```bash
-pnpm -F learn-anything-cli build      # 仅构建 CLI
-pnpm -F learn-anything-cli test       # 仅测试 CLI
-pnpm -F learn-anything-cli dev:cli    # 构建并在本地运行 CLI
-```
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=ChenChenyaqi%2Flearn-anything&type=date&legend=top-left">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=ChenChenyaqi/learn-anything&type=date&theme=dark&legend=top-left" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=ChenChenyaqi/learn-anything&type=date&legend=top-left" />
-    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ChenChenyaqi/learn-anything&type=date&legend=top-left" />
-  </picture>
-</a>
-
-## 许可证
-
-[MIT](./LICENSE) © [yaqi chen](https://github.com/ChenChenyaqi)
-
----
-
-<p align="center">
-  <sub>用 ❤️ 为好奇心构建 · <a href="https://github.com/ChenChenyaqi/learn-anything">GitHub</a> · <a href="./CONTRIBUTING.md">贡献指南</a> · <a href="./CHANGELOG.md">更新日志</a></sub>
-</p>
+[MIT](./LICENSE) © [yaqi chen](https://github.com/ChenChenyaqi)。V2 作为 [eduardojvieira/learn-anything](https://github.com/eduardojvieira/learn-anything) fork 维护；原项目仍是 [ChenChenyaqi/learn-anything](https://github.com/ChenChenyaqi/learn-anything)。
