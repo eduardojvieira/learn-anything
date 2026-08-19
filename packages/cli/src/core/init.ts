@@ -195,13 +195,14 @@ export class InitCommand {
   }
 
   private hasToolDir(resolvedPath: string, tool: AIToolOption): boolean {
-    if (!tool.skillsDir) return false;
-    const dirPath = path.join(resolvedPath, tool.skillsDir);
-    try {
-      return fs.statSync(dirPath).isDirectory();
-    } catch {
-      return false;
-    }
+    return [tool.skillsDir, ...(tool.detectionPaths ?? [])].filter(Boolean).some((candidate) => {
+      try {
+        fs.statSync(path.join(resolvedPath, candidate!));
+        return true;
+      } catch {
+        return false;
+      }
+    });
   }
 
   private async interactiveSelect(tools: AIToolOption[]): Promise<AIToolOption[]> {

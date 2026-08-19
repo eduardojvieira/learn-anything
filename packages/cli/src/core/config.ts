@@ -46,7 +46,14 @@ export const AI_TOOLS: AIToolOption[] = [
     skillsDir: '.claude',
   },
   { name: 'Cline', value: 'cline', available: true, successLabel: 'Cline', skillsDir: '.cline' },
-  { name: 'Codex', value: 'codex', available: true, successLabel: 'Codex', skillsDir: '.agents' },
+  {
+    name: 'Codex',
+    value: 'codex',
+    available: true,
+    successLabel: 'Codex',
+    skillsDir: '.agents',
+    detectionPaths: ['.codex'],
+  },
   {
     name: 'ForgeCode',
     value: 'forgecode',

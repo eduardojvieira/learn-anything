@@ -85,6 +85,14 @@ describe('CLI Integration — init', () => {
     expect(fs.existsSync(path.join(skillsDir, 'learn-anything-topic', 'scripts'))).toBe(false);
   });
 
+  it('updates legacy Codex detection into project-local V2 skills', async () => {
+    fs.mkdirSync(path.join(tmpDir, '.codex'));
+    await new InitCommand({ update: true, context7: false }).execute(tmpDir);
+    expect(fs.readdirSync(path.join(tmpDir, '.agents', 'skills'))).toHaveLength(7);
+    expect(fs.existsSync(path.join(tmpDir, '.codex', 'prompts'))).toBe(false);
+    expect(fs.existsSync(path.join(tmpDir, '.opencode', 'commands'))).toBe(false);
+  });
+
   it('generates Hermes skills and OpenCode commands in their project-local locations', async () => {
     await new InitCommand({ tools: 'hermes,opencode', context7: false }).execute(tmpDir);
 
