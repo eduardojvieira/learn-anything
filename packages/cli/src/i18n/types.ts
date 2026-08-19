@@ -1,4 +1,4 @@
-export type SupportedLocale = 'zh-CN' | 'en';
+export type SupportedLocale = 'zh-CN' | 'en' | 'es';
 
 export interface ServeMessages {
   startingServer: string;
@@ -26,6 +26,8 @@ export interface CLIMessages {
   portOption: string;
   strictPortOption: string;
   noOpenOption: string;
+  context7Option: string;
+  noContext7Option: string;
   serveCommandDescription: string;
   serveHint: string;
 }
@@ -45,6 +47,13 @@ export interface InitMessages {
   context7Prompt: string;
   context7Enabled: string;
   context7SetupHint: string;
+  studyCommandDescription: string;
+  topicCommandDescription: string;
+  explainCommandDescription: string;
+  practiceCommandDescription: string;
+  reviewCommandDescription: string;
+  statusCommandDescription: string;
+  quizCommandDescription: string;
 }
 
 export interface LocaleMessages {

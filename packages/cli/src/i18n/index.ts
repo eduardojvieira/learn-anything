@@ -1,10 +1,12 @@
 import type { SupportedLocale, LocaleMessages } from './types.js';
 import { zhCN } from './locales/zh-CN.js';
 import { en } from './locales/en.js';
+import { es } from './locales/es.js';
 
 const messages: Record<SupportedLocale, LocaleMessages> = {
   'zh-CN': zhCN,
   en,
+  es,
 };
 
 export function getMessages(locale: SupportedLocale): LocaleMessages {
@@ -17,11 +19,12 @@ export function detectSystemLocale(): SupportedLocale {
   if (/^zh[_-]/i.test(langEnv)) {
     return 'zh-CN';
   }
+  if (/^es[_-]?/i.test(langEnv)) return 'es';
   return 'en';
 }
 
 export function resolveLocale(cliFlag?: string): SupportedLocale {
-  if (cliFlag === 'zh-CN' || cliFlag === 'en') {
+  if (cliFlag === 'zh-CN' || cliFlag === 'en' || cliFlag === 'es') {
     return cliFlag;
   }
   if (cliFlag) {

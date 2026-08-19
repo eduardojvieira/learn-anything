@@ -7,6 +7,7 @@ import { LEARN_DIR } from '../core/config.js';
 import { getMessages } from '../i18n/index.js';
 import type { SupportedLocale } from '../i18n/types.js';
 import { DEFAULT_PORT, findFreePort, isPortFree } from '../utils/port.js';
+import { loadOrInitializeLearnConfig } from './learn-config.js';
 
 export interface ServeOptions {
   targetPath?: string;
@@ -17,13 +18,13 @@ export interface ServeOptions {
 }
 
 export async function executeServe(options: ServeOptions): Promise<void> {
-  const locale = options.locale ?? 'en';
+  const resolvedPath = path.resolve(options.targetPath ?? '.');
+  const learnDir = path.join(resolvedPath, LEARN_DIR);
+  const topicsDir = path.join(resolvedPath, LEARN_DIR, 'topics');
+  const locale = (await loadOrInitializeLearnConfig(learnDir, options.locale)).state.locale;
   const msg = getMessages(locale);
   const m = msg.serve;
   const cli = msg.cli;
-
-  const resolvedPath = path.resolve(options.targetPath ?? '.');
-  const topicsDir = path.join(resolvedPath, LEARN_DIR, 'topics');
 
   if (!fs.existsSync(topicsDir)) {
     fs.mkdirSync(topicsDir, { recursive: true });

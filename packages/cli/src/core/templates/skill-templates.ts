@@ -1,6 +1,10 @@
 export type { SkillTemplate, CommandTemplate } from './types.js';
 
 export {
+  getLearnStudySkillTemplate,
+  getLearnStudyCommandTemplate,
+} from './workflows/learn-study.js';
+export {
   getLearnTopicSkillTemplate,
   getLearnTopicCommandTemplate,
 } from './workflows/learn-topic.js';

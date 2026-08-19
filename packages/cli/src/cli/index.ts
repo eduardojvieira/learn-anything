@@ -15,10 +15,7 @@ const langIdx = process.argv.indexOf('--lang');
 const earlyLocale = langIdx !== -1 ? resolveLocale(process.argv[langIdx + 1]) : resolveLocale();
 const m = getMessages(earlyLocale);
 
-program
-  .name('learn-anything')
-  .description('AI-powered recursive learning system with Socratic method and TDD practice')
-  .version(version);
+program.name('learn-anything').description(m.cli.programDescription).version(version);
 
 const availableToolIds = AI_TOOLS.filter((tool) => tool.skillsDir).map((tool) => tool.value);
 
@@ -28,8 +25,8 @@ program
   .option('--tools <tools>', m.cli.toolsOptionDescription(availableToolIds.join(', ')))
   .option('--force', m.cli.forceOption)
   .option('--lang <locale>', m.cli.langOption)
-  .option('--context7', 'Enable Context7 documentation verification')
-  .option('--no-context7', 'Disable Context7 documentation verification')
+  .option('--context7', m.cli.context7Option)
+  .option('--no-context7', m.cli.noContext7Option)
   .action(
     async (
       targetPath = '.',
@@ -66,10 +63,11 @@ program
           tools: options?.tools,
           force: options?.force,
           locale: cliLocale,
+          configLocale: options?.lang ? cliLocale : undefined,
           context7: options?.context7,
         });
-        await initCommand.execute(targetPath);
-        console.log(chalk.dim(mc.serveHint));
+        const effectiveLocale = await initCommand.execute(targetPath);
+        console.log(chalk.dim(getMessages(effectiveLocale).cli.serveHint));
       } catch (error) {
         console.log();
         console.error(chalk.red(mc.errorPrefix((error as Error).message)));
@@ -95,10 +93,11 @@ program
         update: true,
         force: options?.force ?? true,
         locale: cliLocale,
+        configLocale: options?.lang ? cliLocale : undefined,
       });
-      await initCommand.execute(resolvedPath);
-      console.log(chalk.green(mc.updateComplete));
-      console.log(chalk.dim(mc.serveHint));
+      const effectiveLocale = await initCommand.execute(resolvedPath);
+      console.log(chalk.green(getMessages(effectiveLocale).cli.updateComplete));
+      console.log(chalk.dim(getMessages(effectiveLocale).cli.serveHint));
     } catch (error) {
       console.log();
       console.error(chalk.red(mc.errorPrefix((error as Error).message)));
@@ -119,7 +118,8 @@ program
       options?: { port?: number; strictPort?: boolean; open?: boolean; lang?: string },
     ) => {
       const cliLocale = resolveLocale(options?.lang);
-      const mc = cliLocale !== earlyLocale ? getMessages(cliLocale).cli : m.cli;
+      const selectedLocale = options?.lang ? cliLocale : undefined;
+      const mc = options?.lang ? getMessages(cliLocale).cli : m.cli;
       try {
         const { executeServe } = await import('../core/serve.js');
         await executeServe({
@@ -127,7 +127,7 @@ program
           port: options?.port,
           strictPort: options?.strictPort,
           open: options?.open,
-          locale: cliLocale,
+          locale: selectedLocale,
         });
       } catch (error) {
         console.log();

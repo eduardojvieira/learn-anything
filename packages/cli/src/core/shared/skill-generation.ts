@@ -1,10 +1,12 @@
 import {
+  getLearnStudySkillTemplate,
   getLearnTopicSkillTemplate,
   getLearnExplainSkillTemplate,
   getLearnPracticeSkillTemplate,
   getLearnReviewSkillTemplate,
   getLearnStatusSkillTemplate,
   getLearnQuizSkillTemplate,
+  getLearnStudyCommandTemplate,
   getLearnTopicCommandTemplate,
   getLearnExplainCommandTemplate,
   getLearnPracticeCommandTemplate,
@@ -28,6 +30,11 @@ export interface CommandTemplateEntry {
 
 export function getSkillTemplates(): SkillTemplateEntry[] {
   return [
+    {
+      template: getLearnStudySkillTemplate(),
+      dirName: 'learn-anything-study',
+      workflowId: 'study',
+    },
     {
       template: getLearnTopicSkillTemplate(),
       dirName: 'learn-anything-topic',
@@ -63,6 +70,7 @@ export function getSkillTemplates(): SkillTemplateEntry[] {
 
 export function getCommandTemplates(): CommandTemplateEntry[] {
   return [
+    { template: getLearnStudyCommandTemplate(), id: 'study' },
     { template: getLearnTopicCommandTemplate(), id: 'topic' },
     { template: getLearnExplainCommandTemplate(), id: 'explain' },
     { template: getLearnPracticeCommandTemplate(), id: 'practice' },
@@ -95,7 +103,7 @@ export function generateSkillContent(
 
   return `---
 name: ${template.name}
-description: ${template.description}
+description: ${JSON.stringify(template.description)}
 license: ${template.license || 'MIT'}
 compatibility: ${template.compatibility || 'Requires learn-anything CLI.'}
 metadata:

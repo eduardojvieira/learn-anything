@@ -28,7 +28,7 @@ import {
 /*  i18n                                                              */
 /* ------------------------------------------------------------------ */
 
-type Locale = 'en' | 'zh-CN';
+type Locale = 'en' | 'es' | 'zh-CN';
 
 interface Strings {
   // Single topic
@@ -137,7 +137,12 @@ const ZH_CN: Strings = {
   noData: (path) => `📭 未找到学习数据: ${path}`,
 };
 
-const STRINGS: Record<Locale, Strings> = { en: EN, 'zh-CN': ZH_CN };
+const ES: Strings = {
+  title: (topic) => `🌟 Estado de aprendizaje: ${topic}`, mastered: 'Dominado', active: 'En curso', practice: 'Práctica', unexplored: 'Sin explorar', progress: 'Progreso', statsTitle: '📊 Estadísticas', lastPractice: (name, rel) => `💪 Última práctica: ${name} (${rel})`, startedLearning: (date) => `📅 Inicio: ${date}`, daysLearning: (days) => `⏱️  Días aprendiendo: ${days}`, legend: 'Leyenda',
+  statusLabel: { mastered: 'dominado', in_progress: 'en curso', needs_practice: 'necesita práctica', unexplored: 'sin explorar' }, statusMeaning: { mastered: 'Dominado — práctica aprobada y confianza alta', in_progress: 'En curso — iniciado pero sin dominar', needs_practice: 'Necesita práctica — requiere refuerzo', unexplored: 'Sin explorar — todavía no empezó' }, practiceCount: (n) => `${n} práctica${n === 1 ? '' : 's'}`, confidence: (pct) => `${pct}% de confianza`, relativeToday: 'hoy', relativeYesterday: 'ayer', relativeDaysAgo: (n) => `hace ${n} días`, allTopicsTitle: '🌟 Estado de aprendizaje — todos los temas', topic: 'Tema', days: 'Días', total: 'Total', noTopics: '📭 No se encontraron temas de aprendizaje.', startJourney: 'Ejecutá `/learn <tema>` para iniciar tu aprendizaje.', noData: (p) => `📭 No hay datos de aprendizaje en ${p}`,
+};
+
+const STRINGS: Record<Locale, Strings> = { en: EN, es: ES, 'zh-CN': ZH_CN };
 
 /* ------------------------------------------------------------------ */
 /*  Display width helpers                                             */
@@ -468,8 +473,8 @@ export function renderAllTopics(summaries: TopicSummary[], now?: number, locale:
 function usage(): never {
   const script = process.argv[1]?.split('/').pop() || 'status.mjs';
   console.error(`Usage:`);
-  console.error(`  node ${script} [--locale en|zh-CN] <topic-dir>`);
-  console.error(`  node ${script} --all [--locale en|zh-CN] <topics-dir>`);
+  console.error(`  node ${script} [--locale en|es|zh-CN] <topic-dir>`);
+  console.error(`  node ${script} --all [--locale en|es|zh-CN] <topics-dir>`);
   process.exit(1);
 }
 
@@ -489,10 +494,10 @@ function main(): void {
       isAll = true;
     } else if (args[i] === '--locale' && args[i + 1]) {
       const val = args[++i];
-      if (val === 'en' || val === 'zh-CN') {
+      if (val === 'en' || val === 'es' || val === 'zh-CN') {
         locale = val;
       } else {
-        console.error(`Unknown locale: ${val}. Supported: en, zh-CN`);
+        console.error(`Unknown locale: ${val}. Supported: en, es, zh-CN`);
         process.exit(1);
       }
     } else if (!args[i].startsWith('--')) {

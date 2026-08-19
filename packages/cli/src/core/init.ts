@@ -2,7 +2,6 @@ import path from 'path';
 import chalk from 'chalk';
 import * as fs from 'fs';
 import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
 import { FileSystemUtils } from '../utils/file-system.js';
 import { AI_TOOLS, AIToolOption, LEARN_DIR } from './config.js';
 import { isInteractive } from '../utils/interactive.js';
@@ -11,6 +10,7 @@ import { getSkillTemplates, getCommandContents, generateSkillContent } from './s
 import type { SupportedLocale } from '../i18n/types.js';
 import { getMessages } from '../i18n/index.js';
 import { CONTEXT7_GUIDANCE } from './templates/context7-guidance.js';
+import { initializeLearnConfig } from './learn-config.js';
 
 const require = createRequire(import.meta.url);
 const { version: VERSION } = require('../../package.json');
@@ -21,14 +21,16 @@ type InitCommandOptions = {
   locale?: SupportedLocale;
   update?: boolean;
   context7?: boolean;
+  configLocale?: SupportedLocale;
 };
 
 export class InitCommand {
   private readonly toolsArg?: string;
   private readonly force: boolean;
-  private readonly locale: SupportedLocale;
+  private locale: SupportedLocale;
   private readonly isUpdate: boolean;
   private readonly context7Arg?: boolean;
+  private readonly configLocale?: SupportedLocale;
   private context7Enabled: boolean = false;
 
   constructor(options: InitCommandOptions = {}) {
@@ -37,11 +39,11 @@ export class InitCommand {
     this.locale = options.locale ?? 'en';
     this.isUpdate = options.update ?? false;
     this.context7Arg = options.context7;
+    this.configLocale = options.configLocale;
   }
 
-  async execute(targetPath: string = '.'): Promise<void> {
+  async execute(targetPath: string = '.'): Promise<SupportedLocale> {
     const resolvedPath = path.resolve(targetPath);
-    const m = getMessages(this.locale);
 
     // Ensure target directory exists
     await FileSystemUtils.ensureDir(resolvedPath);
@@ -50,6 +52,9 @@ export class InitCommand {
     const learnDir = path.join(resolvedPath, LEARN_DIR);
     const topicsDir = path.join(learnDir, 'topics');
     await FileSystemUtils.ensureDir(topicsDir);
+    const config = await initializeLearnConfig(learnDir, this.configLocale);
+    this.locale = config.state.locale;
+    const m = getMessages(this.locale);
 
     // Run v0→v1 migration for any existing learning data
     const { migrateAll } = await import('./learn-protocol/index.js');
@@ -91,7 +96,7 @@ export class InitCommand {
           ),
         ),
       );
-      return;
+      return this.locale;
     }
 
     // Context7 setup
@@ -113,42 +118,33 @@ export class InitCommand {
     console.log('');
     console.log(chalk.bold(m.init.initComplete));
     console.log(chalk.dim(m.init.globalDataPath(LEARN_DIR)));
-    console.log(chalk.dim(m.init.startLearning('/learn javascript')));
+    console.log(chalk.dim(m.init.startLearning('/learn:topic javascript')));
 
     console.log(chalk.bold(m.init.availableCommands));
     const cmd = m.init.cmdLine;
     console.log(
-      cmd(
-        chalk.cyan('/learn:topic <topic-name>'),
-        chalk.dim('      — Initialize or load a learning topic'),
-      ),
+      cmd(chalk.cyan('/learn:study [topic-name]'), chalk.dim(m.init.studyCommandDescription)),
+    );
+    console.log(
+      cmd(chalk.cyan('/learn:topic <topic-name>'), chalk.dim(m.init.topicCommandDescription)),
+    );
+    console.log(
+      cmd(chalk.cyan('/learn:explain <concept-name>'), chalk.dim(m.init.explainCommandDescription)),
     );
     console.log(
       cmd(
-        chalk.cyan('/learn:explain <concept-name>'),
-        chalk.dim('  — Recursively deep-dive into a concept'),
+        chalk.cyan('/learn:practice <concept-name>'),
+        chalk.dim(m.init.practiceCommandDescription),
       ),
     );
     console.log(
-      cmd(chalk.cyan('/learn:practice <concept-name>'), chalk.dim(' — TDD-style coding exercises')),
+      cmd(chalk.cyan('/learn:review [topic-name]'), chalk.dim(m.init.reviewCommandDescription)),
     );
     console.log(
-      cmd(
-        chalk.cyan('/learn:review [topic-name]'),
-        chalk.dim('    — Review progress, spaced repetition recommendations'),
-      ),
+      cmd(chalk.cyan('/learn:status [topic-name]'), chalk.dim(m.init.statusCommandDescription)),
     );
     console.log(
-      cmd(
-        chalk.cyan('/learn:status [topic-name]'),
-        chalk.dim('    — Visualize learning state as knowledge map heatmap'),
-      ),
-    );
-    console.log(
-      cmd(
-        chalk.cyan('/learn:quiz <concept-name>'),
-        chalk.dim('   — Quick text Q&A quiz (saved for re-practice)'),
-      ),
+      cmd(chalk.cyan('/learn:quiz <concept-name>'), chalk.dim(m.init.quizCommandDescription)),
     );
     console.log('');
 
@@ -156,6 +152,7 @@ export class InitCommand {
       console.log(chalk.dim(m.init.context7SetupHint));
       console.log('');
     }
+    return this.locale;
   }
 
   private async promptContext7(): Promise<boolean> {
@@ -221,65 +218,7 @@ export class InitCommand {
           : undefined,
       );
       await FileSystemUtils.writeFile(skillFile, content);
-
-      const scriptsDir = path.join(skillDir, 'scripts');
-
-      // topic / explain / practice / quiz → utils.mjs + render.mjs
-      if (
-        entry.dirName === 'learn-anything-topic' ||
-        entry.dirName === 'learn-anything-explain' ||
-        entry.dirName === 'learn-anything-practice' ||
-        entry.dirName === 'learn-anything-quiz'
-      ) {
-        await FileSystemUtils.writeFile(
-          path.join(scriptsDir, 'utils.mjs'),
-          this.readCompiledScript('utils.mjs'),
-        );
-        await FileSystemUtils.writeFile(
-          path.join(scriptsDir, 'render.mjs'),
-          this.readCompiledScript('render.mjs'),
-        );
-      }
-      // quiz -> validate-quiz.mjs (deck validation)
-      if (entry.dirName === 'learn-anything-quiz') {
-        await FileSystemUtils.writeFile(
-          path.join(scriptsDir, 'validate-quiz.mjs'),
-          this.readCompiledScript('validate-quiz.mjs'),
-        );
-      }
-      // topic -> init-sessions.mjs
-      if (entry.dirName === 'learn-anything-topic') {
-        await FileSystemUtils.writeFile(
-          path.join(scriptsDir, 'init-sessions.mjs'),
-          this.readCompiledScript('init-sessions.mjs'),
-        );
-      }
-
-      // status → utils.mjs + status.mjs
-      if (entry.dirName === 'learn-anything-status') {
-        await FileSystemUtils.writeFile(
-          path.join(scriptsDir, 'utils.mjs'),
-          this.readCompiledScript('utils.mjs'),
-        );
-        await FileSystemUtils.writeFile(
-          path.join(scriptsDir, 'status.mjs'),
-          this.readCompiledScript('status.mjs'),
-        );
-      }
-
-      // review → no scripts needed
     }
-  }
-
-  /** Read a compiled script from dist/scripts/ (bundled alongside this module). */
-  private readCompiledScript(filename: string): string {
-    const scriptPath = path.resolve(
-      path.dirname(fileURLToPath(import.meta.url)),
-      '..',
-      'scripts',
-      filename,
-    );
-    return fs.readFileSync(scriptPath, 'utf-8');
   }
 
   private async generateCommandsForTool(resolvedPath: string, tool: AIToolOption): Promise<void> {
@@ -296,14 +235,16 @@ export class InitCommand {
   }
 }
 
-const DOC_VERIFICATION_WORKFLOWS = new Set(['topic', 'explain', 'practice', 'quiz']);
+const DOC_VERIFICATION_WORKFLOWS = new Set(['study', 'topic', 'explain', 'practice', 'quiz']);
 
 function isDocVerificationTemplate(workflowId: string): boolean {
   return DOC_VERIFICATION_WORKFLOWS.has(workflowId);
 }
 
 function injectContext7Guidance(instructions: string): string {
-  const marker = '\n## Command:';
+  const marker = instructions.includes('\n## Decision Gates')
+    ? '\n## Decision Gates'
+    : '\n## Execution Steps';
   const index = instructions.indexOf(marker);
   if (index === -1) return instructions + CONTEXT7_GUIDANCE;
   return instructions.slice(0, index) + CONTEXT7_GUIDANCE + instructions.slice(index);

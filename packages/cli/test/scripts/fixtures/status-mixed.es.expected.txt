@@ -1,0 +1,40 @@
+🌟 Estado de aprendizaje: JavaScript
+
+Language Basics  [3/4 dominado]
+├── 🟢 Variables & Types  dominado · 3 prácticas · 95% de confianza
+├── 🟢 Operators  dominado · 2 prácticas · 90% de confianza
+├── 🟢 Control Flow  dominado · 1 práctica · 85% de confianza
+└── ⚪ Type Coercion  sin explorar
+
+Functions  [1/5 dominado]
+├── 🔵 Function Declarations  en curso · 40% de confianza
+├── 🟢 Scope & Closures  dominado · 5 prácticas · 92% de confianza
+├── ⚪ this Keyword  sin explorar
+├── ⚪ Arrow Functions  sin explorar
+└── ⚪ Higher-Order Functions  sin explorar
+
+Objects & Prototypes  [0/4 dominado]
+├── 🟠 Object Literals  necesita práctica · 1 práctica · 35% de confianza
+├── ⚪ Constructors  sin explorar
+├── ⚪ prototype & __proto__  sin explorar
+└── ⚪ Inheritance Patterns  sin explorar
+
+┌──────────────────────────────────────────────────────────┐
+│    📊 Estadísticas                                       │
+├──────────┬──────────┬──────────┬──────────────┬──────────┤
+│ Dominado │ En curso │ Práctica │ Sin explorar │ Progreso │
+│ 4 🟢     │ 1 🔵     │ 1 🟠     │ 7 ⚪          │ 31%      │
+├──────────┴──────────┴──────────┴──────────────┴──────────┤
+│ 💪 Última práctica: Scope & Closures (ayer)              │
+│ 📅 Inicio: 2026-05-28                                    │
+│ ⏱️  Días aprendiendo: 8                                  │
+└──────────────────────────────────────────────────────────┘
+
+## Leyenda
+
+| Icon | Status | Meaning |
+|------|--------|---------|
+| 🟢 | dominado | Dominado — práctica aprobada y confianza alta |
+| 🔵 | en curso | En curso — iniciado pero sin dominar |
+| 🟠 | necesita práctica | Necesita práctica — requiere refuerzo |
+| ⚪ | sin explorar | Sin explorar — todavía no empezó |

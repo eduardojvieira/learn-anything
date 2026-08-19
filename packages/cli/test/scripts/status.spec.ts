@@ -150,6 +150,14 @@ describe('renderStatus() — zh-CN', () => {
   });
 });
 
+describe('renderStatus() — es', () => {
+  it('mixed statuses', () => {
+    expect(renderStatus(loadFixture('status-mixed.json'), NOW, 'es')).toBe(
+      loadExpected('status-mixed.es.expected.txt'),
+    );
+  });
+});
+
 // ===========================================================================
 // renderAllTopics() — English
 // ===========================================================================
@@ -199,5 +207,19 @@ describe('renderAllTopics() — zh-CN', () => {
   it('empty topics list', () => {
     const expected = loadExpected('status-all-topics-empty.zh-CN.expected.txt');
     expect(renderAllTopics([], NOW, 'zh-CN')).toBe(expected);
+  });
+});
+
+describe('renderAllTopics() — es', () => {
+  it('multiple topics', () => {
+    expect(renderAllTopics(MIXED_SUMMARIES, NOW, 'es')).toBe(
+      loadExpected('status-all-topics.es.expected.txt'),
+    );
+  });
+
+  it('empty topics list', () => {
+    expect(renderAllTopics([], NOW, 'es')).toBe(
+      loadExpected('status-all-topics-empty.es.expected.txt'),
+    );
   });
 });

@@ -1,0 +1,4 @@
+🌟 Estado de aprendizaje — todos los temas
+
+📭 No se encontraron temas de aprendizaje.
+Ejecutá `/learn <tema>` para iniciar tu aprendizaje.
