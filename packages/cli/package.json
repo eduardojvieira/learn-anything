@@ -30,7 +30,8 @@
     }
   },
   "bin": {
-    "learn-anything": "./bin/learn-anything.js"
+    "learn-anything": "./bin/learn-anything.js",
+    "learnctl": "./bin/learnctl.js"
   },
   "files": [
     "dist",
