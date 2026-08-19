@@ -2,9 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
   pull_request:
-    branches: [main, develop]
 
 jobs:
   lint:
@@ -79,3 +77,5 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - run: npm pack --dry-run
+        working-directory: packages/cli

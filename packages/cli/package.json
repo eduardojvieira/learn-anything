@@ -1,6 +1,6 @@
 {
   "name": "learn-anything-cli",
-  "version": "1.6.3",
+  "version": "2.0.0",
   "description": "AI-powered recursive learning system with Socratic method and TDD practice",
   "keywords": [
     "learn-anything-cli",
@@ -12,17 +12,15 @@
     "socratic",
     "tdd"
   ],
-  "homepage": "https://github.com/ChenChenyaqi/learn-anything",
+  "homepage": "https://github.com/eduardojvieira/learn-anything",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ChenChenyaqi/learn-anything"
+    "url": "https://github.com/eduardojvieira/learn-anything"
   },
   "license": "MIT",
   "author": "yaqi chen",
   "type": "module",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -42,7 +40,7 @@
     "!dist/**/*.map"
   ],
   "scripts": {
-    "build": "node scripts/bundle-site.mjs && tsc",
+    "build": "node scripts/clean-dist.mjs && node scripts/bundle-site.mjs && tsc",
     "dev": "tsc --watch",
     "dev:cli": "pnpm build && node bin/learn-anything.js",
     "test": "vitest run",
