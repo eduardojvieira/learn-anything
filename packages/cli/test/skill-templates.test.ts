@@ -91,6 +91,20 @@ describe('V2 workflow templates', () => {
 
   it('keeps each specialized workflow on its runtime responsibility', () => {
     expect(getLearnTopicSkillTemplate().instructions).toContain('init-topic');
+    expect(getLearnTopicSkillTemplate().description).toContain('author');
+    expect(getLearnTopicSkillTemplate().instructions).toContain('validate-course');
+    expect(getLearnTopicSkillTemplate().instructions).toContain('exercises/<slug>/README.md');
+    expect(getLearnTopicSkillTemplate().instructions).toContain('fresh precision/contract review');
+    expect(getLearnTopicSkillTemplate().instructions).toContain('"topic":"snapshot.state.topic"');
+    expect(getLearnTopicSkillTemplate().instructions).toContain(
+      '"concept_name":"concept.name","created":"YYYY-MM-DD HH:mm:ss","questions":[...]',
+    );
+    expect(getLearnTopicSkillTemplate().instructions).toContain(
+      'id,type,gradeable,prompt,explanation,answer',
+    );
+    expect(getLearnTopicSkillTemplate().instructions).toContain(
+      'multiple_choice|multi_select|true_false → exact',
+    );
     expect(getLearnExplainSkillTemplate().instructions).toContain('record-session');
     expect(getLearnPracticeSkillTemplate().instructions).toContain('record-assessment');
     expect(getLearnReviewSkillTemplate().instructions).toContain('again');

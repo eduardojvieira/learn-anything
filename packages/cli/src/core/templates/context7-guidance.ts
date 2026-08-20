@@ -19,5 +19,5 @@ When teaching about a specific library or framework, verify your explanations ag
 3. **Cross-reference**: Ensure your explanations, code examples, and API usage match the official documentation
 4. **Defer to docs**: If your explanation conflicts with official documentation, use the official documentation as the authoritative source
 
-If Context7 MCP tools are not available in your environment, proceed with your built-in knowledge.
+If Context7 is unavailable, use another primary-source lookup. If no verification tool is available, label the claim unverified or omit it; never present version-specific memory as current fact.
 `;

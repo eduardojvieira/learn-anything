@@ -334,6 +334,7 @@ describe('CLI Integration — init', () => {
       'utf8',
     );
     expect(enabled).toContain('## Documentation Verification (Context7)');
+    expect(enabled).toContain('never present version-specific memory as current fact');
     expect(enabled.indexOf('## Documentation Verification (Context7)')).toBeLessThan(
       enabled.indexOf('## Decision Gates'),
     );
