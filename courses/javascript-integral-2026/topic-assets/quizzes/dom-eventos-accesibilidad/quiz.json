@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "dom-eventos-accesibilidad",
+  "concept_name": "DOM, eventos, formularios y accesibilidad",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "delegacion-abort",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué permite limpiar varios listeners registrados con la misma signal?",
+      "options": [
+        "removeEventListener sin callback",
+        "AbortController.abort()",
+        "event.stopPropagation()",
+        "preventDefault()"
+      ],
+      "answer": "AbortController.abort()",
+      "explanation": "Al abortar el controller, EventTarget elimina los listeners registrados con esa AbortSignal. stopPropagation sólo afecta el recorrido del evento actual."
+    },
+    {
+      "id": "form-native",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná prácticas correctas para un formulario accesible.",
+      "options": [
+        "Usar label asociado al control",
+        "Usar placeholder como único nombre",
+        "Preferir required y tipos HTML para restricciones comunes",
+        "Mover foco con tabindex positivo",
+        "Informar un error dinámico de forma entendible"
+      ],
+      "answer": [
+        "Usar label asociado al control",
+        "Preferir required y tipos HTML para restricciones comunes",
+        "Informar un error dinámico de forma entendible"
+      ],
+      "explanation": "El label nombra el control; la validación nativa cubre restricciones declarables. El placeholder desaparece al escribir y tabindex positivo altera el orden natural."
+    },
+    {
+      "id": "rendering",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Tras cambiar una clase, ¿qué afirmación es correcta?",
+      "options": [
+        "Siempre se ejecutan parsing, layout y paint completos",
+        "El navegador puede recalcular style y decide el trabajo posterior según el cambio",
+        "requestAnimationFrame corre en un Worker",
+        "Una microtask permite pintar entre cada callback"
+      ],
+      "answer": "El navegador puede recalcular style y decide el trabajo posterior según el cambio",
+      "explanation": "El pipeline depende de la invalidez producida: un cambio puede requerir composición, paint o layout. Las microtasks se agotan antes de que el host pueda avanzar al render."
+    },
+    {
+      "id": "workers-performance",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná afirmaciones correctas sobre aislamiento y medición.",
+      "options": [
+        "Un Worker comparte el DOM con la página",
+        "postMessage puede transferir un ArrayBuffer",
+        "Un Service Worker que controla al cliente y maneja fetch puede responder sus requests",
+        "PerformanceObserver permite observar entradas de rendimiento",
+        "User Timing reemplaza una medición de interacción real"
+      ],
+      "answer": [
+        "postMessage puede transferir un ArrayBuffer",
+        "Un Service Worker que controla al cliente y maneja fetch puede responder sus requests",
+        "PerformanceObserver permite observar entradas de rendimiento"
+      ],
+      "explanation": "Workers no tocan el DOM; comunican por mensajes. Un Service Worker instalado y activo no intercepta por sí solo: debe controlar al cliente y manejar fetch, normalmente con respondWith. User Timing mide marcas propias, pero no reemplaza métricas de usuario ni un perfil de long tasks."
+    },
+    {
+      "id": "a11y-review",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Para hacer clickeable una tarjeta alcanza con un div y un listener click; después optimizamos teclado, foco y memoria’. Incluí también qué limpiarías al desmontar.",
+      "answer": "Usaría un button o link nativo según la acción; conserva teclado, foco y semántica. Si no hubiera alternativa, implementaría role, nombre, activación con Enter/Espacio y foco visible. Agruparía listeners y observadores en AbortController/disconnect al desmontar para no retener nodos.",
+      "explanation": "La accesibilidad básica no es una mejora posterior. Los listeners, observers y closures que alcanzan nodos retirados pueden mantener memoria y producir comportamiento duplicado."
+    }
+  ]
+}

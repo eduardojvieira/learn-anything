@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "fetch-almacenamiento-seguridad",
+  "concept_name": "Fetch, URLs, almacenamiento y seguridad web",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "http-error",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué hace `await fetch('/missing')` si el servidor responde HTTP 404?",
+      "options": [
+        "Rechaza siempre",
+        "Resuelve con Response; hay que revisar ok o status",
+        "Devuelve null",
+        "Sólo rechaza en Firefox"
+      ],
+      "answer": "Resuelve con Response; hay que revisar ok o status",
+      "explanation": "fetch rechaza por fallas de solicitud/red o abort, no por el significado HTTP de 404 o 503. Un cliente debe evaluar response.ok antes de leer el cuerpo como éxito."
+    },
+    {
+      "id": "credentials",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Cuál es el valor por defecto de credentials en fetch?",
+      "options": ["include", "omit", "same-origin", "Depende del método HTTP"],
+      "answer": "same-origin",
+      "explanation": "El valor por defecto es same-origin: envía credenciales en solicitudes same-origin, no las amplía automáticamente a otro origin. include exige además una configuración CORS compatible para lectura cross-origin."
+    },
+    {
+      "id": "cors",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre SOP y CORS.",
+      "options": [
+        "CORS permite al navegador exponer una respuesta cross-origin a JavaScript",
+        "CORS reemplaza autenticación y autorización del servidor",
+        "CORS no es autorización del servidor",
+        "no-cors permite leer libremente body y headers"
+      ],
+      "answer": [
+        "CORS permite al navegador exponer una respuesta cross-origin a JavaScript",
+        "CORS no es autorización del servidor"
+      ],
+      "explanation": "SOP limita lectura entre origins y CORS es el protocolo por el que el servidor habilita esa lectura al navegador. No autentica al usuario ni decide permisos del recurso: el servidor debe verificar ambos por su cuenta."
+    },
+    {
+      "id": "opaque",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Una respuesta de fetch con mode: 'no-cors' puede ser opaca: status 0 y body/headers no legibles por JavaScript.",
+      "answer": true,
+      "explanation": "no-cors no arregla una API que necesitás leer. La respuesta opaca es intencionalmente inaccesible; sirve sólo cuando no necesitás inspeccionarla, por ejemplo ciertos recursos de caché."
+    },
+    {
+      "id": "storage-security",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Guardo el access token en localStorage, CORS ya protege la API y si fetch recibe 500 entra al catch’.",
+      "answer": "localStorage es legible por JavaScript del origin y por eso XSS puede exfiltrar el token; CORS no autoriza el servidor; 500 resuelve fetch con Response y debe verificarse con ok/status. Cookies HttpOnly reducen exposición a XSS pero requieren defensa CSRF y atributos SameSite/Secure adecuados.",
+      "explanation": "El modelo separa exposición al script, autenticación/autorización del servidor y transporte HTTP. catch sigue siendo necesario para red, URL inválida y AbortError."
+    }
+  ]
+}
