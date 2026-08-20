@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "paradigmas-modelado",
+  "concept_name": "Paradigmas y modelado en JavaScript",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "En un modelo de orden, ¿cuál es una responsabilidad adecuada del objeto orden?",
+      "options": [
+        "Rechazar una transición que no salga de su estado actual",
+        "Elegir el color de todos los botones de la aplicación",
+        "Abrir una conexión HTTP para cada lectura",
+        "Conocer la estructura interna de cada consumidor"
+      ],
+      "answer": "Rechazar una transición que no salga de su estado actual",
+      "explanation": "La orden protege su invariante de transición. La UI y el transporte son responsabilidades de otros bordes."
+    },
+    {
+      "id": "q2",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Elegí las dos afirmaciones correctas sobre composición e invariantes.",
+      "options": [
+        "Una política compuesta puede reemplazarse sin inventar una jerarquía de clases",
+        "El estado derivado conviene recalcularlo desde la fuente de verdad",
+        "Duplicar una etiqueta derivada elimina toda inconsistencia",
+        "Cualquier combinación de capacidades respeta automáticamente el dominio"
+      ],
+      "answer": [
+        "Una política compuesta puede reemplazarse sin inventar una jerarquía de clases",
+        "El estado derivado conviene recalcularlo desde la fuente de verdad"
+      ],
+      "explanation": "La composición reduce acoplamiento, pero cada borde debe preservar invariantes explícitos. Duplicar estado crea sincronización adicional."
+    },
+    {
+      "id": "q3",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "SOLID obliga a aplicar una interfaz o patrón aunque el problema tenga una sola variante estable.",
+      "answer": false,
+      "explanation": "SOLID son heurísticas para detectar acoplamiento y cambios costosos, no una obligación de agregar abstracciones sin variación real."
+    },
+    {
+      "id": "q4",
+      "type": "fill_in_blank",
+      "gradeable": "accepted",
+      "prompt": "Completar: en una máquina de estados, el par estado actual + evento determina una ____ permitida o un rechazo.",
+      "answer": "transición",
+      "accepted_answers": ["transición", "transicion"],
+      "explanation": "La tabla de transiciones hace visibles los caminos válidos y convierte los imposibles en errores cercanos a la causa."
+    },
+    {
+      "id": "q5",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Una pantalla guarda `status`, `label` y `canShip` por separado. Corregí el modelo: distinguí el evento de dominio que cambia `status` de la notificación emitida después, e indicá qué datos derivarías.",
+      "answer": "evaluación cualitativa",
+      "explanation": "La respuesta debe conservar una fuente de verdad y derivar label/canShip. Debe separar, por ejemplo, el evento de dominio `pay` que produce la transición de la notificación `orderPaid` posterior; también debe nombrar el costo de la duplicación."
+    }
+  ]
+}

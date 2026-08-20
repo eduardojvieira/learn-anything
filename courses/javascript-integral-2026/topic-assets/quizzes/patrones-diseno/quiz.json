@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "patrones-diseno",
+  "concept_name": "Patrones de creación, estructura y comportamiento",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "factory-di",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué cambio justifica mejor una factory con dependency injection?",
+      "options": [
+        "Una única función pura y estable",
+        "Elegir un transport por ambiente sin que cada caller conozca sus detalles",
+        "Evitar escribir imports en cualquier archivo",
+        "Reemplazar todos los objetos literales por clases"
+      ],
+      "answer": "Elegir un transport por ambiente sin que cada caller conozca sus detalles",
+      "explanation": "La factory concentra construcción y la DI hace explícito un colaborador variable o con efectos. Una función pura estable no necesita ese límite adicional."
+    },
+    {
+      "id": "structural",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre patrones estructurales.",
+      "options": [
+        "Un adapter traduce contratos incompatibles en un borde",
+        "Una facade coordina varios subsistemas detrás de una entrada más simple",
+        "Un decorator debe tragar errores para ser transparente",
+        "Un módulo puede encapsular estado con una closure"
+      ],
+      "answer": [
+        "Un adapter traduce contratos incompatibles en un borde",
+        "Una facade coordina varios subsistemas detrás de una entrada más simple",
+        "Un módulo puede encapsular estado con una closure"
+      ],
+      "explanation": "Adapter y facade reducen acoplamiento de maneras distintas; una closure puede dar estado privado por instancia. Un decorator transparente conserva el contrato y no oculta fallas."
+    },
+    {
+      "id": "behavior",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué patrón modela mejor reglas válidas como `draft → published → archived`?",
+      "options": ["Observer", "State", "Adapter", "Builder"],
+      "answer": "State",
+      "explanation": "State organiza comportamiento y transiciones según el estado actual. Observer responde quién recibe una notificación, no qué transición está permitida."
+    },
+    {
+      "id": "events",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Para pedir un total que necesitás antes de continuar, pub-sub suele ser más claro que una función con retorno.",
+      "answer": false,
+      "explanation": "Una consulta necesaria se expresa mejor como dependencia directa con retorno y fallo visibles. Eventos sirven para notificar hechos ocurridos a interesados desacoplados."
+    },
+    {
+      "id": "cost",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Si un patrón conocido puede aparecer, conviene crear interfaces, builders y buses de eventos ahora para estar preparados’.",
+      "answer": "Un patrón paga cuando aísla una variación o un borde real. Si no hay cambio concreto que quede local, agregaría indirection, contratos y costo de depuración sin beneficio.",
+      "explanation": "La abstracción también tiene mantenimiento, ciclo de vida y pruebas. Elegí la forma más pequeña que proteja una tensión observada, no variantes imaginarias."
+    }
+  ]
+}
