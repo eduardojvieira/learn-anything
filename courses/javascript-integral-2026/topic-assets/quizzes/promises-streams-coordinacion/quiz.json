@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "promises-streams-coordinacion",
+  "concept_name": "Promises, async/await, streams y coordinación",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "thenable",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué hace Promise.resolve con { then(resolve) { resolve(4); } }?",
+      "options": [
+        "La resuelve con el objeto",
+        "Adopta el thenable y resuelve con 4",
+        "Lanza porque no es Promise",
+        "La deja pendiente"
+      ],
+      "answer": "Adopta el thenable y resuelve con 4",
+      "explanation": "La resolución de Promise adopta thenables: lee y llama su then. Por eso una API debe protegerse de thenables ajenos que pueden lanzar o comportarse mal."
+    },
+    {
+      "id": "async-errors",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Si una async function hace throw new TypeError('x'), ¿dónde se observa esa falla?",
+      "options": [
+        "En la llamada síncrona, antes de devolver",
+        "Como rechazo de la Promise retornada",
+        "Sólo en uncatchableException",
+        "Se convierte en undefined"
+      ],
+      "answer": "Como rechazo de la Promise retornada",
+      "explanation": "Una async function siempre devuelve Promise. throw se vuelve rechazo; await lo relanza en el punto de espera y se maneja con try/catch o con catch de la Promise."
+    },
+    {
+      "id": "combinators",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre combinadores.",
+      "options": [
+        "all preserva el orden de entrada",
+        "allSettled rechaza al primer error",
+        "any rechaza con AggregateError si todas rechazan",
+        "race cancela automáticamente a las perdedoras",
+        "race adopta el primer settlement"
+      ],
+      "answer": [
+        "all preserva el orden de entrada",
+        "any rechaza con AggregateError si todas rechazan",
+        "race adopta el primer settlement"
+      ],
+      "explanation": "all falla rápido; allSettled informa todos los estados; any busca el primer éxito. race sólo decide su resultado: no aborta el trabajo que sigue corriendo."
+    },
+    {
+      "id": "cancellation",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Promise.race([trabajo, timeout]) cancela trabajo cuando gana timeout’. Mostrá el contrato que falta.",
+      "answer": "race no cancela nada. Creá un AbortController, pasá signal a trabajo y, al vencer el timeout, llamá controller.abort(reason); trabajo debe observar ese signal y liberar recursos.",
+      "explanation": "El timeout decide y la cancelación son mecanismos distintos. Sin cooperación del trabajo, el recurso puede seguir consumiéndose después de que la Promise expuesta haya rechazado."
+    },
+    {
+      "id": "backpressure",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "En un Writable de Node, ¿qué indica write(chunk) === false?",
+      "options": [
+        "El chunk se perdió",
+        "Hay que seguir escribiendo hasta finish",
+        "Hay que esperar drain antes de producir más",
+        "El stream ya fue destruido"
+      ],
+      "answer": "Hay que esperar drain antes de producir más",
+      "explanation": "false expresa backpressure: el buffer interno alcanzó el umbral. pipeline coordina Readable, Transform y Writable para que ese freno viaje hacia arriba."
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "event-loop-jobs",
+  "concept_name": "Jobs, event loops, tareas y microtasks",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "completion",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Mientras corre una tarea JavaScript larga en un agente, ¿qué describe run-to-completion?",
+      "options": [
+        "Otra tarea puede intercalarse entre dos sentencias",
+        "La tarea termina o entrega el control antes de elegir otra tarea",
+        "El host cancela la tarea a los 16 ms",
+        "Las Promises se ejecutan en paralelo"
+      ],
+      "answer": "La tarea termina o entrega el control antes de elegir otra tarea",
+      "explanation": "El código sincrónico no es preempted por otra tarea en ese agente. Un host puede elegir trabajo recién al recuperar el control; no existe una garantía de corte a los 16 ms."
+    },
+    {
+      "id": "jobs",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre Jobs y microtasks.",
+      "options": [
+        "Una reacción de Promise se agenda como Job de ECMAScript",
+        "Un checkpoint de microtasks puede ejecutar microtasks agregadas por otra microtask",
+        "Una microtask espera necesariamente al próximo timer",
+        "ECMAScript fija una cola global compartida por todos los hosts"
+      ],
+      "answer": [
+        "Una reacción de Promise se agenda como Job de ECMAScript",
+        "Un checkpoint de microtasks puede ejecutar microtasks agregadas por otra microtask"
+      ],
+      "explanation": "PromiseReactionJob es parte del modelo ECMAScript. El host integra Jobs mediante checkpoints; al drenar, una microtask puede añadir otra. ECMAScript no prescribe una cola global ni el turno de timers."
+    },
+    {
+      "id": "host",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué afirmación es portable entre browser y Node?",
+      "options": [
+        "setTimeout(fn, 0) siempre corre antes que setImmediate(fn)",
+        "El rendering ocurre después de cada microtask",
+        "El orden entre fuentes de tareas depende del host y del contexto",
+        "I/O es una API definida por ECMAScript"
+      ],
+      "answer": "El orden entre fuentes de tareas depende del host y del contexto",
+      "explanation": "Timers, I/O, rendering y las colas que los seleccionan son responsabilidades del host. No hagas depender un contrato portable de un orden entre fuentes distintas."
+    },
+    {
+      "id": "starvation",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Una cadena que vuelve a encolar una microtask puede demorar timers, I/O o rendering porque el checkpoint no termina.",
+      "answer": true,
+      "explanation": "Al vaciar microtasks se ejecutan también las que agregan otras. Si la cadena no deja vacía la cola, el host no recupera el punto en que puede seleccionar trabajo posterior."
+    },
+    {
+      "id": "correction",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘setTimeout(fn, 0) ejecuta fn inmediatamente y el navegador renderiza a 60 Hz entre cada callback’.",
+      "answer": "El delay es un umbral para que el timer sea elegible, no ejecución inmediata. El host decide cuándo seleccionarlo y rendering depende del navegador, carga y frame disponible; no hay garantía de 60 Hz ni de render entre callbacks.",
+      "explanation": "La corrección separa el contrato del timer de la política del host y evita convertir un objetivo de refresh en una promesa de scheduling."
+    }
+  ]
+}

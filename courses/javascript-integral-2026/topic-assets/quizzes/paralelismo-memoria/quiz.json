@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "paralelismo-memoria",
+  "concept_name": "Paralelismo, modelo de memoria y ciclo de vida",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "worker",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué contrato seguro expresa mejor la relación entre un worker y un thread de OS?",
+      "options": [
+        "Siempre uno a uno",
+        "El host decide el mapeo de un aislamiento de ejecución",
+        "Comparte variables del padre",
+        "Hace paralelo todo algoritmo"
+      ],
+      "answer": "El host decide el mapeo de un aislamiento de ejecución",
+      "explanation": "Los workers los implementa el host; no prometen una relación uno-a-uno con threads del sistema."
+    },
+    {
+      "id": "messages",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué debe viajar por postMessage?",
+      "options": [
+        "Un closure",
+        "Datos validados con tipo e id",
+        "Una referencia mutable",
+        "Una Promise"
+      ],
+      "answer": "Datos validados con tipo e id",
+      "explanation": "Un protocolo explícito valida datos y correlaciona respuesta, error o cancelación."
+    },
+    {
+      "id": "atomics",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué evita perder un incremento compartido?",
+      "options": ["await", "Atomics.add(view, 0, 1)", "WeakRef", "freeze"],
+      "answer": "Atomics.add(view, 0, 1)",
+      "explanation": "Lectura y escritura separadas pueden perder actualizaciones; Atomics.add es indivisible. En una Int32Array el resultado queda en el dominio Int32 y puede envolver, por lo que el protocolo debe definir qué significa overflow."
+    },
+    {
+      "id": "finalizer",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "FinalizationRegistry sirve para liberar un lock crítico.",
+      "answer": false,
+      "explanation": "El GC y los finalizers no tienen tiempo garantizado; sólo sirven para mantenimiento auxiliar tolerante a no ocurrir."
+    },
+    {
+      "id": "using",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘await using elimina feature detection y reemplaza un finalizer’. ",
+      "answer": "using/await using da limpieza léxica determinista sólo donde la sintaxis y runtime son compatibles; requiere ruta alternativa. Un finalizer depende del GC.",
+      "explanation": "Explicit resource management es ES2027 y runtime-dependent; sintaxis nueva puede fallar al parsear antes del probe."
+    }
+  ]
+}
