@@ -103,6 +103,28 @@ describe('buildFileTree', () => {
   it('returns empty array for empty input', () => {
     expect(buildFileTree([])).toEqual([]);
   });
+
+  it('follows canonical concept order and places study assets before alphabetical fallbacks', () => {
+    const tree = buildFileTree(
+      [
+        'exercises/zeta/solution.ts',
+        'exercises/zeta/README.md',
+        'exercises/zeta/notes.md',
+        'exercises/zeta/starter.ts',
+        'exercises/alpha/README.md',
+      ],
+      { rootOrder: ['zeta', 'alpha'], directoryLabels: { zeta: '1.1 Zeta', alpha: '1.2 Alpha' } },
+    );
+    expect(tree.map((node) => node.name)).toEqual(['zeta', 'alpha']);
+    expect(tree[0]).toMatchObject({ label: '1.1 Zeta' });
+    expect(collectFiles(tree).map((file) => file.path)).toEqual([
+      'exercises/zeta/README.md',
+      'exercises/zeta/starter.ts',
+      'exercises/zeta/solution.ts',
+      'exercises/zeta/notes.md',
+      'exercises/alpha/README.md',
+    ]);
+  });
 });
 
 describe('collectFiles', () => {

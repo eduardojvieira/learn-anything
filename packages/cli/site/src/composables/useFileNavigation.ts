@@ -70,6 +70,8 @@ export function useFileNavigation() {
     );
   }
 
+  provide('openConceptReading', (path: string) => selectFile(path, 'markdown', 'exercises'));
+
   function restoreFromRoute() {
     resetLoader();
     const slug = route.params.slug as string | undefined;

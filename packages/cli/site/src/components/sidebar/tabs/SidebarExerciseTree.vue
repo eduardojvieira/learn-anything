@@ -3,8 +3,13 @@ import { computed, watch } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useAutoExpand } from './useAutoExpand';
 import { loadTopicFiles, getDataVersion } from '@/composables/useTopicData';
+import { topicCurriculum } from '@/composables/conceptNavigation';
 import { isMarkdownFile } from '@/utils/markdown';
-import { buildFileTree, ancestorDirPaths, type FileLeaf } from '@/components/sidebar/tabs/buildFileTree';
+import {
+  buildFileTree,
+  ancestorDirPaths,
+  type FileLeaf,
+} from '@/components/sidebar/tabs/buildFileTree';
 import FileTreeBranch from '@/components/sidebar/tabs/FileTreeBranch.vue';
 
 const props = defineProps<{
@@ -20,7 +25,8 @@ const { t } = useI18n();
 
 const nodes = computed(() => {
   void getDataVersion();
-  return buildFileTree(loadTopicFiles(props.topicSlug)?.exercises ?? []);
+  const curriculum = topicCurriculum(props.topicSlug);
+  return buildFileTree(loadTopicFiles(props.topicSlug)?.exercises ?? [], curriculum);
 });
 
 const firstDirPath = computed(() => {

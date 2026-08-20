@@ -3,11 +3,16 @@ import { computed } from 'vue';
 import { useI18n } from '@/composables/useI18n';
 import { useAutoExpand } from './useAutoExpand';
 import { loadTopicFiles, getDataVersion } from '@/composables/useTopicData';
-import { buildFileTree, collectFiles, type FileLeaf, type DirNode } from '@/components/sidebar/tabs/buildFileTree';
+import { topicCurriculum } from '@/composables/conceptNavigation';
+import {
+  buildFileTree,
+  collectFiles,
+  type FileLeaf,
+  type DirNode,
+} from '@/components/sidebar/tabs/buildFileTree';
 import type { QueueItem } from '@/components/quiz/types';
 import QuizIcons from '@/components/quiz/QuizIcons.vue';
 import FileTreeBranch from '@/components/sidebar/tabs/FileTreeBranch.vue';
-
 
 const props = defineProps<{
   topicSlug: string;
@@ -22,7 +27,10 @@ const { t } = useI18n();
 
 const nodes = computed(() => {
   void getDataVersion();
-  return buildFileTree(loadTopicFiles(props.topicSlug)?.quizzes ?? []);
+  return buildFileTree(
+    loadTopicFiles(props.topicSlug)?.quizzes ?? [],
+    topicCurriculum(props.topicSlug),
+  );
 });
 
 const allFiles = computed(() => collectFiles(nodes.value));
@@ -32,10 +40,7 @@ const firstDirPath = computed(() => {
   return first?.path;
 });
 
-const {
-  expanded: expandedKeys,
-  toggle: toggleExpansion,
-} = useAutoExpand(
+const { expanded: expandedKeys, toggle: toggleExpansion } = useAutoExpand(
   'quizzes',
   () => props.topicSlug,
   () => firstDirPath.value,
@@ -53,9 +58,10 @@ function quizPath(relPath: string): string {
 
 function toQueueItem(file: FileLeaf): QueueItem {
   const parts = file.path.split('/');
+  const conceptSlug = parts.length >= 3 ? parts[parts.length - 2] : parts[0];
   return {
-    concept_slug: parts.length >= 3 ? parts[parts.length - 2] : parts[0],
-    concept_name: parts.length >= 3 ? parts[parts.length - 2] : parts[0],
+    concept_slug: conceptSlug,
+    concept_name: topicCurriculum(props.topicSlug).conceptNames[conceptSlug] ?? conceptSlug,
     filename: file.name,
     path: quizPath(file.path),
   };

@@ -2,6 +2,7 @@
 defineProps<{
   label: string;
   expanded: boolean;
+  roomy?: boolean;
 }>();
 
 defineEmits<{
@@ -12,8 +13,11 @@ defineEmits<{
 <template>
   <div>
     <button
-      class="w-full flex items-center gap-1.5 py-1 text-sm font-medium transition-colors cursor-pointer"
-      :class="expanded ? 'text-text-1' : 'text-text-2 hover:text-text-1'"
+      class="w-full flex gap-1.5 font-medium transition-colors cursor-pointer"
+      :class="[
+        expanded ? 'text-text-1' : 'text-text-2 hover:text-text-1',
+        roomy ? 'items-start py-2 text-base leading-6' : 'items-center py-1 text-sm',
+      ]"
       @click="$emit('toggle')"
     >
       <span
@@ -21,7 +25,7 @@ defineEmits<{
         :class="expanded ? 'rotate-90' : ''"
         >▶</span
       >
-      <span class="truncate">{{ label }}</span>
+      <span :class="roomy ? 'min-w-0 text-left whitespace-normal' : 'truncate'">{{ label }}</span>
       <slot name="actions" />
     </button>
 

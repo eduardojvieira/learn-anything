@@ -9,6 +9,8 @@ import {
   type FileLeaf,
 } from '@/components/sidebar/tabs/buildFileTree';
 import FileTreeBranch from '@/components/sidebar/tabs/FileTreeBranch.vue';
+import MasteryTree from '@/components/stats/MasteryTree.vue';
+import { conceptReadmePath } from '@/composables/conceptNavigation';
 
 const props = defineProps<{
   topicSlug: string;
@@ -37,6 +39,17 @@ const isV2 = computed(() => {
   void getDataVersion();
   return Boolean(loadTopicV2(props.topicSlug));
 });
+const readmePaths = computed(() =>
+  Object.fromEntries(
+    currentState.value?.domains
+      .flatMap((domain) =>
+        domain.concepts.map(
+          (concept) => [concept.slug, conceptReadmePath(props.topicSlug, concept.slug)] as const,
+        ),
+      )
+      .filter(([, path]) => path) ?? [],
+  ),
+);
 
 const firstDirPath = computed(() => {
   const first = nodes.value.find((n) => n.type === 'dir');
@@ -83,6 +96,10 @@ function onFileSelected(file: FileLeaf) {
   });
 }
 
+function onReadmeSelected(path: string) {
+  emit('file-selected', { path, type: 'markdown' });
+}
+
 function onOpenSessionLedger() {
   emit('knowledge-map');
   setViewMode('sessions');
@@ -97,6 +114,14 @@ function onOpenSessionLedger() {
     >
       {{ currentState?.topic || topicSlug }}
     </button>
+    <MasteryTree
+      v-if="currentState"
+      class="mb-4"
+      :domains="currentState.domains"
+      :readme-paths="readmePaths"
+      :selected-file-path="selectedFilePath"
+      @readme-selected="onReadmeSelected"
+    />
     <FileTreeBranch
       v-if="nodes.length > 0"
       :nodes="nodes"

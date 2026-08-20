@@ -2,7 +2,12 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { createApp, defineComponent, h, nextTick, provide, ref } from 'vue';
 import SidebarTopicTree from '@/components/sidebar/tabs/SidebarTopicTree.vue';
-import { __injectTestData, __resetForTest, type TopicV2Snapshot } from '@/composables/useTopicData';
+import {
+  __injectTestData,
+  __resetForTest,
+  type StateV1,
+  type TopicV2Snapshot,
+} from '@/composables/useTopicData';
 
 const revision = 'a'.repeat(64);
 const summary = {
@@ -37,7 +42,11 @@ afterEach(() => {
 function mountTopicTree(v2Snapshot?: TopicV2Snapshot) {
   __injectTestData({
     summaries: [summary],
-    states: v2Snapshot ? {} : { topic: { version: 1, topic: 'Topic', slug: 'topic', domains: [] } },
+    states: (v2Snapshot
+      ? {}
+      : {
+          topic: { version: 1, topic: 'Topic', slug: 'topic', created: '2026-01-01', domains: [] },
+        }) as Record<string, StateV1>,
     knowledgeMaps: {},
     fileContents: {},
     files: { topic: { sessions: [], exercises: [], quizzes: [] } },
@@ -82,5 +91,63 @@ describe('SidebarTopicTree V2 session discovery', () => {
     expect(tree.host.querySelector('[data-testid="open-session-ledger"]')).toBeNull();
     expect(tree.host.textContent).toContain('No session notes');
     tree.unmount();
+  });
+
+  it('routes a canonical curriculum concept through the existing file-selected event', async () => {
+    __injectTestData({
+      summaries: [summary],
+      states: {
+        topic: {
+          version: 1,
+          topic: 'Topic',
+          slug: 'topic',
+          created: '2026-01-01',
+          domains: [
+            {
+              name: 'Domain',
+              slug: 'domain',
+              concepts: [
+                {
+                  name: 'Concept',
+                  slug: 'concept',
+                  status: 'in_progress',
+                  confidence: 0.5,
+                  practice_count: 0,
+                  explain_count: 0,
+                  last_explained: null,
+                  last_practiced: null,
+                  details: [],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      knowledgeMaps: {},
+      fileContents: {},
+      files: { topic: { sessions: [], exercises: ['exercises/concept/README.md'], quizzes: [] } },
+    });
+    const selected = ref<{ path: string; type: 'markdown' } | null>(null);
+    const host = document.createElement('div');
+    document.body.append(host);
+    const app = createApp(
+      defineComponent({
+        setup: () => () =>
+          h(SidebarTopicTree, {
+            topicSlug: 'topic',
+            onFileSelected: (file: { path: string; type: 'markdown' }) => (selected.value = file),
+          }),
+      }),
+    );
+    app.mount(host);
+    Array.from(host.querySelectorAll('button'))
+      .find((button) => button.textContent?.includes('1.1 Concept'))
+      ?.click();
+    await nextTick();
+    expect(selected.value).toEqual({
+      path: '/topics/topic/exercises/concept/README.md',
+      type: 'markdown',
+    });
+    app.unmount();
   });
 });

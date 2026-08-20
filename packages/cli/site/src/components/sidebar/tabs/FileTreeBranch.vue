@@ -21,7 +21,7 @@ defineEmits<{
   <template v-for="node in nodes" :key="node.path">
     <SidebarTreeNode
       v-if="node.type === 'dir'"
-      :label="node.name"
+      :label="node.label ?? node.name"
       :expanded="expandedKeys.has(node.path)"
       @toggle="$emit('toggle', node.path)"
     >

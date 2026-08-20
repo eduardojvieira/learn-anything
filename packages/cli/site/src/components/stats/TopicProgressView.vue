@@ -6,7 +6,12 @@ import { computeTopicStats } from './useTopicStats';
 import StatsHero from './StatsHero.vue';
 import MasteryTree from './MasteryTree.vue';
 
-const props = defineProps<{ state: StateV1 }>();
+const props = defineProps<{
+  state: StateV1;
+  readmePaths?: Record<string, string>;
+  selectedFilePath?: string | null;
+}>();
+const emit = defineEmits<{ 'readme-selected': [path: string] }>();
 const { t } = useI18n();
 
 const stats = computed(() => computeTopicStats(props.state));
@@ -55,7 +60,12 @@ const stats = computed(() => computeTopicStats(props.state));
     <!-- Knowledge tree -->
     <div class="border-t border-(--color-divider) p-6">
       <p class="text-xs text-text-3 mb-3">{{ t('topic.knowledgeTree') }}</p>
-      <MasteryTree :domains="state.domains" />
+      <MasteryTree
+        :domains="state.domains"
+        :readme-paths="props.readmePaths"
+        :selected-file-path="props.selectedFilePath"
+        @readme-selected="emit('readme-selected', $event)"
+      />
     </div>
 
     <!-- Activity strip -->
