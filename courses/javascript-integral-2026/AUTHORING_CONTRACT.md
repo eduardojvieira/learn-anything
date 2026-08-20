@@ -28,6 +28,7 @@ Cada concepto ocupa exactamente cuatro archivos:
 - `solution.mjs` debe ser legible, determinista, sin dependencias nuevas, cubrir bordes con asserts y terminar con código 0.
 - `quiz.json` debe seguir el esquema de `sintaxis-valores-tipos-bindings/quiz.json`: exactamente cinco preguntas específicas del capítulo, distractores plausibles y explicaciones sustantivas. `concept_name` siempre es el título humano, no el slug.
 - Formatear los cuatro archivos con Prettier y ejecutar el validador de quiz del repositorio.
+- Antes de renderizar, ejecutar el gate público `learnctl validate-course <topic-dir>`: valida la correspondencia de estado, README, starter/solution y quiz; no ejecuta laboratorios. Los laboratorios JS siguen usando `.mjs` y se verifican aparte con Node.
 
 ## Investigación
 

@@ -27,6 +27,7 @@ import {
   StateStore,
 } from '../core/state-store/index.js';
 import { learnConfigStore, type LearnConfig } from '../core/learn-config.js';
+import { validateCourseSnapshot, type CourseValidationReport } from '../core/course-validation.js';
 
 const payloadSchema = z
   .object({
@@ -143,7 +144,7 @@ export class LearnctlPayloadError extends Error {
 export class UsageError extends Error {
   constructor() {
     super(
-      'Usage: learnctl <init-topic|snapshot|migrate|render|record-evidence|record-assessment|study|record-session|session-snapshot|update-socratic-response|render-session> ...',
+      'Usage: learnctl <init-topic|snapshot|migrate|render|validate-course|record-evidence|record-assessment|study|record-session|session-snapshot|update-socratic-response|render-session> ...',
     );
     this.name = 'UsageError';
   }
@@ -184,6 +185,13 @@ export class SessionTimestampError extends Error {
   }
 }
 
+export class CourseValidationError extends Error {
+  constructor(public readonly report: CourseValidationReport) {
+    super('Course validation failed');
+    this.name = 'CourseValidationError';
+  }
+}
+
 export class SessionTopicMismatchError extends Error {
   constructor() {
     super('Session does not belong to this topic and concept');
@@ -218,6 +226,10 @@ export async function snapshot(topicDir: string): Promise<TopicSnapshot> {
 
 export async function migrate(topicDir: string) {
   return migrateV1ToV2(topicDir);
+}
+
+export async function validateCourse(topicDir: string): Promise<CourseValidationReport> {
+  return validateCourseSnapshot(topicDir, await snapshot(topicDir));
 }
 
 export async function recordEvidence(topicDir: string, payload: unknown) {
@@ -483,6 +495,12 @@ export async function main(
     io.stdout.write(`${JSON.stringify(result)}\n`);
     return 0;
   } catch (error) {
+    if (error instanceof CourseValidationError) {
+      io.stderr.write(
+        `${JSON.stringify({ error: error.name, message: error.message, issues: error.report.issues })}\n`,
+      );
+      return 4;
+    }
     io.stderr.write(
       `${JSON.stringify({ error: errorName(error), message: errorMessage(error) })}\n`,
     );
@@ -504,6 +522,11 @@ async function dispatch(args: string[]): Promise<unknown> {
   if (command === 'snapshot' && topicDir && !extra) return snapshot(topicDir);
   if (command === 'migrate' && topicDir && !extra) return migrate(topicDir);
   if (command === 'render' && topicDir && !extra) return render(topicDir);
+  if (command === 'validate-course' && topicDir && !extra) {
+    const report = await validateCourse(topicDir);
+    if (!report.complete) throw new CourseValidationError(report);
+    return report;
+  }
   if (command === 'record-evidence' && topicDir && extra && rest.length === 0) {
     let payload: unknown;
     try {
@@ -919,6 +942,7 @@ function exitCode(error: unknown): number {
     return 3;
   if (
     error instanceof LearnctlPayloadError ||
+    error instanceof CourseValidationError ||
     error instanceof StateCorruptionError ||
     error instanceof StateRecoveryError
   )

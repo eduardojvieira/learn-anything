@@ -9,6 +9,7 @@ Pack fuente para un curso V2 en español: 11 dominios, 30 conceptos y assets cop
     node packages/cli/bin/learn-anything.js init "$COURSES_ROOT" --tools codex,hermes,opencode --lang es --context7
     node packages/cli/bin/learnctl.js init-topic "$COURSES_ROOT/.learn/topics/javascript-integral-2026" courses/javascript-integral-2026/curriculum.json
     cp -R courses/javascript-integral-2026/topic-assets/. "$COURSES_ROOT/.learn/topics/javascript-integral-2026/"
+    node packages/cli/bin/learnctl.js validate-course "$COURSES_ROOT/.learn/topics/javascript-integral-2026"
     node packages/cli/bin/learnctl.js render "$COURSES_ROOT/.learn/topics/javascript-integral-2026"
     node packages/cli/bin/learnctl.js snapshot "$COURSES_ROOT/.learn/topics/javascript-integral-2026"
     node packages/cli/bin/learnctl.js study "$COURSES_ROOT/.learn/topics/javascript-integral-2026" "$(date --iso-8601=seconds)"

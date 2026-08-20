@@ -38,6 +38,7 @@ export {
   updateSocraticResponse,
   renderSession,
   study,
+  validateCourse,
   main,
   LearnctlPayloadError,
   UsageError,
@@ -47,7 +48,13 @@ export {
   UnknownQuestionError,
   SessionTimestampError,
   SessionTopicMismatchError,
+  CourseValidationError,
 } from './learnctl/index.js';
 export type { LearnctlIo, TopicSnapshot } from './learnctl/index.js';
+export type {
+  CourseIssue,
+  CourseConceptReport,
+  CourseValidationReport,
+} from './core/course-validation.js';
 export { deriveMastery, deriveTopicMastery, buildStudyPlan } from './core/learning-engine/index.js';
 export type { Mastery, MasteryStatus, StudyStep } from './core/learning-engine/index.js';
