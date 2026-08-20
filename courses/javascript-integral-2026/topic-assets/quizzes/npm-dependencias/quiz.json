@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "npm-dependencias",
+  "concept_name": "npm, package.json y cadena de dependencias",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "caret-zero",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Cuál versión satisface ^0.4.1?",
+      "options": ["0.4.9", "0.5.0", "1.0.0", "0.3.9"],
+      "answer": "0.4.9",
+      "explanation": "Con major cero, caret no permite aumentar el primer componente no-cero: ^0.4.1 admite desde 0.4.1 hasta antes de 0.5.0. Tratá 0.x como una compatibilidad más estrecha, no como un major estable."
+    },
+    {
+      "id": "ci-lock",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "En CI, package.json y package-lock.json están versionados y son compatibles. ¿Qué comando instala ese árbol limpio sin actualizar el lockfile?",
+      "options": ["npm ci", "npm install", "npm update", "npm audit fix"],
+      "answer": "npm ci",
+      "explanation": "npm ci requiere lockfile, elimina la instalación existente y no actualiza package.json ni el lockfile. Si el lock no satisface el manifest, falla: esa diferencia es una señal útil, no algo para ocultar."
+    },
+    {
+      "id": "workspace-script",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "En un monorepo npm, ¿cómo ejecutás test en todos los workspaces y evitás fallar sólo porque uno no define ese script?",
+      "options": [
+        "npm run test --workspaces --if-present",
+        "npm test --global",
+        "npm publish --workspaces",
+        "npm install --ignore-scripts"
+      ],
+      "answer": "npm run test --workspaces --if-present",
+      "explanation": "--workspaces recorre los paquetes configurados; --if-present saltea el que no tiene el script. No habilita scripts ajenos ni reemplaza decidir qué paquetes pueden publicar."
+    },
+    {
+      "id": "provenance-limit",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Una attestation de provenance y npm audit signatures prueban que una dependencia es segura y eliminan el riesgo de supply chain.",
+      "answer": false,
+      "explanation": "Las firmas y attestations permiten verificar integridad, procedencia publicada y cierta trazabilidad; audit encuentra avisos conocidos. No demuestran ausencia de código malicioso, vulnerabilidades nuevas, permisos excesivos ni compromiso de un mantenedor o pipeline."
+    },
+    {
+      "id": "release-correction",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí este release: uso un token de larga vida en CI; prepare puede hacer cualquier cosa; después corro audit y ya puedo publicar. Incluí una alternativa para identidad, controles y qué revisar antes de publicar.",
+      "answer": "Usaría trusted publishing con identidad OIDC del CI, 2FA para la cuenta y mínimo privilegio. Revisaría el tarball y lifecycle hooks antes de publicar; audit y firmas complementan esos controles, no garantizan seguridad.",
+      "explanation": "Trusted publishing evita guardar un token de publicación de larga vida en el proveedor compatible y npm puede emitir provenance. Aun así, el workflow, sus permisos, dependencias, scripts y contenido del paquete siguen dentro de la superficie de riesgo."
+    }
+  ]
+}

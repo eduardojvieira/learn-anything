@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "toolchain-tipos-transformacion",
+  "concept_name": "Toolchain, tipos y transformación de código",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "build-stages",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Elegí las afirmaciones correctas sobre una build de producción.",
+      "options": [
+        "Transpilar adapta sintaxis al runtime objetivo y elimina tipos estáticos cuando aplica",
+        "Tree shaking puede quitar exports no alcanzados si el módulo declara efectos correctamente",
+        "Minificar cambia necesariamente el comportamiento del programa",
+        "Bundlear siempre es obligatorio para ejecutar JavaScript"
+      ],
+      "answer": [
+        "Transpilar adapta sintaxis al runtime objetivo y elimina tipos estáticos cuando aplica",
+        "Tree shaking puede quitar exports no alcanzados si el módulo declara efectos correctamente"
+      ],
+      "explanation": "Minificar debe preservar la semántica; un runtime puede resolver módulos sin bundle. Tree shaking depende de imports estáticos y de no confundir efectos observables con código descartable."
+    },
+    {
+      "id": "source-map",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Para qué sirve un source map al depurar código transformado?",
+      "options": [
+        "Relaciona posiciones generadas con fuentes originales",
+        "Ejecuta TypeScript sin compilar",
+        "Elimina imports sin uso",
+        "Evita que el inspector se conecte"
+      ],
+      "answer": "Relaciona posiciones generadas con fuentes originales",
+      "explanation": "El runtime ejecuta el archivo generado. El inspector usa el mapa para presentar la ubicación y, si está disponible, el código fuente original."
+    },
+    {
+      "id": "jsdoc-typescript",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "JSDoc con checkJs y TypeScript pueden detectar contratos incompatibles antes de ejecutar, pero no reemplazan la validación de datos que llegan desde una API.",
+      "answer": true,
+      "explanation": "Los tipos estáticos describen el código analizado; JSON, variables de entorno y red siguen siendo fronteras de runtime que deben validarse."
+    },
+    {
+      "id": "ast-codemod",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Para renombrar una variable sin alterar texto dentro de strings o comentarios, ¿qué secuencia corresponde?",
+      "options": [
+        "Regex → minify",
+        "Parsear → transformar AST → generar código",
+        "Bundlear → transpilar",
+        "Source map → inspector"
+      ],
+      "answer": "Parsear → transformar AST → generar código",
+      "explanation": "Un parser distingue nodos sintácticos. Un codemod opera sobre esos nodos y el generador vuelve a emitir texto; aun así hay que respetar scope y bindings."
+    },
+    {
+      "id": "debug-production",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Si el bundle minificado falla en producción, pongo un console.log en el archivo generado; los source maps sólo son para desarrollo’.",
+      "answer": "evaluación cualitativa",
+      "explanation": "La corrección debe ubicar la fuente original mediante el stack trace y los source maps publicados según la política de seguridad, reproducir el fallo y arreglar la fuente. No conviene editar un artefacto generado ni exponer mapas con fuentes sensibles sin decidirlo."
+    }
+  ]
+}

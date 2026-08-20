@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "esm-commonjs-resolucion",
+  "concept_name": "ES modules, CommonJS y resolución",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "live-binding",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "saldo.mjs exporta let saldo = 0 y acreditar; otro módulo importa ambos, llama acreditar(5) y luego lee saldo. ¿Qué observa?",
+      "options": [
+        "0, porque import copia al cargar",
+        "5, porque el import observa el binding exportado",
+        "ReferenceError, porque los imports son privados",
+        "5 sólo si saldo fuera default"
+      ],
+      "answer": "5, porque el import observa el binding exportado",
+      "explanation": "Un import ESM es un binding vivo. El módulo importador no puede reasignarlo, pero sí observa una reasignación hecha por el módulo que lo exporta."
+    },
+    {
+      "id": "cycle-phases",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "En un ciclo ESM, ¿por qué export const visto = otro puede lanzar ReferenceError aunque el módulo exportador ya haya sido encontrado?",
+      "options": [
+        "Porque los módulos no admiten ciclos",
+        "Porque la instanciación conectó el binding, pero su const aún está en TDZ durante evaluación",
+        "Porque import copia undefined",
+        "Porque export const siempre es asíncrono"
+      ],
+      "answer": "Porque la instanciación conectó el binding, pero su const aún está en TDZ durante evaluación",
+      "explanation": "Primero se crean y enlazan bindings; después se evalúan cuerpos. Un binding let o const conectado puede seguir sin inicializarse si el ciclo lo lee demasiado temprano."
+    },
+    {
+      "id": "host-resolution",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre resolución.",
+      "options": [
+        "ECMAScript define por sí solo dónde vive el archivo de un specifier",
+        "Un navegador puede resolver un import relativo como URL e import maps pueden mapear aliases",
+        "Node ESM exige extensión en un import relativo",
+        "Un import map es una característica automática de Node"
+      ],
+      "answer": [
+        "Un navegador puede resolver un import relativo como URL e import maps pueden mapear aliases",
+        "Node ESM exige extensión en un import relativo"
+      ],
+      "explanation": "El lenguaje delega la resolución al host. El navegador trabaja con URLs e import maps; Node aplica sus reglas de ESM y paquetes."
+    },
+    {
+      "id": "commonjs-boundary",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "En Node, al importar CommonJS desde ESM, el default representa module.exports; los named exports detectados por Node no deben tratarse como bindings vivos garantizados.",
+      "answer": true,
+      "explanation": "La interoperabilidad crea un namespace con default para module.exports. Los nombres CommonJS pueden ser detectados estáticamente y no tienen el contrato de binding vivo de ESM."
+    },
+    {
+      "id": "package-surface",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Si un archivo existe en dist, cualquier consumidor de un paquete Node puede importarlo; exports e imports son lo mismo que export de JavaScript’.",
+      "answer": "package.json exports define los subpaths públicos para consumidores y pueden variar por condición import/require; un archivo no listado puede quedar cerrado. imports define aliases internos con #. Ambos son reglas de resolución de Node, mientras export es sintaxis ESM que publica bindings.",
+      "explanation": "Separar la superficie de paquete de los bindings del lenguaje evita acoplar consumidores a rutas internas y aclara qué capa diagnosticar."
+    }
+  ]
+}
