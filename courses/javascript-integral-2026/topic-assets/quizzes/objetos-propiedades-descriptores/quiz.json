@@ -7,64 +7,67 @@
   "created": "2026-08-20 09:00:00",
   "questions": [
     {
-      "id": "q1",
+      "id": "computed-key",
       "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "¿Cuál es la afirmación correcta sobre 3.1?",
-      "options": [
-        "literales, propiedades y claves computadas",
-        "enumerabilidad, propiedad y orden de claves",
-        "Una suposición de runtime",
-        "Una excepción silenciosa"
-      ],
-      "answer": "literales, propiedades y claves computadas",
-      "explanation": "Las claves propias son strings o symbols; [expr] calcula una clave."
+      "prompt": "Con `const key = 'status'; const order = { [key]: 'paid' }`, ¿cómo se lee el valor?",
+      "options": ["order.status", "order.key", "order.[key]", "order['key']"],
+      "answer": "order.status",
+      "explanation": "La expresión entre corchetes se evalúa al crear el literal: la clave resultante es 'status', no el nombre del binding key."
     },
     {
-      "id": "q2",
+      "id": "own-enumerable-order",
       "type": "multi_select",
       "gradeable": "exact",
-      "prompt": "Elegí dos prácticas que preservan el contrato.",
+      "prompt": "Para un objeto con claves propias `10`, `2`, `name`, un Symbol enumerable y una propiedad `hidden` no enumerable, seleccioná lo correcto.",
       "options": [
-        "Validar entradas",
-        "Comprobar soporte real",
-        "Ignorar errores",
-        "Inferir soporte por user agent"
+        "Object.keys devuelve ['2', '10', 'name']",
+        "Object.keys incluye hidden",
+        "Reflect.ownKeys incluye hidden y el Symbol",
+        "El spread copia el Symbol enumerable, pero no hidden"
       ],
       "answer": [
-        "Validar entradas",
-        "Comprobar soporte real"
+        "Object.keys devuelve ['2', '10', 'name']",
+        "Reflect.ownKeys incluye hidden y el Symbol",
+        "El spread copia el Symbol enumerable, pero no hidden"
       ],
-      "explanation": "La validación y feature detection evitan estados falsos."
+      "explanation": "Las claves tipo índice se ordenan numéricamente antes de los strings por inserción. Object.keys devuelve sólo strings propios enumerables. El spread copia propiedades propias enumerables string y Symbol; Reflect.ownKeys además incluye las no enumerables."
     },
     {
-      "id": "q3",
-      "type": "true_false",
+      "id": "descriptor-defaults",
+      "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "Una demostración aislada en un runtime prueba compatibilidad universal.",
-      "answer": false,
-      "explanation": "La compatibilidad se determina por la capability y la matriz objetivo."
-    },
-    {
-      "id": "q4",
-      "type": "fill_in_blank",
-      "gradeable": "accepted",
-      "prompt": "Completar: el comportamiento adicional que provee navegador o Node pertenece al ____.",
-      "answer": "host",
-      "accepted_answers": [
-        "host",
-        "runtime",
-        "anfitrión"
+      "prompt": "¿Qué describe a `Object.defineProperty(user, 'id', { value: 7 })`?",
+      "options": [
+        "id es enumerable, writable y configurable",
+        "id queda no enumerable, no writable y no configurable",
+        "id crea un getter que devuelve 7",
+        "id sólo puede leerse mediante Reflect"
       ],
-      "explanation": "El host integra ECMAScript con la plataforma."
+      "answer": "id queda no enumerable, no writable y no configurable",
+      "explanation": "En un descriptor nuevo, los atributos booleanos omitidos toman false. Un descriptor de datos usa value/writable; uno accessor usa get/set."
     },
     {
-      "id": "q5",
+      "id": "shallow-copy-nullish",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Con `const copy = { ...user }`, ¿qué pasa al ejecutar `copy.preferences.theme = 'dark'` si preferences existe en ambos objetos?",
+      "options": [
+        "También cambia user.preferences.theme",
+        "Sólo cambia copy porque spread es profundo",
+        "Lanza porque spread congela el anidamiento",
+        "Convierte preferences en null"
+      ],
+      "answer": "También cambia user.preferences.theme",
+      "explanation": "Spread crea una raíz nueva, pero copia el valor de preferences; si ese valor es una referencia a objeto, ambas raíces comparten el anidamiento. `?.` y `??` sirven para leer ausencias sin confundir 0, false o ''."
+    },
+    {
+      "id": "freeze-seal-correction",
       "type": "error_correction",
       "gradeable": "ai_only",
-      "prompt": "Corregí un ejemplo de 3.1 que viola uno de sus invariantes y justificá el cambio.",
-      "answer": "evaluación cualitativa",
-      "explanation": "La respuesta debe identificar entrada, regla y caso borde."
+      "prompt": "Corregí: ‘Object.freeze bloquea en profundidad y Object.seal no permite cambiar una propiedad existente’. Incluí qué verificarías antes de depender de esas APIs.",
+      "answer": "Ambas operaciones son superficiales. freeze impide escribir, agregar, borrar y reconfigurar propiedades propias de esa raíz; seal impide agregar, borrar y reconfigurar, pero conserva la escritura de propiedades de datos que ya eran writable. Verificaría Object.isFrozen/Object.isSealed en el runtime objetivo o usaría feature detection si la capacidad fuese opcional.",
+      "explanation": "Un objeto anidado puede seguir mutable tras freeze o seal. No confundas el estado de la raíz con una garantía transitiva."
     }
   ]
 }

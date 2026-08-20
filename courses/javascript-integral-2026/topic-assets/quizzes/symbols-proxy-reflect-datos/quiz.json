@@ -10,61 +10,57 @@
       "id": "q1",
       "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "¿Cuál es la afirmación correcta sobre 3.3?",
+      "prompt": "¿Qué diferencia hay entre Symbol('cache') y Symbol.for('cache')?",
       "options": [
-        "Symbol y well-known symbols",
-        "traps e invariantes de Proxy",
-        "Una suposición de runtime",
-        "Una excepción silenciosa"
+        "El primero siempre crea una identidad nueva; el segundo consulta el registro global de símbolos.",
+        "Ambos devuelven el mismo símbolo para la misma descripción.",
+        "El primero es enumerable y el segundo no.",
+        "Symbol.for solo funciona en navegadores."
       ],
-      "answer": "Symbol y well-known symbols",
-      "explanation": "Symbol() crea identidad única. Symbol.iterator implementa el protocolo iterable; Symbol.for usa un registro compartido."
+      "answer": "El primero siempre crea una identidad nueva; el segundo consulta el registro global de símbolos.",
+      "explanation": "La descripción es sólo diagnóstica. Symbol.for comparte identidad por clave dentro del registro global del agente."
     },
     {
       "id": "q2",
       "type": "multi_select",
       "gradeable": "exact",
-      "prompt": "Elegí dos prácticas que preservan el contrato.",
+      "prompt": "Elegí las dos afirmaciones correctas sobre un Proxy.",
       "options": [
-        "Validar entradas",
-        "Comprobar soporte real",
-        "Ignorar errores",
-        "Inferir soporte por user agent"
+        "Un trap ownKeys no puede ocultar una propiedad propia no configurable.",
+        "Un trap puede devolver cualquier resultado aunque contradiga un target no extensible.",
+        "Reflect.set es una delegación útil desde un trap set porque conserva la operación base.",
+        "Un Proxy convierte al objeto target en una frontera de seguridad."
       ],
       "answer": [
-        "Validar entradas",
-        "Comprobar soporte real"
+        "Un trap ownKeys no puede ocultar una propiedad propia no configurable.",
+        "Reflect.set es una delegación útil desde un trap set porque conserva la operación base."
       ],
-      "explanation": "La validación y feature detection evitan estados falsos."
+      "explanation": "El motor impone invariantes de Proxy y lanza TypeError ante una mentira observable. Reflect expresa la operación ordinaria; quien ya tiene el target puede evitar el Proxy."
     },
     {
       "id": "q3",
       "type": "true_false",
       "gradeable": "exact",
-      "prompt": "Una demostración aislada en un runtime prueba compatibilidad universal.",
+      "prompt": "JSON.stringify serializa un BigInt sin intervención adicional.",
       "answer": false,
-      "explanation": "La compatibilidad se determina por la capability y la matriz objetivo."
+      "explanation": "BigInt no pertenece al formato JSON y JSON.stringify lanza TypeError. Un replacer puede codificarlo bajo un contrato explícito, por ejemplo como string etiquetado."
     },
     {
       "id": "q4",
       "type": "fill_in_blank",
       "gradeable": "accepted",
-      "prompt": "Completar: el comportamiento adicional que provee navegador o Node pertenece al ____.",
-      "answer": "host",
-      "accepted_answers": [
-        "host",
-        "runtime",
-        "anfitrión"
-      ],
-      "explanation": "El host integra ECMAScript con la plataforma."
+      "prompt": "Completar: para no perder el lexema 9007199254740993 al revivir JSON, el soporte ES2026 expone context.____.",
+      "answer": "source",
+      "accepted_answers": ["source", "source string"],
+      "explanation": "El tercer argumento del reviver puede incluir context.source. Como depende del runtime, primero se detecta; sin él, conviene transportar el identificador exacto como string."
     },
     {
       "id": "q5",
       "type": "error_correction",
       "gradeable": "ai_only",
-      "prompt": "Corregí un ejemplo de 3.3 que viola uno de sus invariantes y justificá el cambio.",
+      "prompt": "Corregí: const copy = structuredClone({ run() {} });. Explicá por qué falla y proponé una alternativa para transportar datos y reconstruir comportamiento.",
       "answer": "evaluación cualitativa",
-      "explanation": "La respuesta debe identificar entrada, regla y caso borde."
+      "explanation": "Structured clone no clona funciones. La corrección debe separar datos clonables de comportamiento y además detectar globalThis.structuredClone antes de depender de la API del host."
     }
   ]
 }

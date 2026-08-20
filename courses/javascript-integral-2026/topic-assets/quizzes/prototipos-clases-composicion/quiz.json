@@ -4,67 +4,78 @@
   "topic_slug": "javascript-integral-2026",
   "concept_slug": "prototipos-clases-composicion",
   "concept_name": "Prototipos, clases, privados y composición",
-  "created": "2026-08-20 09:00:00",
+  "created": "2026-08-20 11:00:00",
   "questions": [
     {
-      "id": "q1",
+      "id": "delegation",
       "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "¿Cuál es la afirmación correcta sobre 3.2?",
+      "prompt": "Si `ada` hereda `speak` de su prototipo y luego se asigna `ada.speak = () => 'local'`, ¿qué ocurre al leer `ada.speak`?",
       "options": [
-        "cadena de prototipos y delegación",
-        "funciones constructoras",
-        "Una suposición de runtime",
-        "Una excepción silenciosa"
+        "Se usa el método propio nuevo",
+        "Se sigue usando el del prototipo",
+        "Se modifica todo el prototipo",
+        "Da SyntaxError"
       ],
-      "answer": "cadena de prototipos y delegación",
-      "explanation": "Al leer una propiedad se busca primero en el objeto y luego por [[Prototype]]. Delegación comparte comportamiento sin copiar métodos."
+      "answer": "Se usa el método propio nuevo",
+      "explanation": "La búsqueda de propiedades empieza en el objeto receptor. Una propiedad propia sombrea la propiedad con el mismo nombre encontrada más arriba en la cadena; no modifica el prototipo."
     },
     {
-      "id": "q2",
+      "id": "constructor-prototype",
       "type": "multi_select",
       "gradeable": "exact",
-      "prompt": "Elegí dos prácticas que preservan el contrato.",
+      "prompt": "Seleccioná las afirmaciones correctas sobre una función constructora `Member` usada con `new`.",
       "options": [
-        "Validar entradas",
-        "Comprobar soporte real",
-        "Ignorar errores",
-        "Inferir soporte por user agent"
+        "`this` refiere a la instancia nueva",
+        "`Member.prototype` se usa como prototipo de la instancia",
+        "Cada instancia copia automáticamente cada método de `Member.prototype`",
+        "Llamar `Member()` sin `new` garantiza crear una instancia"
       ],
       "answer": [
-        "Validar entradas",
-        "Comprobar soporte real"
+        "`this` refiere a la instancia nueva",
+        "`Member.prototype` se usa como prototipo de la instancia"
       ],
-      "explanation": "La validación y feature detection evitan estados falsos."
+      "explanation": "`new` crea el receptor y enlaza su prototipo para delegación. Los métodos no se copian y una función constructora común llamada sin `new` no ofrece esa garantía."
     },
     {
-      "id": "q3",
-      "type": "true_false",
+      "id": "derived-class",
+      "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "Una demostración aislada en un runtime prueba compatibilidad universal.",
-      "answer": false,
-      "explanation": "La compatibilidad se determina por la capability y la matriz objetivo."
-    },
-    {
-      "id": "q4",
-      "type": "fill_in_blank",
-      "gradeable": "accepted",
-      "prompt": "Completar: el comportamiento adicional que provee navegador o Node pertenece al ____.",
-      "answer": "host",
-      "accepted_answers": [
-        "host",
-        "runtime",
-        "anfitrión"
+      "prompt": "En el constructor de una clase con `extends`, ¿qué debe pasar antes de acceder a `this`?",
+      "options": [
+        "Llamar `super(...)`",
+        "Llamar un método estático",
+        "Leer un campo privado",
+        "Asignar `prototype`"
       ],
-      "explanation": "El host integra ECMAScript con la plataforma."
+      "answer": "Llamar `super(...)`",
+      "explanation": "Una clase derivada no tiene un `this` utilizable hasta que `super(...)` inicializa la parte base. El motor lanza ReferenceError si se intenta usar antes."
     },
     {
-      "id": "q5",
+      "id": "private-static",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre `#validateDeposit`, una política privada de monedas y un bloque `static`.",
+      "options": [
+        "`#validateDeposit` sólo puede nombrarse dentro del cuerpo léxico de la clase",
+        "`Account.currencies.add('EUR')` modifica el Set privado",
+        "Un bloque `static` corre al definir la clase",
+        "`Account.acceptsCurrency('ARS')` puede consultar una política privada"
+      ],
+      "answer": [
+        "`#validateDeposit` sólo puede nombrarse dentro del cuerpo léxico de la clase",
+        "Un bloque `static` corre al definir la clase",
+        "`Account.acceptsCurrency('ARS')` puede consultar una política privada"
+      ],
+      "explanation": "Los privados sólo pueden nombrarse en el cuerpo léxico que los declaró; no son claves string ni se exponen como `Account.currencies`. El bloque static inicializa una vez la política y un método static controlado puede consultarla sin entregar el Set mutable."
+    },
+    {
+      "id": "composition",
       "type": "error_correction",
       "gradeable": "ai_only",
-      "prompt": "Corregí un ejemplo de 3.2 que viola uno de sus invariantes y justificá el cambio.",
-      "answer": "evaluación cualitativa",
-      "explanation": "La respuesta debe identificar entrada, regla y caso borde."
+      "prompt": "Corregí: ‘Para combinar formato, envío y reintento, conviene una subclase por cada combinación posible’. Proponé una composición y justificá por qué preserva mejor el contrato.",
+      "answer": "Pasar capacidades separadas, por ejemplo composeNotifier(format, send), y componer un reintento alrededor de send. Así cada política se prueba y cambia sin multiplicar jerarquías de subclases.",
+      "explanation": "La herencia expresa una relación estable de tipo. Cuando las variaciones se combinan de forma independiente, la composición evita explosión de subclases y hace explícitos los contratos de cada función."
     }
   ]
 }
