@@ -30,16 +30,15 @@ The memorable moment is the full-width mastery ledger resolving immediately into
 
 ## Fidelity inventory
 
-| Comp ingredient               | Production medium                                      | Commitment                                                           |
-| ----------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------- |
-| Warm archival-paper field     | CSS colors plus subtle layered noise-free fiber marks  | Visible at full resolution, never dirty or contrast-reducing         |
-| Top utility strip and LA mark | Semantic HTML/CSS                                      | 36px ruled strip; no leaked numeric navigation                       |
-| Topic rail                    | Existing Vue sidebar + CSS                             | 230–250px ruled rows, square search, stable footer                   |
-| Mastery overview              | Existing stats components + CSS                        | First major panel, segmented real-data rule and three summary cells  |
-| Topic directory               | Existing topic buttons + CSS                           | Three dense full-width rows with metadata and progress at right      |
-| Suggested review ledger       | Existing review component + CSS                        | Context column, compact rows, 8px reason dots, no thick colored edge |
-| Type system                   | Local `Noto Serif`, `Noto Serif CJK`, Georgia fallback | Scholarly, multilingual, readable; tabular numerals enabled          |
-| Topic/article reading         | Existing semantic HTML and Markdown renderer           | Centered sheet, 65–75ch body measure, code stays monospace           |
+| Comp ingredient           | Production medium                                      | Commitment                                                           |
+| ------------------------- | ------------------------------------------------------ | -------------------------------------------------------------------- |
+| Warm archival-paper field | CSS colors plus subtle layered noise-free fiber marks  | Visible at full resolution, never dirty or contrast-reducing         |
+| Topic rail                | Existing Vue sidebar + CSS                             | 230–250px ruled rows, square search, stable footer                   |
+| Mastery overview          | Existing stats components + CSS                        | First major panel, segmented real-data rule and three summary cells  |
+| Topic directory           | Existing topic buttons + CSS                           | Three dense full-width rows with metadata and progress at right      |
+| Suggested review ledger   | Existing review component + CSS                        | Context column, compact rows, 8px reason dots, no thick colored edge |
+| Type system               | Local `Noto Serif`, `Noto Serif CJK`, Georgia fallback | Scholarly, multilingual, readable; tabular numerals enabled          |
+| Topic/article reading     | Existing semantic HTML and Markdown renderer           | Centered sheet, 65–75ch body measure, code stays monospace           |
 
 ## Unresolved decisions
 

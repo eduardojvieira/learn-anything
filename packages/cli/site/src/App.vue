@@ -78,11 +78,6 @@ onUnmounted(() => {
 
 <template>
   <div class="mastery-shell">
-    <header class="utility-strip">
-      <span class="utility-mark">LA</span>
-      <span class="utility-spacer" />
-      <span class="utility-label">Learn Anything</span>
-    </header>
     <AppSidebar
       :context="sidebarContext"
       :topic-slug="currentTopicSlug"

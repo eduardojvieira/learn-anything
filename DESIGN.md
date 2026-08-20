@@ -121,7 +121,7 @@ Warm paper and ledger ink carry the interface; the colored marks are reserved fo
 
 ## Layout
 
-The desktop shell uses a 36px utility strip above a 244px ruled rail, with a generous central canvas. The dashboard becomes a two-column ledger—fluid evidence and topic directory beside a 400px review column—then reduces to one column before mobile. The mobile rail becomes a drawer, while controls retain a 44px menu target.
+The desktop shell uses a full-height 244px ruled rail beside a generous central canvas. The dashboard becomes a two-column ledger—fluid evidence and topic directory beside a 400px review column—then reduces to one column before mobile. The mobile rail becomes a drawer, while controls retain a 44px menu target.
 
 Spacing follows a compact editorial rhythm: 8px for inline detail, 16px for ordinary separation, 20px for panel interiors, and 28px for the desktop canvas. Topic rows and review rows are full-width ruled records rather than isolated cards.
 
@@ -160,7 +160,7 @@ The operational surfaces are square: buttons, fields, modal shells, progress rai
 
 **Character:** a persistent study rail, not an application chrome sidebar.
 
-- **Style:** a 244px ruled paper rail under the utility strip, with uppercase rail title and square search trigger.
+- **Style:** a full-height 244px ruled paper rail, with uppercase rail title and square search trigger.
 - **State:** selected search results use a paper-soft accent wash and a 1px indigo bar.
 - **Mobile:** the rail translates into a drawer and is opened by a 44px square menu control.
 
