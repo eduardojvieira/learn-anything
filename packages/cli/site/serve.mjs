@@ -201,15 +201,19 @@ function startHeartbeat() {
 }
 
 let watcherReady = false;
+let topicsWatcher;
 
 function startWatcher() {
   if (watcherReady) return;
   watcherReady = true;
   try {
     let timer;
-    watch(TOPICS_DIR, { recursive: true }, (_event, _filename) => {
+    topicsWatcher = watch(TOPICS_DIR, { recursive: true }, (_event, _filename) => {
       clearTimeout(timer);
       timer = setTimeout(broadcastReload, 200);
+    });
+    topicsWatcher.on('error', (error) => {
+      if (error?.code !== 'ENOENT') process.stderr.write(`Topic watcher error: ${error}\n`);
     });
   } catch {
     // topics dir may not exist yet

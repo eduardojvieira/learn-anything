@@ -112,4 +112,23 @@ describe('site search index', () => {
       ]),
     );
   });
+
+  it('survives an ephemeral StateStore lock directory', async () => {
+    root = await mkdtemp(path.join(os.tmpdir(), 'site-watcher-'));
+    const topic = path.join(root, 'v2-topic');
+    await mkdir(topic, { recursive: true });
+    await writeFile(
+      path.join(topic, 'state.json'),
+      JSON.stringify({ version: 2, topic: 'V2 Topic', slug: 'v2-topic', domains: [] }),
+    );
+    const base = await startServer(root);
+    const lock = path.join(topic, '.state.json.lock');
+    await mkdir(lock);
+    await writeFile(path.join(lock, 'owner.json'), '{}');
+    await rm(lock, { recursive: true, force: true });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(server?.exitCode).toBeNull();
+    expect((await fetch(`${base}/api/topics`)).ok).toBe(true);
+  });
 });
