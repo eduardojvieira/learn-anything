@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "sintaxis-valores-tipos-bindings",
+  "concept_name": "Sintaxis, valores, tipos y bindings",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "asi",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué devuelve esta función? `function f(){ return\n{ ok: true }; }`",
+      "options": ["El objeto", "undefined", "SyntaxError", "true"],
+      "answer": "undefined",
+      "explanation": "ASI restringida termina `return` al encontrar el salto de línea. El bloque siguiente no es la expresión retornada; escribí el objeto en la misma línea."
+    },
+    {
+      "id": "types",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre clasificación e identidad.",
+      "options": [
+        "null es primitivo aunque typeof null sea 'object'",
+        "Una función es un objeto callable",
+        "Array es un octavo primitivo",
+        "Symbol('x') !== Symbol('x'), pero Symbol.for('x') === Symbol.for('x')"
+      ],
+      "answer": [
+        "null es primitivo aunque typeof null sea 'object'",
+        "Una función es un objeto callable",
+        "Symbol('x') !== Symbol('x'), pero Symbol.for('x') === Symbol.for('x')"
+      ],
+      "explanation": "`typeof null === 'object'` es una anomalía histórica; funciones y arrays son objetos. Cada Symbol() crea identidad nueva, mientras Symbol.for usa el registro global por clave."
+    },
+    {
+      "id": "numeric",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas.",
+      "options": [
+        "0.1 + 0.2 puede no ser exactamente 0.3",
+        "1n + 1 mezcla BigInt y Number sin error",
+        "BigInt divide truncando hacia cero",
+        "Number.isSafeInteger protege identidad de enteros Number"
+      ],
+      "answer": [
+        "0.1 + 0.2 puede no ser exactamente 0.3",
+        "BigInt divide truncando hacia cero",
+        "Number.isSafeInteger protege identidad de enteros Number"
+      ],
+      "explanation": "Number usa binary64, por eso fracciones decimales pueden no representarse exactamente. BigInt y Number no se mezclan en aritmética; `5n / 2n` da `2n`."
+    },
+    {
+      "id": "const",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "`const user = {name: 'Ana'}` impide `user.name = 'Noa'`.",
+      "answer": false,
+      "explanation": "`const` protege el binding: no permite reasignar `user`. El objeto alcanzado sigue mutable salvo que apliques otra operación, como freeze, con sus propios límites."
+    },
+    {
+      "id": "alias",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Los objetos se pasan por referencia; `{...user}` vuelve todo inmutable y profundo’.",
+      "answer": "Los argumentos se pasan por valor; para un objeto se copia el valor referencia. Spread crea una raíz nueva superficial: propiedades anidadas siguen aliased.",
+      "explanation": "La distinción permite predecir que reasignar un parámetro no cambia al llamador, mientras mutar una propiedad del objeto compartido sí puede hacerlo."
+    }
+  ]
+}

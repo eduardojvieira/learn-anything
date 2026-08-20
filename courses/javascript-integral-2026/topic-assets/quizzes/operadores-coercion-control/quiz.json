@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "operadores-coercion-control",
+  "concept_name": "Operadores, coerción y control de flujo",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "nullish",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Con `const puerto = 0`, ¿qué conserva el cero?",
+      "options": ["puerto || 3000", "puerto ?? 3000", "Ambos", "Ninguno"],
+      "answer": "puerto ?? 3000",
+      "explanation": "|| toma todo falsy; ?? sólo null y undefined."
+    },
+    {
+      "id": "boundary",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas de conversión y frontera.",
+      "options": [
+        "[] es truthy",
+        "Number(true) === 1",
+        "toPort(true) debe lanzar TypeError",
+        "toPort(70000) debe lanzar RangeError",
+        "El string vacío es decimal canónico"
+      ],
+      "answer": [
+        "[] es truthy",
+        "Number(true) === 1",
+        "toPort(true) debe lanzar TypeError",
+        "toPort(70000) debe lanzar RangeError"
+      ],
+      "explanation": "Convertir no valida: [] es truthy y Number(true) es 1, pero el puerto rechaza boolean por representación y 70000 por rango."
+    },
+    {
+      "id": "equality",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué expresión encuentra NaN en un array?",
+      "options": ["[NaN].indexOf(NaN)", "[NaN].includes(NaN)", "NaN === NaN", "Object.is(-0, 0)"],
+      "answer": "[NaN].includes(NaN)",
+      "explanation": "includes usa SameValueZero; indexOf usa igualdad estricta y no encuentra NaN."
+    },
+    {
+      "id": "flow",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas de flujo.",
+      "options": [
+        "10 - 3 - 2 es 5",
+        "switch usa comparación estricta y puede hacer fall-through",
+        "continue pasa a la siguiente iteración",
+        "i <= array.length evita off-by-one"
+      ],
+      "answer": [
+        "10 - 3 - 2 es 5",
+        "switch usa comparación estricta y puede hacer fall-through",
+        "continue pasa a la siguiente iteración"
+      ],
+      "explanation": "Resta asocia a izquierda; switch continúa sin break; continue salta el resto. Para índices se usa i < length."
+    },
+    {
+      "id": "finally",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Un return o throw de finally conserva la falla primaria, y Error con cause sólo copia su texto’.",
+      "answer": "finally puede enmascarar la completion pendiente. Error con cause conserva la identidad de la causa original; cleanup debe completar normalmente.",
+      "explanation": "Un RangeError de cleanup puede reemplazar una falla primaria. cause mantiene el objeto original para diagnóstico."
+    }
+  ]
+}

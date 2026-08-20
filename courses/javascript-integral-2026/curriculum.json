@@ -1,0 +1,641 @@
+{
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "slug": "javascript-integral-2026",
+  "created_at": "2026-08-20T09:00:00-03:00",
+  "domains": [
+    {
+      "name": "Fundamentos del lenguaje",
+      "slug": "fundamentos",
+      "concepts": [
+        {
+          "name": "ECMAScript, motores, hosts y compatibilidad",
+          "slug": "ecmascript-motores-hosts",
+          "details": [
+            "ECMA-262 y ECMAScript 2026",
+            "TC39, stages y Test262",
+            "motor, realm y agente",
+            "navegador, Node.js y APIs host",
+            "feature detection y matrices de compatibilidad"
+          ],
+          "prerequisites": [],
+          "relations": [
+            {
+              "kind": "related",
+              "target": "esm-commonjs-resolucion"
+            }
+          ]
+        },
+        {
+          "name": "Sintaxis, valores, tipos y bindings",
+          "slug": "sintaxis-valores-tipos-bindings",
+          "details": [
+            "gramática, expresiones y sentencias",
+            "primitivos, objetos, null y undefined",
+            "Number, BigInt, String, Boolean y Symbol",
+            "let, const, var y asignación",
+            "identidad, mutabilidad y paso por valor"
+          ],
+          "prerequisites": ["ecmascript-motores-hosts"],
+          "relations": [
+            {
+              "kind": "contrast",
+              "target": "memoria-binaria-typedarray"
+            }
+          ]
+        },
+        {
+          "name": "Operadores, coerción y control de flujo",
+          "slug": "operadores-coercion-control",
+          "details": [
+            "precedencia y cortocircuito",
+            "truthiness, coerción y conversiones explícitas",
+            "igualdad estricta, laxa, Object.is y SameValueZero",
+            "if, switch y operador condicional",
+            "for, while, break, continue y etiquetas",
+            "throw, try, catch, finally y objetos Error"
+          ],
+          "prerequisites": ["sintaxis-valores-tipos-bindings"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "seguridad-performance-observabilidad"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Funciones y modelo de ejecución",
+      "slug": "ejecucion",
+      "concepts": [
+        {
+          "name": "Funciones, parámetros y pila de llamadas",
+          "slug": "funciones-parametros-pila",
+          "details": [
+            "declaraciones, expresiones y arrow functions",
+            "parámetros por defecto, rest y spread",
+            "destructuring, argumentos y retorno",
+            "funciones como valores y callbacks",
+            "pila, recursión y desbordamiento"
+          ],
+          "prerequisites": ["operadores-coercion-control"],
+          "relations": [
+            {
+              "kind": "related",
+              "target": "event-loop-jobs"
+            }
+          ]
+        },
+        {
+          "name": "Scope, closures, hoisting y módulos léxicos",
+          "slug": "scope-closures-hoisting",
+          "details": [
+            "entornos léxicos y resolución de nombres",
+            "scope global, de módulo, función y bloque",
+            "hoisting y zona muerta temporal",
+            "closures, encapsulación y captura de bindings",
+            "closures por iteración y retención accidental"
+          ],
+          "prerequisites": ["funciones-parametros-pila"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "paradigmas-modelado"
+            }
+          ]
+        },
+        {
+          "name": "this, invocación, constructores y funciones ligadas",
+          "slug": "this-invocacion-constructores",
+          "details": [
+            "llamada simple, método y receptor",
+            "call, apply y bind",
+            "new, new.target y constructores",
+            "this léxico en arrows",
+            "modo estricto, arguments, super y evaluación"
+          ],
+          "prerequisites": ["funciones-parametros-pila"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "prototipos-clases-composicion"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Objetos y metaprogramación",
+      "slug": "objetos",
+      "concepts": [
+        {
+          "name": "Objetos, propiedades y descriptores",
+          "slug": "objetos-propiedades-descriptores",
+          "details": [
+            "literales, propiedades y claves computadas",
+            "enumerabilidad, propiedad y orden de claves",
+            "getters, setters y descriptores",
+            "destructuring, spread y copias superficiales",
+            "optional chaining, nullish coalescing, freeze y seal"
+          ],
+          "prerequisites": ["sintaxis-valores-tipos-bindings"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "dom-eventos-accesibilidad"
+            }
+          ]
+        },
+        {
+          "name": "Prototipos, clases, privados y composición",
+          "slug": "prototipos-clases-composicion",
+          "details": [
+            "cadena de prototipos y delegación",
+            "funciones constructoras",
+            "class, extends, super y métodos estáticos",
+            "campos y métodos privados, static blocks",
+            "herencia frente a composición"
+          ],
+          "prerequisites": ["objetos-propiedades-descriptores", "this-invocacion-constructores"],
+          "relations": [
+            {
+              "kind": "contrast",
+              "target": "paradigmas-modelado"
+            }
+          ]
+        },
+        {
+          "name": "Symbols, Proxy, Reflect y datos estructurados",
+          "slug": "symbols-proxy-reflect-datos",
+          "details": [
+            "Symbol y well-known symbols",
+            "traps e invariantes de Proxy",
+            "operaciones fundamentales con Reflect",
+            "JSON, reviver, replacer y acceso a source en ES2026",
+            "structured clone como algoritmo de plataforma"
+          ],
+          "prerequisites": ["objetos-propiedades-descriptores"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "memoria-binaria-typedarray"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Colecciones, texto y algoritmos",
+      "slug": "colecciones",
+      "concepts": [
+        {
+          "name": "Arrays, Map, Set y colecciones débiles",
+          "slug": "arrays-map-set",
+          "details": [
+            "arrays densos, dispersos y métodos mutables",
+            "Map, Set y métodos algebraicos",
+            "Map.getOrInsert y getOrInsertComputed en ES2026",
+            "WeakMap y WeakSet",
+            "elección por invariantes y complejidad"
+          ],
+          "prerequisites": ["operadores-coercion-control"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "complejidad-estructuras"
+            }
+          ]
+        },
+        {
+          "name": "Memoria binaria, TypedArray y serialización",
+          "slug": "memoria-binaria-typedarray",
+          "details": [
+            "ArrayBuffer, SharedArrayBuffer y vistas",
+            "TypedArray, DataView y endianness",
+            "buffers redimensionables y transferibles",
+            "Uint8Array base64 y hexadecimal en ES2026",
+            "codificación de texto y límites de serialización"
+          ],
+          "prerequisites": ["arrays-map-set"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "paralelismo-memoria"
+            }
+          ]
+        },
+        {
+          "name": "Strings, Unicode, RegExp, fechas e internacionalización",
+          "slug": "strings-unicode-regexp-intl",
+          "details": [
+            "UTF-16, code points, graphemes y normalización",
+            "RegExp, grupos, lookarounds, Unicode y backtracking",
+            "Date, zonas horarias y relojes",
+            "ECMA-402: NumberFormat, DateTimeFormat, Collator y Segmenter",
+            "Temporal como capacidad sujeta al runtime, no supuesto universal"
+          ],
+          "prerequisites": ["sintaxis-valores-tipos-bindings"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "dom-eventos-accesibilidad"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Algoritmos y abstracciones funcionales",
+      "slug": "algoritmos",
+      "concepts": [
+        {
+          "name": "Complejidad y estructuras de datos compuestas",
+          "slug": "complejidad-estructuras",
+          "details": [
+            "Big O temporal y espacial",
+            "pilas, colas, listas y hash tables",
+            "árboles, heaps, tries y grafos",
+            "búsqueda, ordenamiento y recorridos",
+            "divide and conquer, greedy y programación dinámica"
+          ],
+          "prerequisites": ["arrays-map-set"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "seguridad-performance-observabilidad"
+            }
+          ]
+        },
+        {
+          "name": "Iterables, iteradores, generadores y secuencias",
+          "slug": "iterables-generadores-secuencias",
+          "details": [
+            "protocolos iterable e iterator",
+            "generadores y delegación con yield*",
+            "iteración y generadores asíncronos",
+            "iterator helpers y evaluación perezosa",
+            "iterator sequencing y Array.fromAsync en ES2026"
+          ],
+          "prerequisites": ["funciones-parametros-pila"],
+          "relations": [
+            {
+              "kind": "analogy",
+              "target": "promises-streams-coordinacion"
+            }
+          ]
+        },
+        {
+          "name": "Programación funcional y transformación de datos",
+          "slug": "programacion-funcional",
+          "details": [
+            "funciones puras y transparencia referencial",
+            "map, filter, reduce y flatMap",
+            "composición, currying y aplicación parcial",
+            "inmutabilidad y persistencia conceptual",
+            "recursión, lazy evaluation y control de efectos"
+          ],
+          "prerequisites": ["funciones-parametros-pila", "arrays-map-set"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "paradigmas-modelado"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Paradigmas y patrones de diseño",
+      "slug": "paradigmas",
+      "concepts": [
+        {
+          "name": "Paradigmas y modelado en JavaScript",
+          "slug": "paradigmas-modelado",
+          "details": [
+            "objetos, mensajes y responsabilidades",
+            "encapsulación, polimorfismo y delegación",
+            "SOLID como heurísticas, no dogma",
+            "composición sobre herencia y modelado de invariantes",
+            "imperativo, orientado a objetos, funcional y declarativo",
+            "eventos, observables y flujos",
+            "estado derivado y máquinas de estados",
+            "reactividad push y pull",
+            "criterios de elección y carga cognitiva"
+          ],
+          "prerequisites": ["prototipos-clases-composicion", "programacion-funcional"],
+          "relations": [
+            {
+              "kind": "related",
+              "target": "arquitectura-fronteras"
+            }
+          ]
+        },
+        {
+          "name": "Patrones de creación, estructura y comportamiento",
+          "slug": "patrones-diseno",
+          "details": [
+            "factory, builder y dependency injection",
+            "module, adapter, facade y decorator",
+            "strategy, command, observer y state",
+            "middleware, pub-sub y event emitter",
+            "antipatrones y costo de abstracción"
+          ],
+          "prerequisites": ["paradigmas-modelado"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "node-red-servicios"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Asincronía, concurrencia y memoria",
+      "slug": "asincronia",
+      "concepts": [
+        {
+          "name": "Jobs, event loops, tareas y microtasks",
+          "slug": "event-loop-jobs",
+          "details": [
+            "run-to-completion",
+            "ECMAScript Jobs y Promise jobs",
+            "event loop y task queues del host",
+            "timers, I/O y rendering",
+            "starvation, latencia y bloqueo"
+          ],
+          "prerequisites": ["funciones-parametros-pila"],
+          "relations": [
+            {
+              "kind": "contrast",
+              "target": "dom-eventos-accesibilidad"
+            }
+          ]
+        },
+        {
+          "name": "Promises, async/await, streams y coordinación",
+          "slug": "promises-streams-coordinacion",
+          "details": [
+            "resolución, encadenamiento y thenables",
+            "async functions y propagación de errores",
+            "all, allSettled, any y race",
+            "cancelación, timeouts y concurrencia limitada",
+            "Readable, Writable y Transform streams con backpressure"
+          ],
+          "prerequisites": ["event-loop-jobs", "funciones-parametros-pila"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "node-red-servicios"
+            }
+          ]
+        },
+        {
+          "name": "Paralelismo, modelo de memoria y ciclo de vida",
+          "slug": "paralelismo-memoria",
+          "details": [
+            "agentes, workers y paso de mensajes",
+            "SharedArrayBuffer, Atomics, carreras y deadlocks",
+            "alcanzabilidad, garbage collection y presión de asignación",
+            "WeakRef, FinalizationRegistry y cachés",
+            "using, await using, DisposableStack y limpieza determinista"
+          ],
+          "prerequisites": ["promises-streams-coordinacion", "memoria-binaria-typedarray"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "node-red-servicios"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Módulos, paquetes y herramientas",
+      "slug": "modulos",
+      "concepts": [
+        {
+          "name": "ES modules, CommonJS y resolución",
+          "slug": "esm-commonjs-resolucion",
+          "details": [
+            "import, export y live bindings",
+            "instanciación, evaluación y ciclos",
+            "import dinámico, top-level await y atributos",
+            "resolución del host e import maps",
+            "CommonJS, interoperabilidad y package exports/imports"
+          ],
+          "prerequisites": ["scope-closures-hoisting"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "node-procesos-io"
+            }
+          ]
+        },
+        {
+          "name": "npm, package.json y cadena de dependencias",
+          "slug": "npm-dependencias",
+          "details": [
+            "semver y resolución del grafo",
+            "lockfiles, npm ci y reproducibilidad",
+            "scripts, lifecycle hooks y workspaces",
+            "publicación, provenance y trusted publishing",
+            "auditoría, firmas, 2FA y riesgos de supply chain"
+          ],
+          "prerequisites": ["esm-commonjs-resolucion"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "testing-entrega"
+            }
+          ]
+        },
+        {
+          "name": "Toolchain, tipos y transformación de código",
+          "slug": "toolchain-tipos-transformacion",
+          "details": [
+            "linting, formatting y convenciones",
+            "transpilación, bundling, tree shaking y minificación",
+            "source maps, debugging e inspector",
+            "JSDoc y TypeScript como análisis estático opcional",
+            "AST, parsers, codemods y generación de código"
+          ],
+          "prerequisites": ["npm-dependencias"],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "testing-entrega"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Plataforma web",
+      "slug": "web",
+      "concepts": [
+        {
+          "name": "DOM, eventos, formularios y accesibilidad",
+          "slug": "dom-eventos-accesibilidad",
+          "details": [
+            "árbol DOM, selección y mutación",
+            "EventTarget, propagación, delegación y aborting",
+            "formularios, constraint validation y custom elements",
+            "semántica, teclado, foco y accesibilidad",
+            "Web IDL y conversión entre plataforma y ECMAScript",
+            "parsing, style, layout, paint y composición",
+            "event loop, frames y long tasks",
+            "Web Workers, Service Workers y canales de mensajes",
+            "Performance API, User Timing y PerformanceObserver",
+            "caching, lazy loading, code splitting y memory leaks"
+          ],
+          "prerequisites": ["objetos-propiedades-descriptores", "event-loop-jobs"],
+          "relations": [
+            {
+              "kind": "related",
+              "target": "event-loop-jobs"
+            }
+          ]
+        },
+        {
+          "name": "Fetch, URLs, almacenamiento y seguridad web",
+          "slug": "fetch-almacenamiento-seguridad",
+          "details": [
+            "URL, Request, Response, Headers y bodies",
+            "HTTP, redirects, cache, cookies y credentials",
+            "same-origin policy, CORS, CSP y permisos",
+            "Web Storage, IndexedDB y Cache API",
+            "AbortSignal, errores de red y trabajo offline"
+          ],
+          "prerequisites": [
+            "promises-streams-coordinacion",
+            "objetos-propiedades-descriptores",
+            "dom-eventos-accesibilidad"
+          ],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "seguridad-performance-observabilidad"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Node.js y servicios",
+      "slug": "node",
+      "concepts": [
+        {
+          "name": "Runtime Node.js, procesos e I/O",
+          "slug": "node-procesos-io",
+          "details": [
+            "ciclo de vida, CLI, process y variables de entorno",
+            "filesystem, path, URL y buffers",
+            "EventEmitter y streams de Node",
+            "señales, errores fatales y graceful shutdown",
+            "inspector, diagnostics y permission model"
+          ],
+          "prerequisites": ["esm-commonjs-resolucion"],
+          "relations": [
+            {
+              "kind": "contrast",
+              "target": "dom-eventos-accesibilidad"
+            }
+          ]
+        },
+        {
+          "name": "Red, servicios, persistencia y paralelismo en Node.js",
+          "slug": "node-red-servicios",
+          "details": [
+            "TCP, DNS, HTTP, HTTPS y HTTP/2",
+            "TLS, crypto y manejo de secretos",
+            "worker threads, child processes y worker pool",
+            "backpressure, límites y resource exhaustion",
+            "timeouts, keep-alive y cierre ordenado",
+            "diseño de APIs HTTP y validación",
+            "SQL, transacciones, índices y pools",
+            "NoSQL, cachés y consistencia",
+            "colas, eventos, webhooks y WebSocket",
+            "idempotencia, retries, circuit breakers y rate limits"
+          ],
+          "prerequisites": [
+            "node-procesos-io",
+            "promises-streams-coordinacion",
+            "esm-commonjs-resolucion"
+          ],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "arquitectura-fronteras"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Calidad, seguridad, rendimiento y arquitectura",
+      "slug": "calidad",
+      "concepts": [
+        {
+          "name": "Testing, verificación y entrega confiable",
+          "slug": "testing-entrega",
+          "details": [
+            "unit, integration, contract y end-to-end",
+            "mocks, fakes, fixtures y test seams",
+            "property-based, mutation, fuzzing y concurrencia",
+            "coverage, determinismo y Node test runner",
+            "CI, revisión, versionado y migraciones seguras"
+          ],
+          "prerequisites": ["toolchain-tipos-transformacion"],
+          "relations": [
+            {
+              "kind": "related",
+              "target": "seguridad-performance-observabilidad"
+            }
+          ]
+        },
+        {
+          "name": "Seguridad, performance y observabilidad",
+          "slug": "seguridad-performance-observabilidad",
+          "details": [
+            "threat modeling y límites de confianza",
+            "XSS, CSRF, injection, prototype pollution y deserialización",
+            "profiling, benchmarking, complejidad y allocation pressure",
+            "JIT, shapes, inline caches y deoptimización como detalles de motor",
+            "logs estructurados, métricas, trazas y alertas"
+          ],
+          "prerequisites": [
+            "testing-entrega",
+            "paralelismo-memoria",
+            "fetch-almacenamiento-seguridad",
+            "node-red-servicios"
+          ],
+          "relations": [
+            {
+              "kind": "application",
+              "target": "arquitectura-fronteras"
+            }
+          ]
+        },
+        {
+          "name": "Arquitectura avanzada y fronteras del sistema",
+          "slug": "arquitectura-fronteras",
+          "details": [
+            "cohesión, acoplamiento, DIP y diseño modular",
+            "capas, hexagonal y functional core/imperative shell",
+            "DDD, bounded contexts y evolución de contratos",
+            "event-driven, CQRS, event sourcing y consistencia distribuida",
+            "WebAssembly 3.0, capas de embedding, límites JS-Wasm y cuándo no usarlo"
+          ],
+          "prerequisites": ["paradigmas-modelado", "node-red-servicios"],
+          "relations": [
+            {
+              "kind": "related",
+              "target": "paradigmas-modelado"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

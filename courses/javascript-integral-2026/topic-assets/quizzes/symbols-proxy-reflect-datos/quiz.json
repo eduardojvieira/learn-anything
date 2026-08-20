@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "symbols-proxy-reflect-datos",
+  "concept_name": "Symbols, Proxy, Reflect y datos estructurados",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Cuál es la afirmación correcta sobre 3.3?",
+      "options": [
+        "Symbol y well-known symbols",
+        "traps e invariantes de Proxy",
+        "Una suposición de runtime",
+        "Una excepción silenciosa"
+      ],
+      "answer": "Symbol y well-known symbols",
+      "explanation": "Symbol() crea identidad única. Symbol.iterator implementa el protocolo iterable; Symbol.for usa un registro compartido."
+    },
+    {
+      "id": "q2",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Elegí dos prácticas que preservan el contrato.",
+      "options": [
+        "Validar entradas",
+        "Comprobar soporte real",
+        "Ignorar errores",
+        "Inferir soporte por user agent"
+      ],
+      "answer": [
+        "Validar entradas",
+        "Comprobar soporte real"
+      ],
+      "explanation": "La validación y feature detection evitan estados falsos."
+    },
+    {
+      "id": "q3",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Una demostración aislada en un runtime prueba compatibilidad universal.",
+      "answer": false,
+      "explanation": "La compatibilidad se determina por la capability y la matriz objetivo."
+    },
+    {
+      "id": "q4",
+      "type": "fill_in_blank",
+      "gradeable": "accepted",
+      "prompt": "Completar: el comportamiento adicional que provee navegador o Node pertenece al ____.",
+      "answer": "host",
+      "accepted_answers": [
+        "host",
+        "runtime",
+        "anfitrión"
+      ],
+      "explanation": "El host integra ECMAScript con la plataforma."
+    },
+    {
+      "id": "q5",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí un ejemplo de 3.3 que viola uno de sus invariantes y justificá el cambio.",
+      "answer": "evaluación cualitativa",
+      "explanation": "La respuesta debe identificar entrada, regla y caso borde."
+    }
+  ]
+}

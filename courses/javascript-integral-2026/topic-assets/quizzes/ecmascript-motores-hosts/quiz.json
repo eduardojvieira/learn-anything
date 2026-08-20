@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "ecmascript-motores-hosts",
+  "concept_name": "ECMAScript, motores, hosts y compatibilidad",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "scope",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Cuál de estas capacidades queda fuera del alcance de ECMA-262?",
+      "options": [
+        "La sintaxis de una función",
+        "El algoritmo de Promise",
+        "El DOM y el filesystem",
+        "Los objetos Map"
+      ],
+      "answer": "El DOM y el filesystem",
+      "explanation": "ECMA-262 define el lenguaje, incluidos Promise y Map, no I/O ni las APIs de una ventana o del filesystem. Eso corresponde al host."
+    },
+    {
+      "id": "stage-four",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Si una propuesta llegó a Stage 4 y entra en una edición de ECMAScript, todos los runtimes que usás ya la soportan.",
+      "answer": false,
+      "explanation": "Stage 4 termina el trabajo de estandarización, pero no actualiza navegadores, Node ni equipos corporativos. Hay que probar los targets reales."
+    },
+    {
+      "id": "realm-agent",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Por qué un array de otro Realm puede fallar con `valor instanceof Array` pero pasar `Array.isArray(valor)`?",
+      "options": [
+        "instanceof compara contra el constructor y prototipo del Realm local",
+        "Array.isArray convierte el valor a string",
+        "Los arrays cross-Realm siempre son proxies",
+        "Un agente no puede tener arrays"
+      ],
+      "answer": "instanceof compara contra el constructor y prototipo del Realm local",
+      "explanation": "Cada Realm tiene sus propios intrinsics, incluido Array. `instanceof` sigue esa cadena local; `Array.isArray` reconoce la identidad interna del array."
+    },
+    {
+      "id": "host",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Node moderno y un navegador ofrecen `fetch`. ¿Cómo hay que clasificarla?",
+      "options": [
+        "Sintaxis ECMAScript",
+        "API host expuesta por dos runtimes",
+        "Intrínseca definida por ECMA-262",
+        "Prueba de que ambos hosts son idénticos"
+      ],
+      "answer": "API host expuesta por dos runtimes",
+      "explanation": "Compartir un nombre no mueve `fetch` al lenguaje ni garantiza los mismos permisos, versiones o bordes de implementación."
+    },
+    {
+      "id": "syntax-detection",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí este plan: ‘Pongo sintaxis nueva en el archivo principal y, si `typeof nuevaAPI` da false, no se ejecutará’. Explicá qué falla antes y qué opciones seguras quedan.",
+      "answer": "El parser puede rechazar el archivo antes de ejecutar typeof; hay que transpilar o servir otra build, y detectar la API por separado.",
+      "explanation": "El feature detection corre después del parseo. Sirve para una API ya parseable; no puede rescatar sintaxis que el runtime desconoce."
+    }
+  ]
+}
