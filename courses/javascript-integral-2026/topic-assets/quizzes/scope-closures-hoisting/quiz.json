@@ -7,64 +7,74 @@
   "created": "2026-08-20 09:00:00",
   "questions": [
     {
-      "id": "q1",
+      "id": "resolution",
       "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "¿Cuál es la afirmación correcta sobre 2.2?",
+      "prompt": "Una función creada dentro de `crearInforme`, donde existe `const moneda = 'USD'`, se invoca desde un caller que tiene `const moneda = 'ARS'`. ¿Qué moneda resuelve la función interna?",
       "options": [
-        "entornos léxicos y resolución de nombres",
-        "scope global, de módulo, función y bloque",
-        "Una suposición de runtime",
-        "Una excepción silenciosa"
+        "USD, por su entorno léxico",
+        "ARS, por su caller",
+        "La última asignada globalmente",
+        "Ninguna: una closure no puede leer exteriores"
       ],
-      "answer": "entornos léxicos y resolución de nombres",
-      "explanation": "Un nombre se resuelve desde el entorno actual hacia los exteriores, según dónde se escribió la función, no dónde se la llamó."
+      "answer": "USD, por su entorno léxico",
+      "explanation": "La función busca primero en su entorno y después en los exteriores definidos donde fue creada. El caller no reemplaza esa cadena léxica."
     },
     {
-      "id": "q2",
+      "id": "scopes",
       "type": "multi_select",
       "gradeable": "exact",
-      "prompt": "Elegí dos prácticas que preservan el contrato.",
+      "prompt": "Seleccioná las afirmaciones correctas sobre scopes.",
       "options": [
-        "Validar entradas",
-        "Comprobar soporte real",
-        "Ignorar errores",
-        "Inferir soporte por user agent"
+        "Un import ES es un binding vivo",
+        "let y const de bloque quedan visibles fuera de las llaves",
+        "var declarado en un if pertenece a la función envolvente",
+        "Un binding superior de módulo se vuelve automáticamente propiedad de globalThis"
       ],
       "answer": [
-        "Validar entradas",
-        "Comprobar soporte real"
+        "Un import ES es un binding vivo",
+        "var declarado en un if pertenece a la función envolvente"
       ],
-      "explanation": "La validación y feature detection evitan estados falsos."
+      "explanation": "Los imports observan el binding exportado. let y const son de bloque; var es de función y los bindings de módulo no equivalen a propiedades globales."
     },
     {
-      "id": "q3",
+      "id": "hoisting-tdz",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué ocurre al evaluar `console.log(x); let x = 1;` en el mismo bloque?",
+      "options": [
+        "Imprime undefined",
+        "Lanza ReferenceError por TDZ",
+        "Imprime 1",
+        "Lanza TypeError"
+      ],
+      "answer": "Lanza ReferenceError por TDZ",
+      "explanation": "El binding let fue creado al entrar al scope, pero no puede leerse hasta que se evalúa su inicializador. var temprano, en cambio, lee undefined."
+    },
+    {
+      "id": "capture",
       "type": "true_false",
       "gradeable": "exact",
-      "prompt": "Una demostración aislada en un runtime prueba compatibilidad universal.",
+      "prompt": "Una closure captura necesariamente una foto inmutable del valor exterior en el instante de crearse.",
       "answer": false,
-      "explanation": "La compatibilidad se determina por la capability y la matriz objetivo."
+      "explanation": "Normalmente captura el binding. Si ese binding se reasigna, la closure lee el valor nuevo; para una foto hay que crear un binding separado."
     },
     {
-      "id": "q4",
-      "type": "fill_in_blank",
-      "gradeable": "accepted",
-      "prompt": "Completar: el comportamiento adicional que provee navegador o Node pertenece al ____.",
-      "answer": "host",
-      "accepted_answers": [
-        "host",
-        "runtime",
-        "anfitrión"
+      "id": "iteration-retention",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Elegí dos cambios que evitan problemas habituales con closures.",
+      "options": [
+        "Usar let o const en el for que crea callbacks",
+        "Extraer id y name antes de devolver una callback",
+        "Usar var para que cada vuelta cree un binding",
+        "Confiar en que el GC libere un listener aunque siga registrado"
       ],
-      "explanation": "El host integra ECMAScript con la plataforma."
-    },
-    {
-      "id": "q5",
-      "type": "error_correction",
-      "gradeable": "ai_only",
-      "prompt": "Corregí un ejemplo de 2.2 que viola uno de sus invariantes y justificá el cambio.",
-      "answer": "evaluación cualitativa",
-      "explanation": "La respuesta debe identificar entrada, regla y caso borde."
+      "answer": [
+        "Usar let o const en el for que crea callbacks",
+        "Extraer id y name antes de devolver una callback"
+      ],
+      "explanation": "let y const dan bindings por iteración. Proyectar los datos necesarios evita depender del registro completo; un listener registrado conserva una referencia hasta removerlo."
     }
   ]
 }

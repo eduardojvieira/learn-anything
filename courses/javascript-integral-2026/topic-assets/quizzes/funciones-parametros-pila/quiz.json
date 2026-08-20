@@ -7,64 +7,61 @@
   "created": "2026-08-20 09:00:00",
   "questions": [
     {
-      "id": "q1",
+      "id": "forms",
       "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "¿Cuál es la afirmación correcta sobre 2.1?",
+      "prompt": "¿Qué forma puede usar return implícito sin llaves para una sola expresión?",
       "options": [
-        "declaraciones, expresiones y arrow functions",
-        "parámetros por defecto, rest y spread",
-        "Una suposición de runtime",
-        "Una excepción silenciosa"
+        "Function declaration",
+        "Function expression nombrada",
+        "Arrow function",
+        "Método con function"
       ],
-      "answer": "declaraciones, expresiones y arrow functions",
-      "explanation": "Una declaración de función se inicializa con el scope; una expresión depende de su binding. Arrow no tiene this ni arguments propios y no es constructora."
+      "answer": "Arrow function",
+      "explanation": "Una arrow con cuerpo de expresión retorna ese valor. Si agregás llaves, deja de haber retorno implícito y necesitás `return` explícito."
     },
     {
-      "id": "q2",
+      "id": "defaults-rest-spread",
       "type": "multi_select",
       "gradeable": "exact",
-      "prompt": "Elegí dos prácticas que preservan el contrato.",
+      "prompt": "Seleccioná las afirmaciones correctas sobre parámetros y argumentos.",
       "options": [
-        "Validar entradas",
-        "Comprobar soporte real",
-        "Ignorar errores",
-        "Inferir soporte por user agent"
+        "Un default se aplica cuando el argumento es undefined",
+        "Rest reúne argumentos restantes en un array real",
+        "Spread puede expandir un iterable al llamar una función",
+        "Un default reemplaza automáticamente null"
       ],
       "answer": [
-        "Validar entradas",
-        "Comprobar soporte real"
+        "Un default se aplica cuando el argumento es undefined",
+        "Rest reúne argumentos restantes en un array real",
+        "Spread puede expandir un iterable al llamar una función"
       ],
-      "explanation": "La validación y feature detection evitan estados falsos."
+      "explanation": "`null` es un argumento provisto, por eso no activa el default. Rest está en la firma; spread está en el sitio de llamada o en un literal."
     },
     {
-      "id": "q3",
+      "id": "destructuring-return",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Con `function f({ etiqueta = 'x' } = {}) { return etiqueta; }`, ¿qué devuelve `f({})`?",
+      "options": ["undefined", "null", "x", "TypeError"],
+      "answer": "x",
+      "explanation": "El patrón extrae `etiqueta` y su default cubre la propiedad ausente. El `= {}` del parámetro cubre el argumento omitido, que es otro borde."
+    },
+    {
+      "id": "callback",
       "type": "true_false",
       "gradeable": "exact",
-      "prompt": "Una demostración aislada en un runtime prueba compatibilidad universal.",
+      "prompt": "Pasar una función como callback ejecuta esa función en el instante de pasarla.",
       "answer": false,
-      "explanation": "La compatibilidad se determina por la capability y la matriz objetivo."
+      "explanation": "Se pasa el valor función. Quien recibe el callback decide si, cuándo y con qué argumentos invocarlo; `map` lo llama una vez por elemento."
     },
     {
-      "id": "q4",
-      "type": "fill_in_blank",
-      "gradeable": "accepted",
-      "prompt": "Completar: el comportamiento adicional que provee navegador o Node pertenece al ____.",
-      "answer": "host",
-      "accepted_answers": [
-        "host",
-        "runtime",
-        "anfitrión"
-      ],
-      "explanation": "El host integra ECMAScript con la plataforma."
-    },
-    {
-      "id": "q5",
+      "id": "stack",
       "type": "error_correction",
       "gradeable": "ai_only",
-      "prompt": "Corregí un ejemplo de 2.1 que viola uno de sus invariantes y justificá el cambio.",
-      "answer": "evaluación cualitativa",
-      "explanation": "La respuesta debe identificar entrada, regla y caso borde."
+      "prompt": "Corregí: ‘La recursión no usa más memoria que un loop y JavaScript garantiza la misma profundidad de pila en todos los runtimes’.",
+      "answer": "Cada llamada recursiva agrega un frame hasta retornar; un loop no acumula esos frames. El límite depende del runtime y del entorno, así que una profundidad controlada o un algoritmo iterativo evita depender de Stack Overflow.",
+      "explanation": "La pila conserva llamadas activas, argumentos y retorno. No hay un límite portable que una aplicación pueda asumir; validá una cota propia antes de recursar cuando el input pueda crecer."
     }
   ]
 }

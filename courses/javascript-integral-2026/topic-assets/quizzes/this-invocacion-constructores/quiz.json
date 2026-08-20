@@ -10,61 +10,57 @@
       "id": "q1",
       "type": "multiple_choice",
       "gradeable": "exact",
-      "prompt": "¿Cuál es la afirmación correcta sobre 2.3?",
+      "prompt": "En un módulo, ¿qué ocurre tras `const f = cuenta.depositar; f(2)` si `depositar` lee `this.saldo`?",
       "options": [
-        "llamada simple, método y receptor",
-        "call, apply y bind",
-        "Una suposición de runtime",
-        "Una excepción silenciosa"
+        "Lanza porque la llamada simple entrega `undefined` como this",
+        "Actualiza cuenta porque f conserva su objeto de origen",
+        "Usa automáticamente el objeto global",
+        "Crea una copia de cuenta antes de llamar"
       ],
-      "answer": "llamada simple, método y receptor",
-      "explanation": "En una función normal this depende de la llamada. obj.method() usa obj; una llamada suelta en strict mode recibe undefined."
+      "answer": "Lanza porque la llamada simple entrega `undefined` como this",
+      "explanation": "El binding f guarda la función, no la referencia de propiedad cuenta.depositar. Los módulos son strict, por lo que una llamada simple entrega undefined como this."
     },
     {
       "id": "q2",
       "type": "multi_select",
       "gradeable": "exact",
-      "prompt": "Elegí dos prácticas que preservan el contrato.",
+      "prompt": "Elegí las dos afirmaciones correctas sobre call, apply y bind.",
       "options": [
-        "Validar entradas",
-        "Comprobar soporte real",
-        "Ignorar errores",
-        "Inferir soporte por user agent"
+        "call invoca de inmediato con argumentos separados",
+        "apply invoca de inmediato con una lista array-like de argumentos",
+        "bind invoca de inmediato y devuelve el resultado",
+        "call puede cambiar el this de una arrow"
       ],
       "answer": [
-        "Validar entradas",
-        "Comprobar soporte real"
+        "call invoca de inmediato con argumentos separados",
+        "apply invoca de inmediato con una lista array-like de argumentos"
       ],
-      "explanation": "La validación y feature detection evitan estados falsos."
+      "explanation": "bind devuelve una función para una invocación posterior; una arrow captura this léxicamente, así que call/apply/bind no lo reemplazan."
     },
     {
       "id": "q3",
       "type": "true_false",
       "gradeable": "exact",
-      "prompt": "Una demostración aislada en un runtime prueba compatibilidad universal.",
-      "answer": false,
-      "explanation": "La compatibilidad se determina por la capability y la matriz objetivo."
+      "prompt": "Una función ligada a un constructor puede invocarse con new; en ese caso se ignora el this ligado y se conservan los argumentos ligados.",
+      "answer": true,
+      "explanation": "Si la función objetivo es constructora, la función ligada también puede construir. new crea el receptor nuevo y no usa el this que bind había fijado."
     },
     {
       "id": "q4",
       "type": "fill_in_blank",
       "gradeable": "accepted",
-      "prompt": "Completar: el comportamiento adicional que provee navegador o Node pertenece al ____.",
-      "answer": "host",
-      "accepted_answers": [
-        "host",
-        "runtime",
-        "anfitrión"
-      ],
-      "explanation": "El host integra ECMAScript con la plataforma."
+      "prompt": "Completar: dentro de una función invocada con new, ____ identifica al constructor usado para iniciar esa construcción.",
+      "answer": "new.target",
+      "accepted_answers": ["new.target", "new target"],
+      "explanation": "new.target vale undefined en una llamada común y permite que un constructor de función exija explícitamente new."
     },
     {
       "id": "q5",
       "type": "error_correction",
       "gradeable": "ai_only",
-      "prompt": "Corregí un ejemplo de 2.3 que viola uno de sus invariantes y justificá el cambio.",
+      "prompt": "Corregí `const objeto = { nombre: 'Ada', mostrar: () => this.nombre };` para que mostrar use el receptor del método, y justificá por qué call no arregla la arrow original.",
       "answer": "evaluación cualitativa",
-      "explanation": "La respuesta debe identificar entrada, regla y caso borde."
+      "explanation": "La corrección esperada usa un método conciso o una función común. La arrow no obtiene this de objeto: lo captura del entorno donde fue creada."
     }
   ]
 }
