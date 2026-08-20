@@ -17,6 +17,7 @@ export default tseslint.config(
       '.learn/',
       'packages/cli/site/topics/',
       'packages/cli/test/fixtures/',
+      'courses/**/*.mjs',
     ],
   },
   {
