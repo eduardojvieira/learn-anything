@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "programacion-funcional",
+  "concept_name": "Programación funcional y transformación de datos",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué condición permite reemplazar una llamada por su resultado sin cambiar el comportamiento observable?",
+      "explanation": "La transparencia referencial permite sustituir una expresión por su valor; requiere que no dependa de estado oculto ni produzca efectos observables.",
+      "options": [
+        "Transparencia referencial",
+        "Mutación defensiva",
+        "Herencia prototipal",
+        "Evaluación ansiosa"
+      ],
+      "answer": "Transparencia referencial"
+    },
+    {
+      "id": "q2",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué describe mejor `flatMap` sobre un array?",
+      "explanation": "Aplica una función a cada elemento y aplana un nivel del resultado; cada entrada puede producir cero, uno o varios valores.",
+      "options": [
+        "Mapea y aplana un nivel",
+        "Filtra valores falsy",
+        "Reduce siempre a un número",
+        "Ordena sin mutar"
+      ],
+      "answer": "Mapea y aplana un nivel"
+    },
+    {
+      "id": "q3",
+      "type": "fill_in_blank",
+      "gradeable": "accepted",
+      "prompt": "Transformar `f(a, b)` en `f(a)(b)` se llama ___.",
+      "explanation": "Currying descompone una función de varios argumentos en una secuencia de funciones de un argumento.",
+      "answer": "currying",
+      "accepted_answers": ["currying", "currificación", "currificacion"]
+    },
+    {
+      "id": "q4",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "`{ ...pedido }` también copia profundamente `pedido.items`.",
+      "explanation": "El spread de objetos es superficial: el nuevo objeto conserva la misma referencia para sus propiedades anidadas.",
+      "answer": false
+    },
+    {
+      "id": "q5",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí la función para que sea predecible: `const ahoraConDescuento = (precio) => precio * (Date.now() % 2 ? 0.9 : 0.8);`.",
+      "explanation": "El tiempo es una dependencia oculta. Recibí la tasa (o la decisión ya calculada) como argumento para que el mismo input produzca el mismo output.",
+      "answer": "const conDescuento = (tasa, precio) => precio * (1 - tasa);"
+    }
+  ]
+}

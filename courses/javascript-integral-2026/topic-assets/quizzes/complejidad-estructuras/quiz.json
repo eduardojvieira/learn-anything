@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "complejidad-estructuras",
+  "concept_name": "Complejidad y estructuras de datos compuestas",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "espacio-auxiliar",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Al hacer una copia ordenada con merge sort de n elementos, ¿cuál es el costo auxiliar habitual, sin contar la entrada?",
+      "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+      "answer": "O(n)",
+      "explanation": "La división recursiva tiene profundidad O(log n), pero al fusionar hace falta almacenar resultados intermedios lineales; el espacio auxiliar dominante es O(n)."
+    },
+    {
+      "id": "estructura-operacion",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las parejas estructura-operación que respetan su invariante y costo típico.",
+      "options": [
+        "Pila: push/pop en el extremo superior, O(1) amortizado con array",
+        "Cola FIFO: shift() repetido sobre Array, O(1) garantizado",
+        "Heap binario: extraer mínimo, O(log n)",
+        "Trie: buscar una palabra de longitud k, O(k)",
+        "Hash table: enumerar todas las claves, O(1)"
+      ],
+      "answer": [
+        "Pila: push/pop en el extremo superior, O(1) amortizado con array",
+        "Heap binario: extraer mínimo, O(log n)",
+        "Trie: buscar una palabra de longitud k, O(k)"
+      ],
+      "explanation": "shift() reindexa elementos y no es una cola O(1); recorrer todas las claves es lineal. Heap y trie organizan el costo alrededor de altura o longitud de clave."
+    },
+    {
+      "id": "recorrido-grafo",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "En un grafo no ponderado, ¿qué recorrido encuentra primero la ruta con menor cantidad de aristas desde un origen?",
+      "options": [
+        "DFS con una pila",
+        "BFS con una cola",
+        "Dijkstra con costos negativos",
+        "Una tabla hash sola"
+      ],
+      "answer": "BFS con una cola",
+      "explanation": "BFS visita por capas: todos los nodos a distancia d antes que los de d + 1. DFS puede encontrar una ruta válida más larga; Dijkstra exige pesos no negativos y sería más trabajo del necesario."
+    },
+    {
+      "id": "estrategia",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre estrategias algorítmicas.",
+      "options": [
+        "Búsqueda binaria necesita un orden compatible con la comparación",
+        "Dijkstra admite aristas negativas si el heap es correcto",
+        "Divide and conquer separa subproblemas y combina resultados",
+        "Programación dinámica reutiliza resultados de subproblemas solapados",
+        "Greedy siempre produce un óptimo global por elegir el mejor paso local"
+      ],
+      "answer": [
+        "Búsqueda binaria necesita un orden compatible con la comparación",
+        "Divide and conquer separa subproblemas y combina resultados",
+        "Programación dinámica reutiliza resultados de subproblemas solapados"
+      ],
+      "explanation": "Un heap no corrige pesos negativos; Dijkstra puede cerrar una decisión demasiado pronto. Greedy requiere una prueba de elección segura, no sólo una intuición local."
+    },
+    {
+      "id": "correccion-dijkstra",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Para desempatar rutas de igual costo alcanza con quedarme con el primer vecino visitado; el orden de las aristas nunca afecta el resultado observable’.",
+      "answer": "Si la API promete desempate, debe definirlo y aplicarlo al comparar candidatos de igual costo, por ejemplo con la ruta lexicográfica. El orden de entrada puede cambiar cuál empate aparece primero; sin regla explícita el resultado no es determinista respecto del contrato.",
+      "explanation": "El costo mínimo no identifica una ruta única. La solución compara costo y una clave de ruta para que el resultado sea reproducible, aun cuando cambie el orden de aristas equivalentes."
+    }
+  ]
+}

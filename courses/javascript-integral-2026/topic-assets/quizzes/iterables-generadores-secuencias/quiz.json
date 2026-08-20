@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "iterables-generadores-secuencias",
+  "concept_name": "Iterables, iteradores, generadores y secuencias",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "protocols",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué debe devolver Symbol.iterator() para que for...of pueda avanzar?",
+      "options": ["Un array", "Un iterator con next()", "Una Promise", "Un callback"],
+      "answer": "Un iterator con next()",
+      "explanation": "El iterable entrega un iterator; next() devuelve objetos { value, done }. Un array es iterable, pero no es el protocolo que for...of consume directamente."
+    },
+    {
+      "id": "yield-star",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "En un generador, ¿qué hace yield* otroIterable?",
+      "options": [
+        "Devuelve el iterable sin recorrerlo",
+        "Delega valores al iterable o generator anidado",
+        "Convierte valores en Promise",
+        "Copia siempre a un array"
+      ],
+      "answer": "Delega valores al iterable o generator anidado",
+      "explanation": "yield* transmite los valores producidos por el delegado y evita escribir el loop manual. No materializa una secuencia por sí solo."
+    },
+    {
+      "id": "async",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre for await...of.",
+      "options": [
+        "Consume async iterables en orden",
+        "También puede adaptar un iterable síncrono",
+        "Convierte una fuente infinita en finita",
+        "Cada next() puede requerir await"
+      ],
+      "answer": [
+        "Consume async iterables en orden",
+        "También puede adaptar un iterable síncrono",
+        "Cada next() puede requerir await"
+      ],
+      "explanation": "for await...of espera cada paso y también acepta iterables síncronos. No impone un límite: una fuente infinita sigue necesitando una política de corte."
+    },
+    {
+      "id": "helpers",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué conserva la evaluación lazy de Iterator Helpers?",
+      "options": [
+        "No ejecuta map/filter hasta que un consumidor pide valores",
+        "Nunca ejecuta callbacks",
+        "Convierte todo en Array antes de filtrar",
+        "Hace que el iterator sea reutilizable"
+      ],
+      "answer": "No ejecuta map/filter hasta que un consumidor pide valores",
+      "explanation": "map, filter y take crean etapas; toArray(), for...of u otro consumidor tira de ellas. Un iterator normalmente se consume una sola vez."
+    },
+    {
+      "id": "compatibility",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Iterator.concat y Array.fromAsync están en cualquier runtime ES2026, así que llamalos sin comprobar nada’.",
+      "answer": "Son APIs que el material ubica en la especificación ES2026, pero un runtime real puede no implementarlas. Detectá la capacidad exacta; si falta, usá un fallback documentado o no ofrezcas esa ruta.",
+      "explanation": "El año de la especificación no actualiza Node, browsers embebidos ni runtimes corporativos. La detección debe probar Iterator.concat o Array.fromAsync, no inferir por user-agent."
+    }
+  ]
+}
