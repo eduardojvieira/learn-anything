@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "strings-unicode-regexp-intl",
+  "concept_name": "Strings, Unicode, RegExp, fechas e internacionalización",
+  "created": "2026-08-20 11:41:00",
+  "questions": [
+    {
+      "id": "utf16",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué mide `\"💡\".length`?",
+      "options": [
+        "Dos unidades de código UTF-16",
+        "Un grafema",
+        "Un byte UTF-8",
+        "Un code point siempre"
+      ],
+      "answer": "Dos unidades de código UTF-16",
+      "explanation": "El emoji usa un par sustituto UTF-16. `length` cuenta unidades de código, no code points ni grafemas visibles."
+    },
+    {
+      "id": "unicode",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre Unicode.",
+      "options": [
+        "NFC puede volver equivalentes 'é' y 'e\\u0301' para una comparación",
+        "Intl.Segmenter con granularidad grapheme cuenta la familia emoji como una unidad visible",
+        "Normalizar NFC elimina diacríticos",
+        "Array.from(text).length siempre cuenta grafemas"
+      ],
+      "answer": [
+        "NFC puede volver equivalentes 'é' y 'e\\u0301' para una comparación",
+        "Intl.Segmenter con granularidad grapheme cuenta la familia emoji como una unidad visible"
+      ],
+      "explanation": "NFC resuelve ciertas representaciones equivalentes sin borrar acentos. La iteración de strings cuenta code points; Segmenter conoce fronteras de grafema."
+    },
+    {
+      "id": "regexp",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Por qué la regex del laboratorio usa `u` junto a `\\p{L}`?",
+      "options": [
+        "Porque las propiedades Unicode requieren el modo Unicode",
+        "Para habilitar backtracking ilimitado",
+        "Para que \\d admita decimales",
+        "Porque agrega automáticamente anclas"
+      ],
+      "answer": "Porque las propiedades Unicode requieren el modo Unicode",
+      "explanation": "La bandera `u` habilita la semántica Unicode de la expresión, incluida la propiedad de letras `\\p{L}`. Los lookarounds delimitan el token sin consumir el contexto."
+    },
+    {
+      "id": "date-intl",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las decisiones correctas para mostrar un cobro ocurrido en un instante dado.",
+      "options": [
+        "Pasar el instante y una timeZone explícita a Intl.DateTimeFormat",
+        "Armar la fecha con getMonth() y concatenación fija",
+        "Usar Intl.NumberFormat con la moneda del contrato",
+        "Usar Intl.Collator para declarar dos cuentas idénticas"
+      ],
+      "answer": [
+        "Pasar el instante y una timeZone explícita a Intl.DateTimeFormat",
+        "Usar Intl.NumberFormat con la moneda del contrato"
+      ],
+      "explanation": "Date representa un instante y necesita locale/zona para presentarse. NumberFormat presenta moneda; Collator sirve para comparación de presentación, no para identidad de cuentas."
+    },
+    {
+      "id": "temporal",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí este supuesto: `const mañana = Temporal.Now.plainDateISO().add({ days: 1 });` debe correr en cualquier runtime.",
+      "answer": "if (typeof globalThis.Temporal !== 'undefined') { const mañana = globalThis.Temporal.Now.plainDateISO().add({ days: 1 }); } else { /* usar la ruta Date + Intl acordada */ }",
+      "explanation": "Temporal se trata como capacidad ES2027 dependiente del runtime. La aplicación debe detectar la capacidad y conservar una ruta explícita cuando no esté disponible."
+    }
+  ]
+}

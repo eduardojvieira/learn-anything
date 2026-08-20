@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "memoria-binaria-typedarray",
+  "concept_name": "Memoria binaria, TypedArray y serialización",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "buffer-view",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué comparten `new Uint8Array(buffer)` y `new DataView(buffer)` cuando reciben el mismo ArrayBuffer?",
+      "options": [
+        "Una copia de bytes independiente",
+        "El almacenamiento subyacente; una escritura puede verse desde ambas vistas",
+        "El mismo tipo de lectura numérica",
+        "El mismo byteOffset obligatorio"
+      ],
+      "answer": "El almacenamiento subyacente; una escritura puede verse desde ambas vistas",
+      "explanation": "ArrayBuffer es el almacenamiento y las vistas lo interpretan. TypedArray aporta elementos homogéneos; DataView permite offsets y tipos distintos sobre los mismos bytes."
+    },
+    {
+      "id": "endianness",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Para escribir un uint16 de protocolo en big-endian con DataView, ¿qué llamada expresa esa decisión?",
+      "options": [
+        "`view.setUint16(0, value, false)`",
+        "`view.setUint16(0, value, true)`",
+        "`new Uint16Array(buffer)[0] = value`",
+        "`view.setUint8(0, value)`"
+      ],
+      "answer": "`view.setUint16(0, value, false)`",
+      "explanation": "El tercer argumento de DataView es `littleEndian`; omitirlo o pasar false selecciona big-endian. Un Uint16Array usa el orden nativo y no documenta un formato de red."
+    },
+    {
+      "id": "transfer",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Transferir un ArrayBuffer a otro agente deja utilizables las vistas que quedaron en el emisor.",
+      "answer": false,
+      "explanation": "Tras una transferencia válida, el buffer del emisor queda detached. Las vistas asociadas dejan de tener sus bytes; no conserves aliases como si fueran una copia. SharedArrayBuffer no se transfiere de ese modo: se comparte."
+    },
+    {
+      "id": "es2026-bytes",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre APIs modernas de Uint8Array.",
+      "options": [
+        "`Uint8Array.fromHex(text)` crea bytes desde hexadecimal",
+        "`bytes.toBase64()` existe en todo runtime que ejecute JavaScript",
+        "`typeof Uint8Array.fromBase64 === 'function'` es feature detection",
+        "Base64 convierte texto Unicode directamente sin elegir codificación"
+      ],
+      "answer": [
+        "`Uint8Array.fromHex(text)` crea bytes desde hexadecimal",
+        "`typeof Uint8Array.fromBase64 === 'function'` es feature detection"
+      ],
+      "explanation": "Las APIs ES2026 trabajan con bytes y todavía dependen del runtime. Primero codificá texto, por ejemplo con TextEncoder UTF-8; base64 es una representación textual de bytes, no de strings JavaScript."
+    },
+    {
+      "id": "serialization-limit",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘JSON.stringify guarda cualquier ArrayBuffer, BigInt y ciclo exactamente como está’.",
+      "answer": "JSON no preserva esos valores: BigInt lanza, ciclos lanzan y ArrayBuffer/TypedArray no forman un protocolo binario automático. Definí formato, codificación y límites; usá structuredClone o transferencia sólo cuando la API lo permita.",
+      "explanation": "Serializar es acordar qué datos, identidad, tipos y tamaño cruzan una frontera. JSON sirve para un subconjunto de valores; no reemplaza un formato binario ni elimina la validación al deserializar."
+    }
+  ]
+}

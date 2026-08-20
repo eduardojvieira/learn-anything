@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "arrays-map-set",
+  "concept_name": "Arrays, Map, Set y colecciones débiles",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "sparse",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Con `const a = [1, , 3]`, ¿qué distingue al hueco de un elemento cuyo valor es undefined?",
+      "options": [
+        "`1 in a` es false",
+        "`a.length` vale 2",
+        "`a[1] === undefined` es false",
+        "`a.map(x => x)` crea un 1 en esa posición"
+      ],
+      "answer": "`1 in a` es false",
+      "explanation": "Leer el hueco da undefined, pero la propiedad de índice no existe: `1 in a` lo revela. length cuenta hasta el mayor índice más uno y muchos métodos iterativos saltan los huecos."
+    },
+    {
+      "id": "mutation",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las operaciones que mutan el array receptor.",
+      "options": ["push", "sort", "map", "slice", "splice"],
+      "answer": ["push", "sort", "splice"],
+      "explanation": "push, sort y splice cambian el receptor. map y slice devuelven otro array; aun así, sus elementos objeto pueden conservar identidad compartida."
+    },
+    {
+      "id": "map-missing",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Por qué `map.has(clave)` es necesario antes de interpretar `map.get(clave)`?",
+      "options": [
+        "Porque Map no acepta undefined como valor",
+        "Porque get devuelve undefined tanto para clave ausente como para una clave guardada con undefined",
+        "Porque has muta el Map",
+        "Porque get compara claves por JSON"
+      ],
+      "answer": "Porque get devuelve undefined tanto para clave ausente como para una clave guardada con undefined",
+      "explanation": "Map permite guardar undefined. has pregunta por presencia y get por valor; confluirlas rompe caches, contadores y agrupamientos."
+    },
+    {
+      "id": "set-algebra",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "`a.union(b)` del álgebra Set ES2025 muta `a` y devuelve ese mismo conjunto.",
+      "answer": false,
+      "explanation": "union, intersection, difference y symmetricDifference construyen un Set nuevo. Como el soporte depende del runtime, verificá el método antes de invocarlo o aplicá un fallback equivalente."
+    },
+    {
+      "id": "weak",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘WeakMap sólo acepta objetos; `Symbol.for('x')` sirve igual que `Symbol('x')`, y puedo recorrerlo para vaciar la cache’.",
+      "answer": "WeakMap acepta objetos —incluidas funciones— y Symbols no registrados como `Symbol('x')`; rechaza `Symbol.for('x')`. No es iterable ni tiene size. Para IDs string, recorrido o limpieza determinista elegí Map.",
+      "explanation": "La debilidad expresa ownership: una clave puede desaparecer cuando no queda otra ruta alcanzable. La recolección no es observable ni programable; el valor que sólo apunta a su propia clave no la retiene por sí solo."
+    }
+  ]
+}
