@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "seguridad-performance-observabilidad",
+  "concept_name": "Seguridad, performance y observabilidad",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "trust-boundary",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Dónde debe validarse un payload JSON que llega por HTTP antes de usarlo para actualizar un perfil?",
+      "options": [
+        "Sólo en el formulario",
+        "En la frontera HTTP, antes de copiarlo o persistirlo",
+        "Después de registrarlo completo",
+        "En el cliente si usa TypeScript"
+      ],
+      "answer": "En la frontera HTTP, antes de copiarlo o persistirlo",
+      "explanation": "El cliente y sus tipos no son una frontera de confianza. Validar forma, claves y valores al entrar evita que datos no confiables alcancen lógica, logs o almacenamiento."
+    },
+    {
+      "id": "browser-attacks",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las defensas correctas.",
+      "options": [
+        "Insertar texto con textContent cuando no necesitás HTML",
+        "Usar consultas parametrizadas para valores de una query",
+        "Desactivar SameSite porque CSRF sólo existe con cookies",
+        "Concatenar un filtro recibido dentro de SQL después de JSON.parse"
+      ],
+      "answer": [
+        "Insertar texto con textContent cuando no necesitás HTML",
+        "Usar consultas parametrizadas para valores de una query"
+      ],
+      "explanation": "textContent evita interpretar el dato como markup y la parametrización mantiene los valores fuera de la sintaxis de la consulta. JSON.parse no vuelve seguro un valor; SameSite es una defensa adicional, no una razón para omitir el diseño CSRF."
+    },
+    {
+      "id": "prototype-pollution",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Por qué un esquema cerrado es preferible a hacer spread de un objeto JSON arbitrario hacia configuración interna?",
+      "options": [
+        "Porque el spread clona profundamente",
+        "Porque sólo construye los campos que el contrato permite y evita claves como __proto__",
+        "Porque JSON no puede contener claves especiales",
+        "Porque Object.assign siempre neutraliza prototipos"
+      ],
+      "answer": "Porque sólo construye los campos que el contrato permite y evita claves como __proto__",
+      "explanation": "El dato deserializado sigue siendo no confiable. Un allowlist valida y reconstruye la representación interna; copiar claves arbitrarias puede abrir caminos de prototype pollution según el destino y las operaciones posteriores."
+    },
+    {
+      "id": "measure-first",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Si un loop parece lento, conviene reescribirlo para favorecer shapes estables antes de medir CPU, allocation y la carga real.",
+      "answer": false,
+      "explanation": "JIT, shapes e inline caches son detalles del motor y pueden variar. Primero medí un caso representativo, identificá el cuello y compará un cambio contra baseline; la complejidad y las asignaciones suelen importar más que una intuición micro."
+    },
+    {
+      "id": "telemetry-design",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Para investigar errores logueo el body completo, el token y el stack en cada request; alerto cuando haya cualquier error’.",
+      "answer": "Usaría logs estructurados con requestId, operación, resultado y campos allowlisted, sin secretos ni payloads crudos; correlacionaría con métricas de tasa de error y latencia, y trazas con propagación de contexto. La alerta debe tener umbral, ventana y acción operativa para evitar ruido.",
+      "explanation": "La observabilidad debe permitir diagnosticar sin ampliar exposición de datos. Una alerta accionable combina una señal agregada, duración y contexto, en lugar de paginar por ruido normal."
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "arquitectura-fronteras",
+  "concept_name": "Arquitectura avanzada y fronteras del sistema",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "modulo",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Un cambio de precio obliga a editar el parser HTTP, el cálculo de totales y tres adaptadores de base. ¿Qué señal es más fuerte?",
+      "options": [
+        "Alta cohesión",
+        "Acoplamiento excesivo a través de una frontera",
+        "DIP aplicado",
+        "Un bounded context sano"
+      ],
+      "answer": "Acoplamiento excesivo a través de una frontera",
+      "explanation": "Una regla de negocio que atraviesa transporte y persistencia indica que las dependencias van hacia detalles. Un puerto de dominio permite que HTTP y base de datos cambien sin conocer el cálculo."
+    },
+    {
+      "id": "contrato",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná decisiones que vuelven evolutivo un contrato entre bounded contexts.",
+      "options": [
+        "Versionar el evento y conservar consumidores antiguos durante la transición",
+        "Publicar sólo datos y nombres que el otro contexto necesita",
+        "Compartir las tablas internas para evitar duplicación",
+        "Hacer idempotente al consumidor porque puede recibir entregas repetidas"
+      ],
+      "answer": [
+        "Versionar el evento y conservar consumidores antiguos durante la transición",
+        "Publicar sólo datos y nombres que el otro contexto necesita",
+        "Hacer idempotente al consumidor porque puede recibir entregas repetidas"
+      ],
+      "explanation": "Un contrato explícito reduce coordinación, pero no vuelve fiable a la red. La base interna compartida acopla modelos y despliegues; un identificador de evento permite deduplicar reintentos."
+    },
+    {
+      "id": "consistencia",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Después de aceptar una orden, inventario tarda segundos en reflejarla. ¿Cuál es la respuesta arquitectónica honesta?",
+      "options": [
+        "Decir que CQRS garantiza consistencia inmediata",
+        "Definir la consistencia esperada, mostrar estado pendiente y hacer idempotentes los efectos",
+        "Reintentar sin límite hasta que parezca síncrono",
+        "Usar event sourcing y eliminar toda falla distribuida"
+      ],
+      "answer": "Definir la consistencia esperada, mostrar estado pendiente y hacer idempotentes los efectos",
+      "explanation": "Event-driven, CQRS y event sourcing cambian el modelo de lectura y auditoría; no eliminan retrasos, particiones ni duplicados. La UX y el contrato deben declarar qué se confirma y cuándo."
+    },
+    {
+      "id": "wasm-capas",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre WebAssembly.",
+      "options": [
+        "Core define el formato, validación y ejecución; no entrega DOM ni filesystem",
+        "La JS API compila e instancia módulos y enlaza imports/exports",
+        "WASI es la Web API del navegador",
+        "WASI define interfaces de sistema con capacidades que el host concede"
+      ],
+      "answer": [
+        "Core define el formato, validación y ejecución; no entrega DOM ni filesystem",
+        "La JS API compila e instancia módulos y enlaza imports/exports",
+        "WASI define interfaces de sistema con capacidades que el host concede"
+      ],
+      "explanation": "La Web API integra Response con compileStreaming e instantiateStreaming; DOM, Workers y permisos son APIs generales del host. WASI es otra familia de interfaces de sistema, dependiente del runtime anfitrión y de permisos explícitos."
+    },
+    {
+      "id": "frontera",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Wasm siempre acelera; basta con detectar WebAssembly y mover cada función chica al módulo’.",
+      "answer": "Wasm puede convenir para cómputo pesado y datos que permanecen del mismo lado. Hay que medir el flujo completo, detectar la capacidad y cada feature requerida, y evitar cruces JS-Wasm finos, DOM/I-O y payloads que dominan el costo.",
+      "explanation": "El límite tiene conversión de tipos, memoria y llamadas. `typeof WebAssembly` sólo detecta la API básica; un módulo o feature concreto requiere validación o carga controlada en los runtimes objetivo."
+    }
+  ]
+}

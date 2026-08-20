@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "testing-entrega",
+  "concept_name": "Testing, verificación y entrega confiable",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "levels",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Un cambio conserva las unit tests verdes pero cambia el JSON público de un endpoint. ¿Qué evidencia ataca directamente ese riesgo?",
+      "options": [
+        "Más coverage",
+        "Una prueba de contrato del consumidor",
+        "Un mock del reloj",
+        "Un test end-to-end de login"
+      ],
+      "answer": "Una prueba de contrato del consumidor",
+      "explanation": "La unidad prueba una decisión local; el contrato verifica la forma y semántica acordadas entre frontera y consumidor. Coverage no compara el payload con el acuerdo."
+    },
+    {
+      "id": "doubles",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre dobles de prueba.",
+      "options": [
+        "Un fake tiene una implementación funcional simplificada",
+        "Un mock debe copiar toda la base de datos real",
+        "Una fixture hace reproducible el dato de entrada",
+        "Un seam permite sustituir una dependencia en la frontera"
+      ],
+      "answer": [
+        "Un fake tiene una implementación funcional simplificada",
+        "Una fixture hace reproducible el dato de entrada",
+        "Un seam permite sustituir una dependencia en la frontera"
+      ],
+      "explanation": "Un mock observa interacciones pactadas; un fake conserva comportamiento útil de forma reducida. El seam es el punto explícito de sustitución, no una variable global escondida."
+    },
+    {
+      "id": "generative",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué revela mutation testing que una métrica de líneas cubiertas puede no revelar?",
+      "options": [
+        "Si el binario arrancó",
+        "Si una pequeña modificación semántica deja los asserts vivos",
+        "Qué host ejecuta JavaScript",
+        "Cuánto tarda una migración"
+      ],
+      "answer": "Si una pequeña modificación semántica deja los asserts vivos",
+      "explanation": "Coverage registra ejecución; un mutante superviviente muestra que el test pasó por el código sin distinguir una decisión relevante."
+    },
+    {
+      "id": "determinism",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Para investigar una falla concurrente intermitente, ¿qué prácticas ayudan a volverla verificable?",
+      "options": [
+        "Inyectar reloj, azar y scheduler cuando sea posible",
+        "Compartir estado global entre tests",
+        "Registrar semilla, input y orden observable",
+        "Asertear sólo que no hubo excepción"
+      ],
+      "answer": [
+        "Inyectar reloj, azar y scheduler cuando sea posible",
+        "Registrar semilla, input y orden observable"
+      ],
+      "explanation": "La reproducibilidad necesita controlar fuentes de no determinismo y conservar el caso. Estado global y asserts vagos esconden carreras."
+    },
+    {
+      "id": "delivery",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘100% de coverage habilita deploy; una migración se revierte ejecutando el SQL inverso cuando algo sale mal’.",
+      "answer": "Coverage sólo informa alcance y no prueba contratos, permisos ni asserts útiles. Una migración segura requiere backup probado, pasos forward compatibles, observabilidad y un rollback o plan de recuperación validado antes de cambiar datos.",
+      "explanation": "La entrega se decide por evidencia ligada a riesgos. Un rollback improvisado puede perder datos o romper versiones que todavía conviven."
+    }
+  ]
+}
