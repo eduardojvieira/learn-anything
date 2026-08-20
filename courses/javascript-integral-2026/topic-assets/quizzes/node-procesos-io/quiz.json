@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "node-procesos-io",
+  "concept_name": "Runtime Node.js, procesos e I/O",
+  "created": "2026-08-20 09:00:00",
+  "questions": [
+    {
+      "id": "lifecycle",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Una CLI detecta un error de uso antes de iniciar I/O. ¿Qué salida preserva mejor cualquier escritura asíncrona ya pendiente?",
+      "options": [
+        "Imprimir en stderr, fijar process.exitCode y dejar que el event loop termine",
+        "Llamar process.exit(0) inmediatamente",
+        "Esperar el evento exit y abrir una escritura asíncrona ahí",
+        "Lanzar un string y continuar con argumentos vacíos"
+      ],
+      "answer": "Imprimir en stderr, fijar process.exitCode y dejar que el event loop termine",
+      "explanation": "process.exit() corta el proceso y puede truncar I/O pendiente. exitCode comunica el resultado sin forzar un corte; el evento exit sólo admite trabajo síncrono."
+    },
+    {
+      "id": "input-boundaries",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las afirmaciones correctas sobre entradas de Node.",
+      "options": [
+        "process.env.PORT llega como string o undefined",
+        "fileURLToPath convierte una file: URL con reglas correctas del host",
+        "url.pathname siempre es un path portable listo para fs",
+        "path.join(base, nombre) evita escribir separadores manuales"
+      ],
+      "answer": [
+        "process.env.PORT llega como string o undefined",
+        "fileURLToPath convierte una file: URL con reglas correctas del host",
+        "path.join(base, nombre) evita escribir separadores manuales"
+      ],
+      "explanation": "Una URL y un path tienen semánticas distintas; pathname conserva reglas y escapes URL, por eso no es la conversión general a path."
+    },
+    {
+      "id": "streams-events",
+      "type": "true_false",
+      "gradeable": "exact",
+      "prompt": "Un chunk de un Readable de texto siempre coincide con una línea completa.",
+      "answer": false,
+      "explanation": "Los límites de chunks responden al I/O y al buffering. Una línea o incluso un carácter UTF-8 puede quedar partido; el consumidor debe conservar estado."
+    },
+    {
+      "id": "signals",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Al instalar un handler para SIGTERM en un servidor, ¿cuál es el primer objetivo del apagado ordenado?",
+      "options": [
+        "Dejar de aceptar trabajo nuevo y cerrar recursos dentro de un tiempo acotado",
+        "Ignorar señales para que el supervisor no reinicie",
+        "Llamar process.exit(0) antes de cerrar conexiones",
+        "Reintentar para siempre toda solicitud activa"
+      ],
+      "answer": "Dejar de aceptar trabajo nuevo y cerrar recursos dentro de un tiempo acotado",
+      "explanation": "El handler reemplaza el final por defecto: debe ser idempotente, detener admisión, drenar lo acotado y tener una salida de seguridad."
+    },
+    {
+      "id": "fatal-permissions",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Pongo un listener vacío para uncaughtException y Node sigue seguro; además --permission vuelve sandbox a toda dependencia’.",
+      "answer": "evaluación cualitativa",
+      "explanation": "Una excepción no capturada puede dejar el proceso inconsistente: registrala de modo mínimo, terminá y dejá que un supervisor reinicie. El Permission Model limita capacidades de Node para código confiable, pero no reemplaza sandbox del SO, aislamiento ni revisión de dependencias."
+    }
+  ]
+}

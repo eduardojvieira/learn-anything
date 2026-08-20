@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "topic": "JavaScript integral — de cero a avanzado (2026)",
+  "topic_slug": "javascript-integral-2026",
+  "concept_slug": "node-red-servicios",
+  "concept_name": "Red, servicios, persistencia y paralelismo en Node.js",
+  "created": "2026-08-20 10:30:00",
+  "questions": [
+    {
+      "id": "layers",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué afirma correctamente la relación entre DNS, TCP y HTTP/2?",
+      "options": [
+        "DNS garantiza que el servicio HTTP responderá",
+        "TCP entrega requests HTTP completos",
+        "HTTP/2 multiplexa streams, pero no elimina timeouts ni límites",
+        "HTTPS autoriza automáticamente al usuario"
+      ],
+      "answer": "HTTP/2 multiplexa streams, pero no elimina timeouts ni límites",
+      "explanation": "DNS sólo resuelve nombres y TCP transporta bytes ordenados. HTTP/2 cambia el transporte de streams HTTP, no capacidad, autenticación o deadlines; Node también admite h2c sin TLS, aunque los browsers usan TLS."
+    },
+    {
+      "id": "pressure",
+      "type": "multi_select",
+      "gradeable": "exact",
+      "prompt": "Seleccioná las acciones que acotan resource exhaustion.",
+      "options": [
+        "Esperar drain cuando writable.write() devuelve false",
+        "Crear un Worker nuevo por cada request CPU-intensivo",
+        "Limitar body, cola y conexiones",
+        "Usar requestTimeout no nulo",
+        "Aplicar Promise.all a toda entrada externa"
+      ],
+      "answer": [
+        "Esperar drain cuando writable.write() devuelve false",
+        "Limitar body, cola y conexiones",
+        "Usar requestTimeout no nulo"
+      ],
+      "explanation": "Backpressure y límites impiden consumo indefinido. Workers por tarea y Promise.all sin cota agregan overhead o concurrencia no controlada."
+    },
+    {
+      "id": "sql",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "Para impedir dos débitos concurrentes por debajo de cero, ¿dónde vive la regla decisiva?",
+      "options": [
+        "Sólo en un if de Node antes de la query",
+        "En una actualización SQL condicional o constraint dentro de transacción",
+        "En una cache local con TTL",
+        "En el tamaño del pool"
+      ],
+      "answer": "En una actualización SQL condicional o constraint dentro de transacción",
+      "explanation": "Dos requests pueden pasar el mismo if. La base puede hacer atómica condición y escritura; el pool regula capacidad, no consistencia."
+    },
+    {
+      "id": "delivery",
+      "type": "multiple_choice",
+      "gradeable": "exact",
+      "prompt": "¿Qué debe asumir un consumidor de cola o webhook con entrega al menos una vez?",
+      "options": [
+        "Que cada evento llega exactamente una vez",
+        "Que WebSocket ya persiste los eventos",
+        "Que puede recibir duplicados y debe ser idempotente",
+        "Que todo 4xx debe reintentarse"
+      ],
+      "answer": "Que puede recibir duplicados y debe ser idempotente",
+      "explanation": "Reintentos, acknowledgements perdidos y reconexiones producen duplicados. WebSocket no es cola durable y los 4xx suelen ser terminales."
+    },
+    {
+      "id": "idempotency",
+      "type": "error_correction",
+      "gradeable": "ai_only",
+      "prompt": "Corregí: ‘Una idempotency key en un Map local garantiza exactly once entre réplicas y después de reiniciar’.",
+      "answer": "Un Map local sólo coalesce dentro de un proceso vivo. La key debe estar ligada al actor y payload, con restricción única y respuesta durable; el transporte puede entregar al menos una vez.",
+      "explanation": "La deduplicación durable coordina réplicas y sobrevive reinicios. Idempotencia hace seguro repetir un efecto, no prueba una entrega física única."
+    }
+  ]
+}
