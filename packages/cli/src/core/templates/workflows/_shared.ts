@@ -34,7 +34,7 @@ export const RUNTIME_HARD_RULES = `## Hard Rules
 - Create sessions with \`learnctl record-session\` and views only with \`learnctl render-session\`. Record only observed user performance with \`record-evidence\` or \`record-assessment\`.
 `;
 
-export const INIT_TOPIC_PAYLOAD = `\`init-topic\` payload: \`{"topic":"string","created_at":"ISO-8601 with offset","domains":[{"name":"string","concepts":[{"name":"string","details":["string"]}]}]}\`. Optional slugs: \`slug\` on topic, domain, or concept.`;
+export const INIT_TOPIC_PAYLOAD = `\`init-topic\` payload: \`{"topic":"string","created_at":"ISO-8601 with offset","domains":[{"name":"string","concepts":[{"name":"string","details":["string"],"prerequisites":["concept-slug"],"relations":[{"kind":"related|contrast|analogy|application","target":"concept-slug"}]}]}]}\`. Optional slugs: \`slug\` on topic, domain, or concept. Prerequisite and relation targets use the final topic-wide unique concept slug (explicit or generated).`;
 
 export const SESSION_PAYLOAD = `\`record-session\` payload: \`{"expected_topic_revision":"snapshot.revision","idempotency_key":"stable string","concept_id":"snapshot concept UUID","kind":"study|explain|practice|review|quiz","locale":"en|es|zh-CN","created_at":"ISO-8601 with offset","blocks":[{"kind":"positioning|diagnostic|retrieval|explanation|worked_example|self_explanation|feedback|correction|interleaving|transfer|delayed_assessment|summary","text":"string"}],"socratic_prompts":["string"]}\`.`;
 

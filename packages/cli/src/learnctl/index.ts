@@ -44,6 +44,17 @@ const payloadSchema = z
                 name: z.string().min(1),
                 slug: z.string().min(1).optional(),
                 details: z.array(z.string().min(1)),
+                prerequisites: z.array(z.string().min(1)).optional(),
+                relations: z
+                  .array(
+                    z
+                      .object({
+                        kind: z.enum(['related', 'contrast', 'analogy', 'application']),
+                        target: z.string().min(1),
+                      })
+                      .strict(),
+                  )
+                  .optional(),
               })
               .strict(),
           ),
@@ -538,7 +549,7 @@ async function dispatch(args: string[]): Promise<unknown> {
 }
 
 function createState(payload: CreateTopicPayload): StateV2 {
-  return {
+  const state: StateV2 = {
     version: 2,
     id: randomUUID(),
     topic: payload.topic,
@@ -577,6 +588,28 @@ function createState(payload: CreateTopicPayload): StateV2 {
       })),
     })),
   };
+  const concepts = state.domains.flatMap((domain) => domain.concepts);
+  const inputs = payload.domains.flatMap((domain) => domain.concepts);
+  const idsBySlug = new Map<string, string | null>();
+  for (const concept of concepts)
+    idsBySlug.set(concept.slug, idsBySlug.has(concept.slug) ? null : concept.id);
+  for (const [input, concept] of inputs.map((input, index) => [input, concepts[index]] as const)) {
+    concept.prerequisites = (input.prerequisites ?? []).map((slug) =>
+      resolveConceptId(idsBySlug, slug),
+    );
+    concept.relations = (input.relations ?? []).map((relation) => ({
+      kind: relation.kind,
+      target_id: resolveConceptId(idsBySlug, relation.target),
+    }));
+  }
+  if (!stateV2Schema.safeParse(state).success) throw new LearnctlPayloadError();
+  return state;
+}
+
+function resolveConceptId(idsBySlug: Map<string, string | null>, slug: string): string {
+  const id = idsBySlug.get(slug);
+  if (!id) throw new LearnctlPayloadError();
+  return id;
 }
 
 function v2Store(topicDir: string): StateStore<StateV2> {

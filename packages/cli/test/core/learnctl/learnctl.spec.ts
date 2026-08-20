@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   createTopic,
   IdempotencyConflictError,
+  LearnctlPayloadError,
   main,
   migrate,
   recordAssessment,
@@ -61,6 +62,77 @@ describe('learnctl core', () => {
     await expect(
       createTopic(path.join(root, 'invalid'), { ...payload(), extra: true }),
     ).rejects.toThrow();
+  });
+
+  it('resolves curriculum graph slugs to stable concept IDs before initialization', async () => {
+    const created = await createTopic(topicDir, {
+      ...payload(),
+      domains: [
+        {
+          name: 'Basics',
+          concepts: [
+            {
+              name: 'Functions',
+              details: [],
+              prerequisites: ['runtime-values'],
+              relations: [{ kind: 'application', target: 'runtime-values' }],
+            },
+          ],
+        },
+        { name: 'Runtime', concepts: [{ name: 'Values', slug: 'runtime-values', details: [] }] },
+      ],
+    });
+    const [functions] = created.state.domains[0].concepts;
+    const [values] = created.state.domains[1].concepts;
+    expect(functions.prerequisites).toEqual([values.id]);
+    expect(functions.relations).toEqual([{ kind: 'application', target_id: values.id }]);
+  });
+
+  it('keeps omitted graph fields empty without imposing slug uniqueness', async () => {
+    const created = await createTopic(topicDir, {
+      ...payload(),
+      domains: [
+        {
+          name: 'Basics',
+          concepts: [
+            { name: 'Same', details: [] },
+            { name: 'Same', details: [] },
+          ],
+        },
+      ],
+    });
+    const concepts = created.state.domains[0].concepts;
+    expect(concepts).toHaveLength(2);
+    expect(concepts.map((concept) => concept.slug)).toEqual(['same', 'same']);
+    expect(concepts.map((concept) => concept.prerequisites)).toEqual([[], []]);
+    expect(concepts.map((concept) => concept.relations)).toEqual([[], []]);
+  });
+
+  it('rejects invalid curriculum graph references before creating state', async () => {
+    const invalid = (concepts: unknown[]) =>
+      createTopic(topicDir, {
+        ...payload(),
+        domains: [{ name: 'Basics', concepts }],
+      });
+
+    await expect(
+      invalid([{ name: 'Functions', details: [], prerequisites: ['missing'] }]),
+    ).rejects.toBeInstanceOf(LearnctlPayloadError);
+    await expect(fs.access(path.join(topicDir, 'state.json'))).rejects.toThrow();
+
+    await expect(
+      invalid([
+        { name: 'Same', details: [] },
+        { name: 'Same', details: [], prerequisites: ['same'] },
+      ]),
+    ).rejects.toBeInstanceOf(LearnctlPayloadError);
+    await expect(
+      invalid([
+        { name: 'One', details: [], prerequisites: ['two'] },
+        { name: 'Two', details: [], prerequisites: ['one'] },
+      ]),
+    ).rejects.toBeInstanceOf(LearnctlPayloadError);
+    await expect(fs.access(path.join(topicDir, 'state.json'))).rejects.toThrow();
   });
 
   it('returns snapshot revision and derived numbering without mutation', async () => {
